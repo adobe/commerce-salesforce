@@ -39,3 +39,11 @@ The project has the following requirements:
 
 For ease of build and installation the following profiles are provided:
 * autoInstallPackage - installs the package and embedded bundles to an existing AEM author instance
+
+## Contributing
+ 
+Contributions are welcomed! Read the [Contributing Guide](.github/CONTRIBUTING.md) for more information.
+ 
+## Licensing
+ 
+This project is licensed under the Apache V2 License. See [LICENSE](LICENSE) for more information.
