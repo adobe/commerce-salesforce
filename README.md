@@ -6,7 +6,6 @@ This project has a number features to integrate Adobe AEM with Salesforce Commer
 This module is provided as two seperate packages - *cq-commerce-demandware-content* containing the core integration and
 *cq-commerce-demandware-sample-content* providing the sample content based on the Salesforce Commerce SiteGenesis demo site.
 
-
 ### Features
 * Create, maintain and publish AEM pages as content assets on the Salesforce Commerce instance
   * Body content is created out of AEM page content
@@ -18,14 +17,17 @@ This module is provided as two seperate packages - *cq-commerce-demandware-conte
 * Live preview of AEM page content with dynamic catalog and product information
 * Connects to Salesforce Commerce via OCAPI and WebDav
 
+For a general feature overview and introduction check out the [intro video](https://helpx.adobe.com/experience-manager/kt/commerce/using/demandware-feature-video-understand.html).
+
 ### Installation
 
 This project supports AEM 6.4 and later versions and requires access to an Salesforce Commerce instance (developer sandbox will work).
+For support oof previous AEM versions see Adobe [AEM documentation](https://helpx.adobe.com/experience-manager/6-3/sites/deploying/using/demandware.html). 
 
 * Start AEM 6.4 author instance
 * Install the main connector content package `cq-commerce-demandware-content`
 * Optionally install the sample content package `cq-commerce-demandware-sample-content`
-* Configure the connector to connect to your Saleforce Commerce instance (see below)
+* Configure the connector to connect to your Saleforce Commerce instance as described in the [project wiki](wiki).
 
 ### Build
 
