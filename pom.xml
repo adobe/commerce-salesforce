@@ -87,10 +87,7 @@
                 <configuration>
                     <excludes combine.children="append">
                         <!-- Ignore lint-files -->
-                        <exclude>**/*.eslintrc</exclude>
-                        <exclude>**/*.editorconfig</exclude>
-                        <exclude>**/*.stylelintrc.yaml</exclude>
-                        <exclude>**/*.eslintignore</exclude>
+                        <exclude>.circleci/*</exclude>
                     </excludes>
                 </configuration>
             </plugin>
