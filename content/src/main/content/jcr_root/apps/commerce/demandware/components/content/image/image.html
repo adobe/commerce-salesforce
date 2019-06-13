@@ -1,0 +1,42 @@
+<!--/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ~ Copyright 2018 Adobe Systems Incorporated
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/-->
+<a
+    data-sly-use.image="image.js"
+    data-sly-unwrap="${!image.linkUrl}"
+    href="${image.linkUrl}"
+    onclick="CQ_Analytics.record({event: 'imageClick', values: { imageLink: '${image.linkurl @ context='scriptString'}', imageAsset: '${image.filereference @ context='scriptString'}', imageTitle: '${image.fileName @ context='scriptString'}' }, collect: false, options: { obj: this }, componentPath: '${image.resource.resourceType @ context='scriptString'}'})">
+    <img
+        src="${image.src}"
+        alt="${image.alt}"
+        title="${image.title}"
+        width="${image.width ? image.width : '100%'}"
+        height="${image.height}"
+        class="${image.cssClass}"
+        data-emptytext="Image"
+        usemap="${image.imageMaps.hash}"/>
+</a>
+<small data-sly-test="${properties.jcr:description}">${properties.jcr:description}</small>
+<map
+    data-sly-list="${image.imageMaps.maps}"
+    name="${image.imageMaps.name}">
+    <area
+        shape="${item.type}"
+        coords="${item.coords}"
+        href="${item.href}"
+        target="${item.target}"
+        alt="${item.alt}" 
+        title="${item.title}"/>
+</map>

@@ -1,0 +1,11 @@
+<a data-sly-use.image="image.js" data-sly-use.product="product.js"
+   data-sly-unwrap="${!properties.productsku}"
+   href="javascript:window.location.href='$link.product('${product.sku}')'">
+<img
+        src="$link.static('${image.src}')"
+        alt="${image.alt}"
+        title="${image.title}"
+        width="${image.width ? image.width : '100%'}"
+        height="${image.height}"
+        class="${image.cssClass}"/>
+</a>

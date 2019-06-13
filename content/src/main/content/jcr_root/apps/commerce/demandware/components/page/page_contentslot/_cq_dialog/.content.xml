@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0"
+          xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          jcr:primaryType="nt:unstructured"
+          jcr:title="Page"
+          sling:resourceType="cq/gui/components/authoring/dialog"
+          extraClientlibs="[cq.common.wcm,cq.siteadmin.admin.properties]"
+          mode="edit">
+    <content
+            jcr:primaryType="nt:unstructured"
+            sling:resourceType="granite/ui/components/foundation/container"
+            class="cq-dialog-content-page">
+        <items jcr:primaryType="nt:unstructured">
+            <tabs
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="granite/ui/components/foundation/container"
+                    rel="cq-siteadmin-admin-properties-tabs">
+                <layout
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="granite/ui/components/foundation/layouts/tabs"
+                        type="nav"/>
+                <items
+                        jcr:primaryType="nt:unstructured"
+                        sling:hideChildren="[cloudservices,personalization,permissions,advanced,thumbnail]">
+                    <basic
+                            jcr:primaryType="nt:unstructured"
+                            jcr:title="Basic"
+                            sling:resourceType="granite/ui/components/foundation/section">
+                        <layout
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/foundation/layouts/fixedcolumns"
+                                margin="{Boolean}false"/>
+                        <items jcr:primaryType="nt:unstructured">
+                            <column1
+                                    jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/foundation/container">
+                                <items jcr:primaryType="nt:unstructured">
+                                    <content-slot
+                                            jcr:primaryType="nt:unstructured"
+                                            jcr:title="Content Slot Configuration"
+                                            sling:resourceType="granite/ui/components/foundation/form/fieldset">
+                                        <items jcr:primaryType="nt:unstructured">
+                                            <pagename
+                                                    cq:hideOnEdit="{Boolean}true"
+                                                    jcr:primaryType="nt:unstructured"
+                                                    sling:resourceType="granite/ui/components/foundation/form/textfield"
+                                                    fieldLabel="Name"
+                                                    name="pageName"
+                                                    validation="foundation.jcr.name"/>
+                                            <slot-config-id
+                                                    cq:showOnCreate="{Boolean}true"
+                                                    jcr:primaryType="nt:unstructured"
+                                                    sling:resourceType="granite/ui/components/foundation/form/textfield"
+                                                    fieldLabel="Slot ID"
+                                                    name="./dwreSlotId"
+                                                    renderReadOnly="{Boolean}true"
+                                                    required="{Boolean}true"/>
+                                            <title
+                                                    cq:showOnCreate="{Boolean}true"
+                                                    jcr:primaryType="nt:unstructured"
+                                                    sling:resourceType="granite/ui/components/foundation/form/textfield"
+                                                    fieldLabel="Title"
+                                                    fieldDescription="Used in AEM only, not exported to Demandware."
+                                                    name="./jcr:title"
+                                                    renderReadOnly="{Boolean}true"
+                                                    required="{Boolean}true"/>
+                                            <default
+                                                    cq:showOnCreate="{Boolean}true"
+                                                    jcr:primaryType="nt:unstructured"
+                                                    sling:resourceType="granite/ui/components/foundation/form/checkbox"
+                                                    deleteHint="{Boolean}true"
+                                                    name="./dwreDefault"
+                                                    renderReadOnly="{Boolean}true"
+                                                    text="Default"
+                                                    value="true"/>
+                                            <default_type
+                                                    jcr:primaryType="nt:unstructured"
+                                                    sling:resourceType="granite/ui/components/foundation/form/hidden"
+                                                    ignoreData="{Boolean}true"
+                                                    name="./dwreDefault@TypeHint"
+                                                    value="Boolean"/>
+                                            <enabled
+                                                    cq:showOnCreate="{Boolean}true"
+                                                    jcr:primaryType="nt:unstructured"
+                                                    sling:resourceType="granite/ui/components/foundation/form/switch"
+                                                    deleteHint="{Boolean}true"
+                                                    fieldLabel="Enabled"
+                                                    name="./dwreEnabled"
+                                                    offText="No"
+                                                    onText="Yes"
+                                                    renderReadOnly="{Boolean}true"
+                                                    value="true"/>
+                                            <enabled_type
+                                                    jcr:primaryType="nt:unstructured"
+                                                    sling:resourceType="granite/ui/components/foundation/form/hidden"
+                                                    ignoreData="{Boolean}true"
+                                                    name="./dwreEnabled@TypeHint"
+                                                    value="Boolean"/>
+                                            <description
+                                                    cq:showOnCreate="{Boolean}true"
+                                                    jcr:primaryType="nt:unstructured"
+                                                    sling:resourceType="granite/ui/components/foundation/form/textarea"
+                                                    fieldLabel="Description"
+                                                    name="./jcr:description"
+                                                    renderReadOnly="{Boolean}true"
+                                                    rows="3"/>
+                                            <charset
+                                                    jcr:primaryType="nt:unstructured"
+                                                    sling:resourceType="granite/ui/components/foundation/form/hidden"
+                                                    ignoreData="{Boolean}true"
+                                                    name="_charset_"
+                                                    value="utf-8"/>
+                                        </items>
+                                    </content-slot>
+                                </items>
+                            </column1>
+                            <column2
+                                    jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/foundation/container">
+                                <items jcr:primaryType="nt:unstructured">
+                                    <slot-type
+                                            cq:showOnCreate="{Boolean}false"
+                                            jcr:primaryType="nt:unstructured"
+                                            jcr:title="Slot Type"
+                                            sling:resourceType="granite/ui/components/foundation/form/fieldset">
+                                        <items jcr:primaryType="nt:unstructured">
+                                            <slot-type
+                                                    jcr:primaryType="nt:unstructured"
+                                                    sling:resourceType="granite/ui/components/foundation/form/textfield"
+                                                    disabled="{Boolean}true"
+                                                    fieldLabel="Type"
+                                                    name="./dwreSlotType"
+                                                    rel="cq-siteadmin-properties-demandware-slottype-category"
+                                                    renderReadOnly="{Boolean}true"/>
+                                        </items>
+                                    </slot-type>
+                                </items>
+                            </column2>
+                        </items>
+                    </basic>
+                    <content
+                            cq:showOnCreate="{Boolean}false"
+                            jcr:primaryType="nt:unstructured"
+                            jcr:title="Slot Content"
+                            sling:resourceType="granite/ui/components/foundation/section">
+                        <layout
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/foundation/layouts/fixedcolumns"
+                                margin="{Boolean}false"/>
+                        <items jcr:primaryType="nt:unstructured">
+                            <column1
+                                    jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/foundation/container">
+                                <items jcr:primaryType="nt:unstructured">
+                                    <section1
+                                            jcr:primaryType="nt:unstructured"
+                                            jcr:title="Content Type"
+                                            sling:resourceType="granite/ui/components/foundation/form/fieldset"
+                                            rel="cq-siteadmin-properties-demandware-slotcontenttypes">
+                                        <items jcr:primaryType="nt:unstructured">
+                                            <content-type
+                                                    jcr:primaryType="nt:unstructured"
+                                                    sling:resourceType="granite/ui/components/foundation/form/select"
+                                                    fieldLabel="Select Content Type"
+                                                    name="./dwreSlotContentType"
+                                                    rel="cq-siteadmin-properties-demandware-selectslotcontenttype"
+                                                    renderReadOnly="{Boolean}true">
+                                                <items jcr:primaryType="nt:unstructured">
+                                                    <product
+                                                            jcr:primaryType="nt:unstructured"
+                                                            text="Products"
+                                                            value="products"/>
+                                                    <category
+                                                            jcr:primaryType="nt:unstructured"
+                                                            text="Categories"
+                                                            value="categories"/>
+                                                    <content-asset
+                                                            jcr:primaryType="nt:unstructured"
+                                                            text="Content Assets"
+                                                            value="content_assets"/>
+                                                    <html
+                                                            jcr:primaryType="nt:unstructured"
+                                                            text="HTML"
+                                                            value="html"/>
+                                                </items>
+                                            </content-type>
+                                            <products
+                                                    jcr:primaryType="nt:unstructured"
+                                                    sling:resourceType="granite/ui/components/foundation/form/multifield"
+                                                    fieldDescription="Assign products to this content slot configuration."
+                                                    fieldLabel="Select Products"
+                                                    rel="cq-siteadmin-properties-demandware-slotcontenttype-product"
+                                                    renderReadOnly="{Boolean}true">
+                                                <field
+                                                        jcr:primaryType="nt:unstructured"
+                                                        sling:resourceType="commerce/gui/components/common/productpicker"
+                                                        name="./dwreSlotProducts"
+                                                        rel="cq-siteadmin-properties-demandware-slotcontenttype-product-fields"/>
+                                            </products>
+                                            <categories
+                                                    jcr:primaryType="nt:unstructured"
+                                                    sling:resourceType="granite/ui/components/foundation/form/multifield"
+                                                    fieldDescription="Assign categories to this content slot configuration."
+                                                    fieldLabel="Select Categories"
+                                                    rel="cq-siteadmin-properties-demandware-slotcontenttype-category"
+                                                    renderHidden="{Boolean}true"
+                                                    renderReadOnly="{Boolean}true">
+                                                <field
+                                                        jcr:primaryType="nt:unstructured"
+                                                        sling:resourceType="granite/ui/components/foundation/form/textfield"
+                                                        name="./dwreSlotCategories"
+                                                        rel="cq-siteadmin-properties-demandware-slotcontenttype-category-fields"/>
+                                            </categories>
+                                            <content-assets
+                                                    jcr:primaryType="nt:unstructured"
+                                                    sling:resourceType="granite/ui/components/foundation/form/multifield"
+                                                    fieldDescription="Assign content assets items to this content slot configuration."
+                                                    fieldLabel="Select Content Assets"
+                                                    rel="cq-siteadmin-properties-demandware-slotcontenttype-contentasset"
+                                                    renderHidden="{Boolean}true"
+                                                    renderReadOnly="{Boolean}true">
+                                                <field
+                                                        jcr:primaryType="nt:unstructured"
+                                                        sling:resourceType="granite/ui/components/foundation/form/textfield"
+                                                        name="./dwreSlotContentAssets"
+                                                        rel="cq-siteadmin-properties-demandware-slotcontenttype-contentasset-fields"/>
+                                            </content-assets>
+                                            <html
+                                                    jcr:primaryType="nt:unstructured"
+                                                    sling:resourceType="granite/ui/components/foundation/form/textarea"
+                                                    fieldDescription="Use HTML with this content slot configuration."
+                                                    fieldLabel="HTML"
+                                                    name="./dwreSlotHTML"
+                                                    rel="cq-siteadmin-properties-demandware-slotcontenttype-html"
+                                                    renderHidden="{Boolean}true"
+                                                    renderReadOnly="{Boolean}true"/>
+                                        </items>
+                                    </section1>
+                                </items>
+                            </column1>
+                            <column2
+                                    jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/foundation/container">
+                                <items jcr:primaryType="nt:unstructured">
+                                    <section1
+                                            jcr:primaryType="nt:unstructured"
+                                            jcr:title="Content"
+                                            sling:resourceType="granite/ui/components/foundation/form/fieldset">
+                                        <items jcr:primaryType="nt:unstructured">
+                                            <template
+                                                    jcr:primaryType="nt:unstructured"
+                                                    sling:resourceType="granite/ui/components/foundation/form/select"
+                                                    fieldLabel="Template"
+                                                    emptyText="Select"
+                                                    name="./dwreTemplatePath"
+                                                    renderReadOnly="{Boolean}true">
+                                                <datasource
+                                                        jcr:primaryType="nt:unstructured"
+                                                        sling:resourceType="commerce/demandware/components/datasources/templates"/>
+                                            </template>
+                                            <callout
+                                                    jcr:primaryType="nt:unstructured"
+                                                    sling:resourceType="granite/ui/components/foundation/form/textfield"
+                                                    fieldLabel="Callout"
+                                                    name="./dwreSlotCallout"
+                                                    renderReadOnly="{Boolean}true"/>
+                                        </items>
+                                    </section1>
+                                </items>
+                            </column2>
+                        </items>
+                    </content>
+                    <schedule
+                            cq:showOnCreate="{Boolean}false"
+                            jcr:primaryType="nt:unstructured"
+                            jcr:title="Schedule"
+                            sling:resourceType="granite/ui/components/foundation/section">
+                        <layout
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/foundation/layouts/fixedcolumns"
+                                margin="{Boolean}false"/>
+                        <items jcr:primaryType="nt:unstructured">
+                            <column1
+                                    jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/foundation/container">
+                                <items jcr:primaryType="nt:unstructured">
+                                    <onofftime
+                                            cq:showOnCreate="{Boolean}false"
+                                            jcr:primaryType="nt:unstructured"
+                                            jcr:title="On/Off Time"
+                                            sling:resourceType="granite/ui/components/foundation/form/fieldset">
+                                        <items jcr:primaryType="nt:unstructured">
+                                            <ondate
+                                                    jcr:primaryType="nt:unstructured"
+                                                    sling:resourceType="granite/ui/components/foundation/form/datepicker"
+                                                    displayedFormat="YYYY-MM-DD HH:mm"
+                                                    fieldLabel="On Time"
+                                                    name="./onTime"
+                                                    renderReadOnly="{Boolean}true"
+                                                    type="datetime"/>
+                                            <offdate
+                                                    jcr:primaryType="nt:unstructured"
+                                                    sling:resourceType="granite/ui/components/foundation/form/datepicker"
+                                                    displayedFormat="YYYY-MM-DD HH:mm"
+                                                    fieldLabel="Off Time"
+                                                    name="./offTime"
+                                                    renderReadOnly="{Boolean}true"
+                                                    type="datetime"/>
+                                        </items>
+                                    </onofftime>
+                                    <dayofweek
+                                            jcr:primaryType="nt:unstructured"
+                                            jcr:title="Day of Week"
+                                            sling:resourceType="granite/ui/components/foundation/form/fieldset">
+                                        <items jcr:primaryType="nt:unstructured">
+                                            <weekday
+                                                    jcr:primaryType="nt:unstructured"
+                                                    sling:resourceType="granite/ui/components/foundation/form/select"
+                                                    emptyText="Select Day of Week"
+                                                    fieldLabel="Day of Week"
+                                                    multiple="{Boolean}true"
+                                                    name="./dwreSlotScheduleDayOfWeek"
+                                                    renderReadOnly="{Boolean}true">
+                                                <items jcr:primaryType="nt:unstructured">
+                                                    <monday
+                                                            jcr:primaryType="nt:unstructured"
+                                                            text="Monday"
+                                                            value="monday"/>
+                                                    <tuesday
+                                                            jcr:primaryType="nt:unstructured"
+                                                            text="Tuesday"
+                                                            value="tuesday"/>
+                                                    <wednesday
+                                                            jcr:primaryType="nt:unstructured"
+                                                            text="Wednesday"
+                                                            value="wednesday"/>
+                                                    <thursday
+                                                            jcr:primaryType="nt:unstructured"
+                                                            text="Thursday"
+                                                            value="thursday"/>
+                                                    <friday
+                                                            jcr:primaryType="nt:unstructured"
+                                                            text="Friday"
+                                                            value="friday"/>
+                                                    <saturday
+                                                            jcr:primaryType="nt:unstructured"
+                                                            text="Saturday"
+                                                            value="saturday"/>
+                                                    <sunday
+                                                            jcr:primaryType="nt:unstructured"
+                                                            text="Sunday"
+                                                            value="sunday"/>
+                                                </items>
+                                            </weekday>
+                                        </items>
+                                    </dayofweek>
+                                    <timeofday
+                                            jcr:primaryType="nt:unstructured"
+                                            jcr:title="Time of Day"
+                                            sling:resourceType="granite/ui/components/foundation/form/fieldset">
+                                        <items jcr:primaryType="nt:unstructured">
+                                            <fromTime
+                                                    jcr:primaryType="nt:unstructured"
+                                                    sling:resourceType="granite/ui/components/foundation/form/datepicker"
+                                                    displayedFormat="HH:mm"
+                                                    fieldLabel="From Time"
+                                                    name="./dwreSlotScheduleFromTime"
+                                                    renderReadOnly="{Boolean}true"
+                                                    type="time"/>
+                                            <toTime
+                                                    jcr:primaryType="nt:unstructured"
+                                                    sling:resourceType="granite/ui/components/foundation/form/datepicker"
+                                                    displayedFormat="HH:mm"
+                                                    fieldLabel="To Time"
+                                                    name="./dwreSlotScheduleToTime"
+                                                    renderReadOnly="{Boolean}true"
+                                                    type="time"/>
+                                        </items>
+                                    </timeofday>
+                                </items>
+                            </column1>
+                            <column2
+                                    jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/foundation/container">
+                                <items jcr:primaryType="nt:unstructured">
+                                    <section1
+                                            jcr:primaryType="nt:unstructured"
+                                            jcr:title="Schedule"
+                                            sling:resourceType="granite/ui/components/foundation/form/fieldset">
+                                        <items jcr:primaryType="nt:unstructured">
+                                            <rank
+                                                    jcr:primaryType="nt:unstructured"
+                                                    sling:resourceType="granite/ui/components/foundation/form/select"
+                                                    fieldLabel="Rank"
+                                                    metaType="dropdown"
+                                                    name="./dwreSlotRank"
+                                                    renderReadOnly="{Boolean}true">
+                                                <items jcr:primaryType="nt:unstructured">
+                                                    <none
+                                                            jcr:primaryType="nt:unstructured"
+                                                            text="None"
+                                                            value=""/>
+                                                    <_x0031_0
+                                                            jcr:primaryType="nt:unstructured"
+                                                            text="10"
+                                                            value="10"/>
+                                                    <_x0032_0
+                                                            jcr:primaryType="nt:unstructured"
+                                                            text="20"
+                                                            value="20"/>
+                                                    <_x0033_0
+                                                            jcr:primaryType="nt:unstructured"
+                                                            text="30"
+                                                            value="30"/>
+                                                    <_x0034_0
+                                                            jcr:primaryType="nt:unstructured"
+                                                            text="40"
+                                                            value="40"/>
+                                                    <_x0035_0
+                                                            jcr:primaryType="nt:unstructured"
+                                                            text="50"
+                                                            value="50"/>
+                                                    <_x0036_0
+                                                            jcr:primaryType="nt:unstructured"
+                                                            text="60"
+                                                            value="60"/>
+                                                    <_x0037_0
+                                                            jcr:primaryType="nt:unstructured"
+                                                            text="70"
+                                                            value="70"/>
+                                                    <_x0038_0
+                                                            jcr:primaryType="nt:unstructured"
+                                                            text="80"
+                                                            value="80"/>
+                                                    <_x0039_0
+                                                            jcr:primaryType="nt:unstructured"
+                                                            text="90"
+                                                            value="90"/>
+                                                    <_x0031_00
+                                                            jcr:primaryType="nt:unstructured"
+                                                            text="100"
+                                                            value="100"/>
+                                                </items>
+                                            </rank>
+                                            <customergroups
+                                                    jcr:primaryType="nt:unstructured"
+                                                    sling:resourceType="granite/ui/components/foundation/form/select"
+                                                    name="./dwreSlotScheduleCustomerGroups"
+                                                    emptyText="Select"
+                                                    multiple="{Boolean}true"
+                                                    fieldLabel="Customer Groups"
+                                                    renderReadOnly="{Boolean}true">
+                                                <datasource
+                                                        jcr:primaryType="nt:unstructured"
+                                                        sling:resourceType="commerce/demandware/components/datasources/customergroups"/>
+                                            </customergroups>
+                                        </items>
+                                    </section1>
+                                </items>
+                            </column2>
+
+                        </items>
+                    </schedule>
+                </items>
+            </tabs>
+        </items>
+    </content>
+</jcr:root>

@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ~ Copyright 2018 Adobe Systems Incorporated
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:mix="http://www.jcp.org/jcr/mix/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    jcr:primaryType="cq:Page">
+    <jcr:content
+        cq:template="/apps/commerce/demandware/templates/page-content"
+        jcr:mixinTypes="[mix:versionable]"
+        jcr:primaryType="cq:PageContent"
+        jcr:title="Terms &amp; Conditions"
+        dwreOnline="true"
+        dwreSearchable="true"
+        dwreFolder="[terms]"
+        sling:resourceType="commerce/demandware/components/page/page"
+        pageTitle="Terms &amp; Conditions of Sale">
+        <header
+            jcr:primaryType="nt:unstructured"
+            sling:resourceType="commerce/demandware/components/placeholder/header"/>
+        <par
+            jcr:primaryType="nt:unstructured"
+            sling:resourceType="commerce/demandware/components/placeholder/parsys">
+            <title
+                jcr:lastModified="{Date}2015-11-10T16:23:43.695+01:00"
+                jcr:lastModifiedBy="admin"
+                jcr:primaryType="nt:unstructured"
+                jcr:title="Terms &amp; Conditions of Sale"
+                sling:resourceType="commerce/demandware/components/content/title"/>
+            <text
+                jcr:lastModified="{Date}2015-11-10T16:24:19.119+01:00"
+                jcr:lastModifiedBy="admin"
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="commerce/demandware/components/content/text"
+                text="&lt;p>ATTENTION: These terms of use set forth the basis on which you are permitted to access and use this website, demandware.com (the &amp;quot;Website&amp;quot;). Please read the terms of use carefully before using the Website. By accessing and using the Website in any way, including, without limitation, browsing the Website, you agree to and are bound by the terms of use described herein. If you do not agree to all of the terms and conditions contained herein, do not use the Website in any manner.&lt;br>&#xa;&lt;/p>&#xa;"
+                textIsRich="true"/>
+            <title_1600896374
+                jcr:created="{Date}2015-11-10T16:24:27.917+01:00"
+                jcr:createdBy="admin"
+                jcr:lastModified="{Date}2015-11-10T16:25:54.046+01:00"
+                jcr:lastModifiedBy="admin"
+                jcr:primaryType="nt:unstructured"
+                jcr:title="OWNERSHIP"
+                sling:resourceType="commerce/demandware/components/content/title"
+                type="h2"/>
+            <text_1313829541
+                jcr:created="{Date}2015-11-10T16:24:48.735+01:00"
+                jcr:createdBy="admin"
+                jcr:lastModified="{Date}2015-11-10T16:25:27.903+01:00"
+                jcr:lastModifiedBy="admin"
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="commerce/demandware/components/content/text"
+                text="&lt;p>All copyrights and other intellectual property rights in the Website, including without limitation all software and written and graphical content included in the Website, are owned by Demandware, Inc. (&amp;quot;Demandware&amp;quot;) and are hereby reserved.&lt;br>&#xa;&lt;/p>&#xa;"
+                textIsRich="true"/>
+            <title_651502204
+                jcr:created="{Date}2015-11-10T16:24:53.173+01:00"
+                jcr:createdBy="admin"
+                jcr:lastModified="{Date}2015-11-10T16:25:48.005+01:00"
+                jcr:lastModifiedBy="admin"
+                jcr:primaryType="nt:unstructured"
+                jcr:title="USE OF WEBSITE AND DOCUMENTS"
+                sling:resourceType="commerce/demandware/components/content/title"
+                type="h2"/>
+            <text_2022756978
+                jcr:created="{Date}2015-11-10T16:24:54.580+01:00"
+                jcr:createdBy="admin"
+                jcr:lastModified="{Date}2015-11-10T16:26:16.996+01:00"
+                jcr:lastModifiedBy="admin"
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="commerce/demandware/components/content/text"
+                text="&lt;p>Demandware hereby authorizes you to make a single copy of the content displayed on the Website for your use in learning about, evaluating or acquiring Demandware services or products, provided (i) you mark such copy &amp;quot;© 2009 Demandware, Inc. All rights reserved.&amp;quot;; (ii) the use of such copy is for informational and non-commercial or personal use and will not be copied or posted on any network computer or broadcast in any media; and (iii) no modifications to such copy are made. No other permission is granted to you to print, copy, reproduce, distribute, transmit, upload, download, store, perform, display in public, alter, or modify the content contained on the Website. Accredited educational institutions, such as K-12, universities and colleges, may download and reproduce the content displayed on the Website for distribution in the classroom. Distribution outside the classroom requires express written permission. Use for any other purpose is expressly prohibited by law, and may result in severe civil and criminal penalties. Violators will be prosecuted to the maximum extent possible. The Website may contain email services, bulletin board services, forums, communities, and/or other message or communication facilities designed to enable you to communicate with others (collectively &amp;quot;Communication Services&amp;quot;). You agree to use the Communication Services only to post, send and receive messages and material that are proper. By way of example, and not as a limitation, you agree that when using the Communication Services or the Website, you will not (i) use them in connection with surveys, contests, pyramid schemes, chain letters, junk email, spamming or any duplicative or unsolicited messages; (ii) defame, abuse, harass, threaten or otherwise violate the legal rights of others; (iii) publish, post, upload, distribute or disseminate any inappropriate, profane, defamatory, obscene, pornographic, racist, lewd, lascivious, excessively violent, harassing, unlawful, or otherwise objectionable topic, name, material or information; (iv) upload, or otherwise make available, files that contain material protected by intellectual property laws unless you own or control the rights thereto or have received all necessary consent to do the same; (v) advertise or offer to sell or buy any goods or services for any business purpose, unless such Communication Services specifically allows such messages; (vi) restrict or inhibit any other user from using and enjoying the Communication Services or the Website; (vii) harvest or otherwise collect information about others, including email addresses; or (viii) violate any applicable laws or regulations. Demandware has no obligation to monitor the Website or Communication Services. However, Demandware reserves the right to review materials posted to the Website and the Communication Services and to remove and/or edit any materials in its sole discretion. Demandware reserves the right to terminate your access to the Website and the Communication Services at any time, without notice, for any reason whatsoever. Demandware reserves the right at all times to disclose any information as it deems necessary to satisfy any applicable law, regulation, legal process or governmental request, or to edit, refuse to post or to remove any information or materials, in whole or in part, in Demandware's sole discretion.&lt;br>&#xa;&lt;/p>&#xa;"
+                textIsRich="true"/>
+            <title_1245371119
+                jcr:created="{Date}2015-11-10T16:26:29.597+01:00"
+                jcr:createdBy="admin"
+                jcr:lastModified="{Date}2015-11-10T16:27:13.229+01:00"
+                jcr:lastModifiedBy="admin"
+                jcr:primaryType="nt:unstructured"
+                jcr:title="TRADEMARKS/COPYRIGHTS"
+                sling:resourceType="commerce/demandware/components/content/title"
+                type="h2"/>
+            <text_1839068986
+                jcr:created="{Date}2015-11-10T16:26:33.149+01:00"
+                jcr:createdBy="admin"
+                jcr:lastModified="{Date}2015-11-10T16:27:49.296+01:00"
+                jcr:lastModifiedBy="admin"
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="commerce/demandware/components/content/text"
+                text="&lt;p>Demandware ®, Demandware eCommerce (SM), the Demandware logo, and any other marks used on the Website are trademarks of Demandware or their respective owners. Such marks may not be used without the prior written consent of Demandware. Any use of those marks, or any others displayed on the Website, will inure solely to the benefit of their respective owners.&lt;/p>&#xa;&lt;p>Copyright Notice. Copyright © 2004-2009 Demandware, Inc. All rights reserved.&lt;br>&#xa;&lt;/p>&#xa;"
+                textIsRich="true"/>
+            <title_1779005719
+                jcr:created="{Date}2015-11-10T16:26:35.004+01:00"
+                jcr:createdBy="admin"
+                jcr:lastModified="{Date}2015-11-10T16:28:20.240+01:00"
+                jcr:lastModifiedBy="admin"
+                jcr:primaryType="nt:unstructured"
+                jcr:title="UNSOLICITED SUBMISSION POLICY"
+                sling:resourceType="commerce/demandware/components/content/title"
+                type="h2"/>
+            <text_1794610628
+                jcr:created="{Date}2015-11-10T16:26:37.989+01:00"
+                jcr:createdBy="admin"
+                jcr:lastModified="{Date}2015-11-10T16:28:07.184+01:00"
+                jcr:lastModifiedBy="admin"
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="commerce/demandware/components/content/text"
+                text="&lt;p>Demandware does not accept or consider unsolicited ideas, suggestions, materials or other information (all of the foregoing being &amp;quot;Submissions&amp;quot;). The purpose for this policy is to avoid misunderstandings or disputes with respect to the origin of ideas, products, services and strategies of Demandware. Please do not send your unsolicited Submissions to Demandware or anyone at Demandware. In the event that you disregard this policy and post, upload, input, provide, submit or otherwise make a Submission to Demandware, (i) you will be granting Demandware and its affiliates permission to use your Submission in connection with the operation of its businesses (the &amp;quot;License&amp;quot;), including, without limitation, the right to copy, distribute, display, edit, reproduce, translate and reformat your Submission for both commercial and non-commercial purposes, (ii) you warrant and represent that you own or otherwise control all of the rights to your Submission, including, without limitation, the rights necessary to grant the License and (iii) any such Submissions will be considered non confidential and non proprietary communications. No compensation will be paid with respect to your Submission. Demandware will not be subject to any obligation of confidence with respect to your Submission.&lt;br>&#xa;&lt;/p>&#xa;"
+                textIsRich="true"/>
+            <title_1283512307
+                jcr:created="{Date}2015-11-10T16:28:29.511+01:00"
+                jcr:createdBy="admin"
+                jcr:lastModified="{Date}2015-11-10T16:28:52.378+01:00"
+                jcr:lastModifiedBy="admin"
+                jcr:primaryType="nt:unstructured"
+                jcr:title="NO UNLAWFUL OR PROHIBITED USE"
+                sling:resourceType="commerce/demandware/components/content/title"
+                type="h2"/>
+            <text_865174151
+                jcr:created="{Date}2015-11-10T16:28:32.237+01:00"
+                jcr:createdBy="admin"
+                jcr:lastModified="{Date}2015-11-10T16:33:13.844+01:00"
+                jcr:lastModifiedBy="admin"
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="commerce/demandware/components/content/text"
+                text="&lt;p>You may not use the Website for any purpose that is unlawful or prohibited by the terms and conditions provided herein. You may not use the Website in any manner that could damage, disable, overburden or otherwise impair any Demandware server or the network(s) connected to any Demandware server, or interfere with any other person's use and enjoyment of the Website. You may not attempt to gain unauthorized access to the Website or the computer systems or networks connected to any Demandware server through any means. You may not obtain any materials or information through any means not intentionally made available to you through the Website.&lt;br>&#xa;&lt;/p>&#xa;"
+                textIsRich="true"/>
+            <title_1299643971
+                jcr:created="{Date}2015-11-10T16:28:34.958+01:00"
+                jcr:createdBy="admin"
+                jcr:lastModified="{Date}2015-11-10T16:29:03.945+01:00"
+                jcr:lastModifiedBy="admin"
+                jcr:primaryType="nt:unstructured"
+                jcr:title="LINKS"
+                sling:resourceType="commerce/demandware/components/content/title"
+                type="h2"/>
+            <text_1692199240
+                jcr:created="{Date}2015-11-10T16:28:36.638+01:00"
+                jcr:createdBy="admin"
+                jcr:lastModified="{Date}2015-11-10T16:33:04.362+01:00"
+                jcr:lastModifiedBy="admin"
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="commerce/demandware/components/content/text"
+                text="&lt;p>Any links to third party websites are provided for your convenience only, and Demandware makes no recommendation or endorsement as to such websites or the products or services offered thereon.&lt;/p>&#xa;&lt;p>You may link to the Demandware Website, unless notified otherwise in writing by Demandware. However, you may not frame the Website in a manner that may cause confusion to Demandware customers, nor may you interfere or attempt to interfere in any way with the operation of the Website, including without limitation through data mining, the use of any robot, scraper or other automated device, or circumvention or attempted circumvention of any website security features.&lt;/p>&#xa;"
+                textIsRich="true"/>
+            <title_1347544338
+                jcr:created="{Date}2015-11-10T16:29:12.178+01:00"
+                jcr:createdBy="admin"
+                jcr:lastModified="{Date}2015-11-10T16:29:23.305+01:00"
+                jcr:lastModifiedBy="admin"
+                jcr:primaryType="nt:unstructured"
+                jcr:title="SPAM EMAIL AND POSTINGS"
+                sling:resourceType="commerce/demandware/components/content/title"
+                type="h2"/>
+            <text_818215643
+                jcr:created="{Date}2015-11-10T16:32:49.730+01:00"
+                jcr:createdBy="admin"
+                jcr:lastModified="{Date}2015-11-10T16:32:52.896+01:00"
+                jcr:lastModifiedBy="admin"
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="commerce/demandware/components/content/text"
+                text="&lt;p>You agree that Demandware would be irreparably harmed by the use, by you or others, of the Website or facilities in connection with the transmission of spam, newsgroup postings or unsolicited email in violation of the terms of use as provided herein, and that Demandware is entitled to obtain injunctive relief against any such transmission (in addition to all other remedies available at law or in equity). Demandware reserves the right to block, filter or delete unsolicited email.&lt;br>&#xa;&lt;/p>&#xa;"
+                textIsRich="true"/>
+            <title_1242100467
+                jcr:created="{Date}2015-11-10T16:29:10.873+01:00"
+                jcr:createdBy="admin"
+                jcr:lastModified="{Date}2015-11-10T16:29:35.770+01:00"
+                jcr:lastModifiedBy="admin"
+                jcr:primaryType="nt:unstructured"
+                jcr:title="U.S. EXPORT ADMINISTRATION LAWS AND REGULATIONS"
+                sling:resourceType="commerce/demandware/components/content/title"
+                type="h2"/>
+            <text_2012486387
+                jcr:created="{Date}2015-11-10T16:32:36.779+01:00"
+                jcr:createdBy="admin"
+                jcr:lastModified="{Date}2015-11-10T16:32:40.038+01:00"
+                jcr:lastModifiedBy="admin"
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="commerce/demandware/components/content/text"
+                text="&lt;p>You acknowledge and agree that material on the Website is subject to the U.S. Export Administration Laws and Regulations. Diversion of such material contrary to U.S. law is prohibited. You agree that none of the material on the Website, nor any direct product therefrom, is being or will be acquired for, shipped, transferred, or re-exported, directly or indirectly, to proscribed or embargoed countries or their nationals, nor be used for nuclear activities, chemical biological weapons, or missile projects unless authorized by the U.S. Government. You certify that you are not on the U.S. Department of Commerce's Denied Persons List or affiliated lists or on the U.S. Department of Treasury's Specially Designated Nationals List. You agree to comply strictly with all U.S. export laws and assume sole responsibility for obtaining licenses to export or re-export as may be required.&lt;br>&#xa;&lt;/p>&#xa;"
+                textIsRich="true"/>
+            <title_2097181750
+                jcr:created="{Date}2015-11-10T16:29:07.898+01:00"
+                jcr:createdBy="admin"
+                jcr:lastModified="{Date}2015-11-10T16:29:46.760+01:00"
+                jcr:lastModifiedBy="admin"
+                jcr:primaryType="nt:unstructured"
+                jcr:title="DISCLAIMER"
+                sling:resourceType="commerce/demandware/components/content/title"
+                type="h2"/>
+            <text_1756362877
+                jcr:created="{Date}2015-11-10T16:32:17.409+01:00"
+                jcr:createdBy="admin"
+                jcr:lastModified="{Date}2015-11-10T16:32:21.007+01:00"
+                jcr:lastModifiedBy="admin"
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="commerce/demandware/components/content/text"
+                text="&lt;p>THE CONTENT CONTAINED IN THE WEBSITE IS PROVIDED BY DEMANDWARE FOR GENERAL INFORMATIONAL PURPOSES ONLY AND DOES NOT CONSTITUTE A SPECIFIC RECOMMENDATION OR ADVICE. SUCH CONTENT IS PROVIDED &amp;quot;AS IS&amp;quot; WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, AND IS SUBJECT TO CHANGE WITHOUT NOTICE. YOUR USE OF THE WEBSITE IS AT YOUR SOLE RISK, AND YOU ASSUME ALL LIABILITY IN RELATION TO IT.&lt;/p>&#xa;&lt;p>ANY INFORMATION OR ADVICE PROVIDED THROUGH THE WEBSITE THAT IS RELATED TO SUPPORT OF DEMANDWARE SOFTWARE PRODUCTS IS SUBJECT TO THE TERMS AND CONDITIONS OF THE LICENSE AND SUPPORT AGREEMENT BETWEEN YOU AND DEMANDWARE, AND NOT TO THESE TERMS OF USE.&lt;/p>&#xa;&lt;p>ANY MENTION IN THE WEBSITE OF NON DEMANDWARE PRODUCTS OR SERVICES IS FOR INFORMATION PURPOSES ONLY AND CONSTITUTES NEITHER AN ENDORSEMENT NOR A RECOMMENDATION.&lt;/p>&#xa;"
+                textIsRich="true"/>
+            <title_1225072896
+                jcr:created="{Date}2015-11-10T16:29:52.933+01:00"
+                jcr:createdBy="admin"
+                jcr:lastModified="{Date}2015-11-10T16:30:06.199+01:00"
+                jcr:lastModifiedBy="admin"
+                jcr:primaryType="nt:unstructured"
+                jcr:title="LIMITATION ON LIABILITY"
+                sling:resourceType="commerce/demandware/components/content/title"
+                type="h2"/>
+            <text_1233261683
+                jcr:created="{Date}2015-11-10T16:32:00.168+01:00"
+                jcr:createdBy="admin"
+                jcr:lastModified="{Date}2015-11-10T16:32:06.254+01:00"
+                jcr:lastModifiedBy="admin"
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="commerce/demandware/components/content/text"
+                text="&lt;p>AS CONSIDERATION FOR YOUR USE OF AND ACCESS TO THE WEBSITE, AND TO THE MAXIMUM EXTENT PERMITTED BY LAW, YOU AGREE THAT: (i) IN NO EVENT WILL DEMANDWARE OR ANY OTHER PARTY INVOLVED IN CREATING, PRODUCING, OR DELIVERING THE WEBSITE OR ANY SITE LINKED TO THE WEBSITE, BE LIABLE TO YOU IN ANY MANNER WHATSOEVER FOR ANY DECISION MADE OR ACTION OR NON-ACTION TAKEN BY YOU IN RELIANCE UPON THE INFORMATION PROVIDED THROUGH THE WEBSITE; AND (ii) THE AGGREGATE LIABILITY OF DEMANDWARE OR ANY OF ITS DISTRIBUTORS OR DEALERS, ARISING FROM OR RELATING TO THIS AGREEMENT (REGARDLESS OF THE FORM OF ACTION OR CLAIM, e.g. CONTRACT, WARRANTY, TORT, STRICT LIABILITY, NEGLIGENCE, FRAUD, AND/OR OTHERWISE) IS LIMITED TO $100; AND (iii) DEMANDWARE SHALL NOT IN ANY CASE BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, EVEN IF DEMANDWARE HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.&lt;/p>&#xa;&lt;p>Some jurisdications do not allow the exclusion of implied warranties, so the above exclusion may not apply to you.&lt;/p>&#xa;"
+                textIsRich="true"/>
+            <title_1915089146
+                jcr:created="{Date}2015-11-10T16:29:51.405+01:00"
+                jcr:createdBy="admin"
+                jcr:lastModified="{Date}2015-11-10T16:30:24.697+01:00"
+                jcr:lastModifiedBy="admin"
+                jcr:primaryType="nt:unstructured"
+                jcr:title="NOTICES OF COPYRIGHT INFRINGEMENT"
+                sling:resourceType="commerce/demandware/components/content/title"
+                type="h2"/>
+            <text_205754489
+                jcr:created="{Date}2015-11-10T16:30:58.347+01:00"
+                jcr:createdBy="admin"
+                jcr:lastModified="{Date}2015-11-10T16:31:44.872+01:00"
+                jcr:lastModifiedBy="admin"
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="commerce/demandware/components/content/text"
+                text="&lt;p>If you believe that material posted on the Website infringes your copyright, you should provide notice of such infringement to the following person, who is Demandware's designated agent for the purposes of the Digital Millennium Copyright Act (17 U.S.C. 512):&lt;/p>&#xa;&lt;p>Demandware, Inc.&lt;br>&#xa;5 Wall St&lt;br>&#xa;Burlington, MA 01803, USA&lt;br>&#xa;&lt;a href=&quot;mailto:info@demandware.com&quot;>info@demandware.com&lt;/a>&lt;/p>&#xa;"
+                textIsRich="true"/>
+            <title_371462193
+                jcr:created="{Date}2015-11-10T16:29:49.652+01:00"
+                jcr:createdBy="admin"
+                jcr:lastModified="{Date}2015-11-10T16:30:38.209+01:00"
+                jcr:lastModifiedBy="admin"
+                jcr:primaryType="nt:unstructured"
+                jcr:title="ENTIRE AGREEMENT"
+                sling:resourceType="commerce/demandware/components/content/title"
+                type="h2"/>
+            <text_2107554644
+                jcr:created="{Date}2015-11-10T16:31:30.526+01:00"
+                jcr:createdBy="admin"
+                jcr:lastModified="{Date}2015-11-10T16:31:33.793+01:00"
+                jcr:lastModifiedBy="admin"
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="commerce/demandware/components/content/text"
+                text="&lt;p>These terms of use are the entire agreement between you and Demandware in relation to your use of the Website, and all other representations or discussions are hereby excluded from this agreement. If any part of these terms are held to be invalid or unenforceable, the remaining provisions shall remain in full force and effect. Demandware's failure to insist on or enforce strict performance of these terms shall not constitute a waiver of any breach or any future breaches thereof.&lt;br>&#xa;&lt;/p>&#xa;"
+                textIsRich="true"/>
+            <title_615128983
+                jcr:created="{Date}2015-11-10T16:30:40.441+01:00"
+                jcr:createdBy="admin"
+                jcr:lastModified="{Date}2015-11-10T16:30:50.600+01:00"
+                jcr:lastModifiedBy="admin"
+                jcr:primaryType="nt:unstructured"
+                jcr:title="GOVERNING LAW AND JURISDICTION"
+                sling:resourceType="commerce/demandware/components/content/title"
+                type="h2"/>
+            <text_470484447
+                jcr:created="{Date}2015-11-10T16:31:01.867+01:00"
+                jcr:createdBy="admin"
+                jcr:lastModified="{Date}2015-11-10T16:31:16.596+01:00"
+                jcr:lastModifiedBy="admin"
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="commerce/demandware/components/content/text"
+                text="&lt;p>The Website is controlled and operated from within the United States, and Demandware does not represent that the Website is appropriate for use outside the United States. If you access the Website from outside the United States, you are responsible for compliance with any applicable local law. Your use of the Website shall be governed in all respects by the laws of the Commonwealth of Massachusetts, USA, without regard to choice of law provisions, and not by the United Nations Convention on Contracts for the International Sale of Goods. You agree that jurisdiction over and venue in any proceeding directly or indirectly arising out of or relating to the Website shall be in the state or federal courts located in Suffolk County or Middlesex County, Massachusetts.&lt;br>&#xa;&lt;/p>&#xa;"
+                textIsRich="true"/>
+        </par>
+        <footer
+            jcr:primaryType="nt:unstructured"
+            sling:resourceType="commerce/demandware/components/placeholder/footer"/>
+    </jcr:content>
+</jcr:root>

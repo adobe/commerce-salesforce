@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*************************************************************************
+ *
+ * ADOBE CONFIDENTIAL
+ * __________________
+ *
+ *  Copyright 2015 Adobe Systems Incorporated
+ *  All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains
+ * the property of Adobe Systems Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to Adobe Systems Incorporated and its
+ * suppliers and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Adobe Systems Incorporated.
+ **************************************************************************/
+-->
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- ====================================================================== -->
+    <!-- P R O J E C T  D E S C R I P T I O N                                   -->
+    <!-- ====================================================================== -->
+    <parent>
+        <groupId>com.adobe.cq.commerce</groupId>
+        <artifactId>cq-commerce-demandware-parent</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>parent/pom.xml</relativePath>
+    </parent>
+    
+    <groupId>com.adobe.cq.commerce</groupId>
+    <artifactId>cq-commerce-demandware-reactor</artifactId>
+    <version>0.3.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    
+    <name>Adobe AEM Commerce Salesforce Integration - Reactor Project</name>
+    <description>Maven multi module project for Adobe AEM Commerce Salesforce integration.</description>
+
+    <!-- ====================================================================== -->
+    <!-- M O D U L E S                                                          -->
+    <!-- ====================================================================== -->
+    <modules>
+        <module>parent</module>
+        <module>bundles/core</module>
+        <module>bundles/commerce</module>
+        <module>bundles/pim</module>
+        <module>bundles/replication</module>
+        <module>bundles/libs</module>
+        <module>bundles/init</module>
+        <module>content</module>
+        <module>content-sample</module>
+    </modules>
+
+    <!-- ====================================================================== -->
+    <!-- S C M  D E F I N I T I O N                                             -->
+    <!-- ====================================================================== -->
+    <scm>
+        <connection>scm:git:https://github.com/adobe/commerce-salesforce</connection>
+        <developerConnection>scm:git:git@github.com:adobe/commerce-salesforce.git</developerConnection>
+        <url>https://github.com/adobe/commerce-salesforce</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <organization>
+        <name>Adobe</name>
+        <url>https://www.adobe.com</url>
+    </organization>
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <!-- ====================================================================== -->
+    <!-- B U I L D   D E F I N I T I O N                                        -->
+    <!-- ====================================================================== -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.rat</groupId>
+                <artifactId>apache-rat-plugin</artifactId>
+                <configuration>
+                    <excludes combine.children="append">
+                        <!-- Ignore lint-files -->
+                        <exclude>**/*.eslintrc</exclude>
+                        <exclude>**/*.editorconfig</exclude>
+                        <exclude>**/*.stylelintrc.yaml</exclude>
+                        <exclude>**/*.eslintignore</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

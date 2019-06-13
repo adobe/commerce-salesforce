@@ -1,0 +1,11 @@
+<a data-sly-use.image="image.js"
+   data-sly-unwrap="${!properties.category}"
+   href="javascript:window.location.href='$link.category('${properties.category}')'">
+<img
+        src="$link.static('${image.src}')"
+        alt="${image.alt}"
+        title="${image.title}"
+        width="${image.width ? image.width : '100%'}"
+        height="${image.height}"
+        class="${image.cssClass}"/>
+</a>

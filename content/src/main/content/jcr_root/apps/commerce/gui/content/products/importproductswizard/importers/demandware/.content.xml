@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ~ Copyright 2018 Adobe Systems Incorporated
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:granite="http://www.adobe.com/jcr/granite/1.0"
+          xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          jcr:primaryType="nt:unstructured"
+          sling:resourceType="granite/ui/components/foundation/layouts/well">
+    <items jcr:primaryType="nt:unstructured">
+        <store-name
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="granite/ui/components/foundation/form/textfield"
+                emptyText="Store name"
+                fieldLabel="Demandware store name"
+                name="storeName"
+                required="{Boolean}true"/>
+        <button
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="granite/ui/components/coral/foundation/form/fileupload"
+                autoStart="{Boolean}false"
+                granite:class="js-fileUpload"
+                icon="folder"
+                text="Select file"
+                multiple="{Boolean}false"
+                name="uploaded-source-file-will-be-replaced"
+                uploadUrl="will_be_replaced"
+                async="{Boolean}true"
+                useHTML5="{Boolean}true"
+                fieldLabel="Source"
+                variant="secondary"
+                wrapperClass="js-fileUpload-wrapper"/>
+        <file-picker
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="granite/ui/components/coral/foundation/text"
+                granite:class="cq-commerce-products-upload-source-preview"
+                text="No file selected"/>
+        <source-path
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="granite/ui/components/coral/foundation/form/hidden"
+                name="csvPath"
+                value="will_be_replaced"/>
+    </items>
+</jcr:root>

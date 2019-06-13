@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ~ Copyright 2018 Adobe Systems Incorporated
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    jcr:description="Root page template for a Demandware site."
+    jcr:primaryType="cq:Template"
+    jcr:title="Demandware Root Page"
+    allowedPaths="[/content]"
+    ranking="{Long}999">
+    <jcr:content
+        jcr:primaryType="cq:PageContent"
+        sling:resourceType="commerce/demandware/components/page/page_root"
+        dwreOnline="true"
+        dwreSearchable="true">
+        <header
+            jcr:primaryType="nt:unstructured"
+            sling:resourceType="commerce/demandware/components/placeholder/header"/>
+        <par
+            jcr:primaryType="nt:unstructured"
+            sling:resourceType="commerce/demandware/components/placeholder/parsys">
+            <title
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="commerce/demandware/components/content/title"/>
+            <text
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="commerce/demandware/components/content/text"
+                text="&lt;p>This is a root page of a Demandware site.&lt;/p>"
+                textIsRich="true"/>
+        </par>
+        <footer
+            jcr:primaryType="nt:unstructured"
+            sling:resourceType="commerce/demandware/components/placeholder/footer"/>
+    </jcr:content>
+</jcr:root>

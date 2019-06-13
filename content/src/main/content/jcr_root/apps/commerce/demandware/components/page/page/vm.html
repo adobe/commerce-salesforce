@@ -1,0 +1,16 @@
+<!doctype html>
+<!--[if lt IE 7]> <html class="ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="ie8 oldie" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html lang="en"> <!--<![endif]-->
+
+	<head>
+        <base href="$request.httpProtocol://$request.httpHost">
+        $include.htmlhead($pdict)
+        <sly data-sly-include="partials/headlibs.vm.html" data-sly-unwrap/>
+    </head>
+    <body class="page ${currentPage.template.name}">
+        <sly data-sly-include="partials/main.vm.html" data-sly-unwrap/>
+        <sly data-sly-include="partials/footlibs.vm.html" data-sly-unwrap/>
+    </body>
+</html>

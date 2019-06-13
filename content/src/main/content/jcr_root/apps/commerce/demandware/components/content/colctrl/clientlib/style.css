@@ -1,0 +1,76 @@
+
+/*
+ *  Copyright 2018 Adobe Systems Incorporated
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+/* Column Control component */
+@media (min-width: 600px) {
+    .parsys_column {
+        margin: 10px 0 0 0;
+    }
+
+    .parsys_column .image.parbase,
+    .parsys_column .category-teaser {
+        margin-bottom: 10px;
+    }
+
+    .cq-colctrl-lt0-c0,
+    .cq-colctrl-lt0-c1 {
+        float: left;
+        width: 48%;
+    }
+    .cq-colctrl-lt0-c0 {
+        margin-right: 2%;
+    }
+    .cq-colctrl-lt0-c1 {
+        margin-left: 2%;
+    }
+
+    .cq-colctrl-lt1-c0 {
+        margin-right: 1%;
+        float: left;
+        width: 20%;
+    }
+    .cq-colctrl-lt1-c1 {
+        float: left;
+        width: 79%;
+    }
+
+    .cq-colctrl-lt2-c0,
+    .cq-colctrl-lt2-c1,
+    .cq-colctrl-lt2-c2 {
+        float: left;
+        width: 32%;
+    }
+    .cq-colctrl-lt2-c1 {
+        margin-right: 2%;
+        margin-left: 2%;
+    }
+
+    .cq-colctrl-lt3-c0,
+    .cq-colctrl-lt3-c1,
+    .cq-colctrl-lt3-c2,
+    .cq-colctrl-lt3-c3 {
+        float: left;
+        width: 24%;
+    }
+
+    .cq-colctrl-lt3-c1,
+    .cq-colctrl-lt3-c2,
+    .cq-colctrl-lt3-c3 {
+        margin-left: 1%;
+    }
+
+}
