@@ -1,4 +1,4 @@
-# Adobe AEM Commerce - Salesforce Commerce integration
+# Adobe AEM - Salesforce Commerce Cloud integration
 
 [![CircleCI](https://circleci.com/gh/adobe/commerce-salesforce.svg?style=svg)](https://circleci.com/gh/adobe/commerce-salesforce)
 
