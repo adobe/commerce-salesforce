@@ -14,16 +14,10 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-<workspaceFilter version="1.0">
-    <filter root="/libs/commerce/demandware" />
-    <filter root="/apps/commerce/demandware"/>
-    <filter root="/apps/commerce/gui/content/products/importproductswizard/importers"/>
-    <filter root="/etc/replication/agents.author/demandware"/>
-    <filter root="/etc/replication/agents.author/demandware-eu"/>
-    <filter root="/etc/replication/agents.author/demandware-us"/>
-    <filter root="/etc/scaffolding/demandware"/>
-    <filter root="/home/users/system/demandware"/>
-    <filter root="/content" mode="merge">
-        <include pattern=".*/rep:policy(/.*)?"/>
-    </filter>
-</workspaceFilter>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:rep="internal"
+          jcr:primaryType="rep:ACL">
+    <allow40
+            jcr:primaryType="rep:GrantACE"
+            rep:principalName="dwre-replication-service-eu"
+            rep:privileges="{Name}[jcr:read,crx:replicate]"/>
+</jcr:root>
