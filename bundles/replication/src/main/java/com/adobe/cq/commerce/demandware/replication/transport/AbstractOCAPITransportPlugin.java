@@ -16,17 +16,14 @@
 
 package com.adobe.cq.commerce.demandware.replication.transport;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Collections;
-import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentSkipListMap;
-import javax.jcr.Session;
-
+import com.adobe.cq.commerce.demandware.DemandwareClient;
+import com.adobe.cq.commerce.demandware.DemandwareCommerceConstants;
+import com.adobe.granite.auth.oauth.AccessTokenProvider;
+import com.day.cq.replication.AgentConfig;
+import com.day.cq.replication.ReplicationAction;
+import com.day.cq.replication.ReplicationActionType;
+import com.day.cq.replication.ReplicationException;
+import com.day.cq.replication.ReplicationLog;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
@@ -55,15 +52,21 @@ import org.apache.sling.commons.json.JSONObject;
 import org.apache.sling.commons.osgi.PropertiesUtil;
 import org.apache.sling.commons.osgi.ServiceUtil;
 import org.osgi.service.component.ComponentContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.adobe.cq.commerce.demandware.DemandwareClient;
-import com.adobe.cq.commerce.demandware.DemandwareCommerceConstants;
-import com.adobe.granite.auth.oauth.AccessTokenProvider;
-import com.day.cq.replication.AgentConfig;
-import com.day.cq.replication.ReplicationAction;
-import com.day.cq.replication.ReplicationActionType;
-import com.day.cq.replication.ReplicationException;
-import com.day.cq.replication.ReplicationLog;
+import javax.jcr.Session;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 /**
  * Abstract {@code TransportHandlerPlugin} class used as base for all Demandware OCAPI transport handlers.
@@ -73,7 +76,7 @@ import com.day.cq.replication.ReplicationLog;
         referenceInterface = AccessTokenProvider.class, bind = "bindAccessTokenProvider", unbind = "unbindAccessTokenProvider",
         cardinality = ReferenceCardinality.OPTIONAL_MULTIPLE, policy = ReferencePolicy.DYNAMIC)
 public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHandlerPlugin {
-
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractOCAPITransportPlugin.class);
     static final String ACCESS_TOKEN_PROPERTY = "accessTokenProvider";
     static final String BEARER_AUTHENTICATION_FORMAT = "Bearer %s";
 
@@ -93,8 +96,13 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
     @Reference
     protected ResourceResolverFactory rrf;
 
-    @Reference
-    protected DemandwareClient demandwareClient;
+    @Reference(referenceInterface = DemandwareClient.class,
+            bind = "bindDemandwareClient",
+            unbind = "unbindDemandwareClient",
+            cardinality = ReferenceCardinality.MANDATORY_MULTIPLE, // TODO check if works with one
+            policy = ReferencePolicy.DYNAMIC)
+    protected final List<DemandwareClient> demandwareClients = Collections.synchronizedList(new
+            ArrayList<DemandwareClient>()); // TODO hashmap
 
     private Map<String, Comparable<Object>> accessTokenProvidersProps =
             new ConcurrentSkipListMap<>(Collections.reverseOrder());
@@ -107,7 +115,18 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
 
     @Override
     DemandwareClient getDemandwareClient() {
-        return demandwareClient;
+        return demandwareClients.get(0);
+    }
+
+    @Override
+    DemandwareClient getDemandwareClient(final String instanceId) {
+        Optional<DemandwareClient> demandwareClient = demandwareClients.stream()
+                .filter(client -> StringUtils.equalsIgnoreCase(instanceId, client.getInstanceId()))
+                .findFirst();
+        if (!demandwareClient.isPresent()) {
+            LOG.error("DemandwareClient not found for instanceId [{}]", instanceId);
+        }
+        return demandwareClient.orElse(null);
     }
 
     @Override
@@ -216,7 +235,8 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
         try {
             // construct the OCAPI request
             final StringBuilder transportUriBuilder = new StringBuilder();
-            transportUriBuilder.append(DemandwareClient.DEFAULT_SCHEMA).append(demandwareClient.getEndpoint());
+            //TODO
+            transportUriBuilder.append(DemandwareClient.DEFAULT_SCHEMA).append(demandwareClients.get(0).getEndpoint());
             transportUriBuilder.append(getOCApiPath()).append(getOCApiVersion());
             transportUriBuilder.append(
                     constructEndpointURL(delivery.getString(DemandwareCommerceConstants.ATTR_API_ENDPOINT), delivery));
@@ -420,5 +440,13 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
         String pid = (String) properties.get("auth.token.provider.client.id");
         accessTokenProviders.remove(accessTokenProvidersProps.get(pid));
         accessTokenProvidersProps.remove(pid);
+    }
+
+    protected void bindDemandwareClient(final DemandwareClient client, final Map<String, Object> properties) {
+        demandwareClients.add(client);
+    }
+
+    protected void unbindDemandwareClient(final DemandwareClient client, final Map<String, Object> properties) {
+        demandwareClients.remove(client);
     }
 }

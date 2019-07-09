@@ -16,11 +16,17 @@
 
 package com.adobe.cq.commerce.demandware.replication.transport;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.Dictionary;
-
+import com.adobe.cq.commerce.demandware.DemandwareClient;
+import com.adobe.cq.commerce.demandware.DemandwareCommerceConstants;
+import com.adobe.cq.commerce.demandware.replication.TransportHandlerPlugin;
+import com.day.cq.replication.AgentConfig;
+import com.day.cq.replication.ReplicationAction;
+import com.day.cq.replication.ReplicationActionType;
+import com.day.cq.replication.ReplicationException;
+import com.day.cq.replication.ReplicationLog;
+import com.github.sardine.Sardine;
+import com.github.sardine.impl.SardineException;
+import com.github.sardine.impl.SardineImpl;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.felix.scr.annotations.Activate;
@@ -44,17 +50,10 @@ import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.adobe.cq.commerce.demandware.DemandwareClient;
-import com.adobe.cq.commerce.demandware.DemandwareCommerceConstants;
-import com.adobe.cq.commerce.demandware.replication.TransportHandlerPlugin;
-import com.day.cq.replication.AgentConfig;
-import com.day.cq.replication.ReplicationAction;
-import com.day.cq.replication.ReplicationActionType;
-import com.day.cq.replication.ReplicationException;
-import com.day.cq.replication.ReplicationLog;
-import com.github.sardine.Sardine;
-import com.github.sardine.impl.SardineException;
-import com.github.sardine.impl.SardineImpl;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Dictionary;
 
 /**
  * <code>TransportHandlerPlugin</code> to send static files to WebDAV.
@@ -76,6 +75,7 @@ public class WebDAVTransportPlugin extends AbstractTransportHandlerPlugin {
     @Property(label = "WebDAV user password")
     private static final String WEBDAV_PASSWORD = "webdav.password";
 
+    //TODO fix
     @Reference
     DemandwareClient demandwareClient;
 
@@ -95,6 +95,12 @@ public class WebDAVTransportPlugin extends AbstractTransportHandlerPlugin {
 
     @Override
     DemandwareClient getDemandwareClient() {
+        return demandwareClient;
+    }
+
+    //TODO
+    @Override
+    DemandwareClient getDemandwareClient(String instanceId) {
         return demandwareClient;
     }
 
