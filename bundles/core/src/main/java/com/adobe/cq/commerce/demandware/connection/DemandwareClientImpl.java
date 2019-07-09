@@ -94,6 +94,9 @@ public class DemandwareClientImpl implements DemandwareClient {
     @Property(label = "Key password", description = "Leave empty for no password")
     private static final String KEY_PWD = "key.password";
 
+    @Property(label = "Instance id", description = "TODO", value = "mariia")
+    private static final String INSTANCE_ID = "instance.id";
+
     private String instanceEndPoint;
     private int socketTimeout;
     private int connectionTimeout;
@@ -247,6 +250,8 @@ public class DemandwareClientImpl implements DemandwareClient {
         keyPwd = StringUtils.trimToNull(PropertiesUtil.toString(configuration.get(KEY_PWD), null));
         socketTimeout = PropertiesUtil.toInteger(configuration.get(INSTANCE_SOCKET_TIMEOUT), 0);
         connectionTimeout = PropertiesUtil.toInteger(configuration.get(INSTANCE_CONNECTION_TIMEOUT), 0);
+
+        String instanceId = PropertiesUtil.toString(configuration.get(INSTANCE_ID), null);
         LOG.debug("activating Demandware client service");
     }
 }
