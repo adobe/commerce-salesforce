@@ -47,4 +47,11 @@ public interface DemandwareClient {
      * @return the created {@code CloseableHttpClient}
      */
     CloseableHttpClient getHttpClient();
+
+    /**
+     * Get the configured id of the Demandware instance. Used to connect Demandware client with Replication Agent.
+     *
+     * @return configured Demandware instance id
+     */
+    String getInstanceId();
 }
