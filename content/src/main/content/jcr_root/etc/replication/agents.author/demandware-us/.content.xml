@@ -20,7 +20,7 @@
     <jcr:content
             cq:template="/libs/cq/replication/templates/agent"
             jcr:primaryType="nt:unstructured"
-            jcr:title="Demandware Content Export Agent"
+            jcr:title="Demandware Content Export Agent US"
             sling:resourceType="commerce/demandware/components/replication/demandware"
             enabled="true"
             enableOauth="true"
@@ -28,5 +28,5 @@
             serializationType="demandware"
             ssl="relaxed"
             transportUri="demandware:///us"
-            userId="dwre-replication-service"/>
+            userId="dwre-replication-service-us"/>
 </jcr:root>
