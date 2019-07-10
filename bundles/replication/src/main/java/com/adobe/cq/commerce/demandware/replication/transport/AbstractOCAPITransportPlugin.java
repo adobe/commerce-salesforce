@@ -52,20 +52,16 @@ import org.apache.sling.commons.json.JSONObject;
 import org.apache.sling.commons.osgi.PropertiesUtil;
 import org.apache.sling.commons.osgi.ServiceUtil;
 import org.osgi.service.component.ComponentContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.jcr.Session;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 /**
@@ -76,7 +72,6 @@ import java.util.concurrent.ConcurrentSkipListMap;
         referenceInterface = AccessTokenProvider.class, bind = "bindAccessTokenProvider", unbind = "unbindAccessTokenProvider",
         cardinality = ReferenceCardinality.OPTIONAL_MULTIPLE, policy = ReferencePolicy.DYNAMIC)
 public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHandlerPlugin {
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractOCAPITransportPlugin.class);
     static final String ACCESS_TOKEN_PROPERTY = "accessTokenProvider";
     static final String BEARER_AUTHENTICATION_FORMAT = "Bearer %s";
 
@@ -96,14 +91,6 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
     @Reference
     protected ResourceResolverFactory rrf;
 
-    @Reference(referenceInterface = DemandwareClient.class,
-            bind = "bindDemandwareClient",
-            unbind = "unbindDemandwareClient",
-            cardinality = ReferenceCardinality.MANDATORY_MULTIPLE, // TODO check if works with one
-            policy = ReferencePolicy.DYNAMIC)
-    protected final List<DemandwareClient> demandwareClients = Collections.synchronizedList(new
-            ArrayList<DemandwareClient>()); // TODO hashmap
-
     private Map<String, Comparable<Object>> accessTokenProvidersProps =
             new ConcurrentSkipListMap<>(Collections.reverseOrder());
     private Map<Comparable<Object>, AccessTokenProvider> accessTokenProviders =
@@ -112,22 +99,6 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
     private String accessTokenProviderId;
     private String ocapiVersion;
     private String ocapiPath;
-
-    @Override
-    DemandwareClient getDemandwareClient() {
-        return demandwareClients.get(0);
-    }
-
-    @Override
-    DemandwareClient getDemandwareClient(final String instanceId) {
-        Optional<DemandwareClient> demandwareClient = demandwareClients.stream()
-                .filter(client -> StringUtils.equalsIgnoreCase(instanceId, client.getInstanceId()))
-                .findFirst();
-        if (!demandwareClient.isPresent()) {
-            LOG.error("DemandwareClient not found for instanceId [{}]", instanceId);
-        }
-        return demandwareClient.orElse(null);
-    }
 
     @Override
     String getApiType() {
@@ -236,7 +207,7 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
             // construct the OCAPI request
             final StringBuilder transportUriBuilder = new StringBuilder();
             //TODO
-            transportUriBuilder.append(DemandwareClient.DEFAULT_SCHEMA).append(demandwareClients.get(0).getEndpoint());
+            transportUriBuilder.append(DemandwareClient.DEFAULT_SCHEMA).append(clientProvider.getAnyClient().getEndpoint());
             transportUriBuilder.append(getOCApiPath()).append(getOCApiVersion());
             transportUriBuilder.append(
                     constructEndpointURL(delivery.getString(DemandwareCommerceConstants.ATTR_API_ENDPOINT), delivery));
@@ -440,13 +411,5 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
         String pid = (String) properties.get("auth.token.provider.client.id");
         accessTokenProviders.remove(accessTokenProvidersProps.get(pid));
         accessTokenProvidersProps.remove(pid);
-    }
-
-    protected void bindDemandwareClient(final DemandwareClient client, final Map<String, Object> properties) {
-        demandwareClients.add(client);
-    }
-
-    protected void unbindDemandwareClient(final DemandwareClient client, final Map<String, Object> properties) {
-        demandwareClients.remove(client);
     }
 }

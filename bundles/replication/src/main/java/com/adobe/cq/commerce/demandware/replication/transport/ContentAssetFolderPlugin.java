@@ -76,7 +76,7 @@ public class ContentAssetFolderPlugin extends AbstractOCAPITransportPlugin {
 
                         // construct URL for folder assignment
                         //TODO
-                        final String transportUriBuilder = DemandwareClient.DEFAULT_SCHEMA + demandwareClients.get(0).getEndpoint() + getOCApiPath() + getOCApiVersion() + constructEndpointURL(
+                        final String transportUriBuilder = DemandwareClient.DEFAULT_SCHEMA + clientProvider.getAnyClient().getEndpoint() + getOCApiPath() + getOCApiVersion() + constructEndpointURL(
                                 delivery.getString(DemandwareCommerceConstants.ATTR_API_ENDPOINT), folder, delivery);
                         final RequestBuilder requestBuilder = RequestBuilder.put();
                         requestBuilder.setUri(transportUriBuilder);

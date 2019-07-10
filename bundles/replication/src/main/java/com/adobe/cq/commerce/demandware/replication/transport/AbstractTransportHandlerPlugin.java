@@ -17,10 +17,13 @@
 package com.adobe.cq.commerce.demandware.replication.transport;
 
 import com.adobe.cq.commerce.demandware.DemandwareClient;
+import com.adobe.cq.commerce.demandware.DemandwareClientProvider;
 import com.adobe.cq.commerce.demandware.replication.TransportHandlerPlugin;
 import com.day.cq.replication.AgentConfig;
 import com.day.cq.replication.ReplicationLog;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.Reference;
 import org.apache.http.Header;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
@@ -30,15 +33,17 @@ import org.apache.sling.commons.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * Abstract {@code TransportHandlerPlugin} class used as base for all Demandware transport handlers.
  */
+@Component(componentAbstract = true)
 public abstract class AbstractTransportHandlerPlugin implements TransportHandlerPlugin {
     static final Pattern placeHolder = Pattern.compile("\\{(.*?)\\}");
+    @Reference
+    protected DemandwareClientProvider clientProvider;
 
     /**
      * Return the supported API type.
@@ -53,21 +58,6 @@ public abstract class AbstractTransportHandlerPlugin implements TransportHandler
      * @return
      */
     abstract String getContentType();
-
-    /**
-     * Returns the configured Demandware client.
-     *
-     * @return
-     */
-    abstract DemandwareClient getDemandwareClient();
-
-    /**
-     * Returns the configured Demandware client defined for configured instance
-     * @param instanceId id of the destination instance
-     *
-     * @return
-     */
-    abstract DemandwareClient getDemandwareClient(final String instanceId);
 
     @Override
     public boolean canHandle(final String apiType, final String contentType) {
@@ -102,9 +92,7 @@ public abstract class AbstractTransportHandlerPlugin implements TransportHandler
      */
     protected HttpClientBuilder getHttpClientBuilder(final AgentConfig config, final ReplicationLog log) {
         // create and configure the Http client builder
-        final DemandwareClient demandwareClient = getInstanceId(config)
-                .map(this::getDemandwareClient)
-                .orElseGet(this::getDemandwareClient);
+        final DemandwareClient demandwareClient = clientProvider.getClientForSpecificInstance(config);
         final HttpClientBuilder httpClientBuilder = demandwareClient.getHttpClientBuilder();
 
         // configure credentials
@@ -163,10 +151,5 @@ public abstract class AbstractTransportHandlerPlugin implements TransportHandler
             }
         }
         return headers;
-    }
-
-    private Optional<String> getInstanceId(final AgentConfig config) {
-        return Optional.ofNullable(config.getTransportURI())
-                .map(uri -> uri.replace(TransportHandlerPlugin.DWRE_SCHEME, StringUtils.EMPTY));
     }
 }

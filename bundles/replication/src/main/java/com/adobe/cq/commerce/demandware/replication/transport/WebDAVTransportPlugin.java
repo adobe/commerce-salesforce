@@ -34,7 +34,6 @@ import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.ConfigurationPolicy;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
-import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
 import org.apache.http.HttpStatus;
 import org.apache.http.auth.AuthScope;
@@ -63,7 +62,6 @@ import java.util.Dictionary;
 @Properties({@Property(name = TransportHandlerPlugin.PN_TASK, value = "WebDAVTransportPlugin", propertyPrivate = true),
     @Property(name = Constants.SERVICE_RANKING, intValue = 30)})
 public class WebDAVTransportPlugin extends AbstractTransportHandlerPlugin {
-
     private static final Logger LOG = LoggerFactory.getLogger(WebDAVTransportPlugin.class);
 
     @Property(label = "WebDAV instance endpoint", description = "Optional: WebDAV server hostname or ip if different from instance endpoint")
@@ -74,10 +72,6 @@ public class WebDAVTransportPlugin extends AbstractTransportHandlerPlugin {
 
     @Property(label = "WebDAV user password")
     private static final String WEBDAV_PASSWORD = "webdav.password";
-
-    //TODO fix
-    @Reference
-    DemandwareClient demandwareClient;
 
     private String webDavEndpoint;
     private String webDavUser;
@@ -94,25 +88,17 @@ public class WebDAVTransportPlugin extends AbstractTransportHandlerPlugin {
     }
 
     @Override
-    DemandwareClient getDemandwareClient() {
-        return demandwareClient;
-    }
-
-    //TODO
-    @Override
-    DemandwareClient getDemandwareClient(String instanceId) {
-        return demandwareClient;
-    }
-
-    @Override
     public boolean deliver(JSONObject delivery, AgentConfig config, ReplicationLog log, ReplicationAction action)
         throws ReplicationException {
 
         // construct the WebDAV request
         String path = null;
+        final String endpoint = StringUtils.isNotEmpty(webDavEndpoint)
+                ? webDavEndpoint
+                : getDemandwareClientEndpoint(config);
         final StringBuilder transportUriBuilder = new StringBuilder();
         transportUriBuilder.append(DemandwareClient.DEFAULT_SCHEMA);
-        transportUriBuilder.append(StringUtils.isNotEmpty(webDavEndpoint) ? webDavEndpoint : demandwareClient.getEndpoint());
+        transportUriBuilder.append(endpoint);
         try {
             transportUriBuilder.append(
                 constructEndpointURL(delivery.getString(DemandwareCommerceConstants.ATTR_WEBDAV_SHARE), delivery));
@@ -249,6 +235,15 @@ public class WebDAVTransportPlugin extends AbstractTransportHandlerPlugin {
                 }
             }
         }
+    }
+
+    final String getDemandwareClientEndpoint(final AgentConfig config) {
+        final DemandwareClient demandwareClient = clientProvider.getClientForSpecificInstance(config);
+        if (demandwareClient == null) {
+            LOG.error("Failed to get DemandwareClient endpoint - no configuration found.");
+            return null;
+        }
+        return demandwareClient.getEndpoint();
     }
 
     /**
