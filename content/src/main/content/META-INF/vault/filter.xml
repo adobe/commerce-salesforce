@@ -23,7 +23,4 @@
     <filter root="/etc/replication/agents.author/demandware-us"/>
     <filter root="/etc/scaffolding/demandware"/>
     <filter root="/home/users/system/demandware"/>
-    <filter root="/content" mode="merge">
-        <include pattern=".*/rep:policy(/.*)?"/>
-    </filter>
 </workspaceFilter>
