@@ -207,7 +207,7 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
             // construct the OCAPI request
             final StringBuilder transportUriBuilder = new StringBuilder();
             //TODO
-            transportUriBuilder.append(DemandwareClient.DEFAULT_SCHEMA).append(clientProvider.getAnyClient().getEndpoint());
+            transportUriBuilder.append(DemandwareClient.DEFAULT_SCHEMA).append(clientProvider.getDefaultClient().getEndpoint());
             transportUriBuilder.append(getOCApiPath()).append(getOCApiVersion());
             transportUriBuilder.append(
                     constructEndpointURL(delivery.getString(DemandwareCommerceConstants.ATTR_API_ENDPOINT), delivery));

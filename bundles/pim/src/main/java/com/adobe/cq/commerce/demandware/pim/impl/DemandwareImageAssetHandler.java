@@ -21,6 +21,7 @@ import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.adobe.cq.commerce.demandware.DemandwareClientProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
@@ -63,7 +64,7 @@ public class DemandwareImageAssetHandler implements ImportAssetHandler {
     private static final String DOWNLOAD_ENDPOINT = "downloadEndpoint";
 
     @Reference
-    DemandwareClient demandwareClient;
+    DemandwareClientProvider clientProvider;
 
     private String downloadEndpoint;
 
@@ -80,12 +81,12 @@ public class DemandwareImageAssetHandler implements ImportAssetHandler {
             return null;
         }
         final String relativeImagePath = (String) properties.get(DemandwareCommerceConstants.ATTRIBUTE_ASSET_PATH);
-        final String endPoint = DemandwareClient.DEFAULT_SCHEMA + demandwareClient.getEndpoint() + downloadEndpoint +
-            StringUtils.prependIfMissing(relativeImagePath, "/", "/");
+        final String endPoint = DemandwareClient.DEFAULT_SCHEMA + clientProvider.getDefaultClient().getEndpoint()
+                + downloadEndpoint + StringUtils.prependIfMissing(relativeImagePath, "/", "/");
 
         // call Demandware to render preview for component
         CloseableHttpResponse responseObj = null;
-        CloseableHttpClient httpClient = demandwareClient.getHttpClient();
+        CloseableHttpClient httpClient = clientProvider.getDefaultClient().getHttpClient();
         try {
             final RequestBuilder requestBuilder = RequestBuilder.get();
 

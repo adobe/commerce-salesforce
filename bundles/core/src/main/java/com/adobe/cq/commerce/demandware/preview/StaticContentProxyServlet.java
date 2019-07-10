@@ -21,6 +21,7 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 
+import com.adobe.cq.commerce.demandware.DemandwareClientProvider;
 import org.apache.commons.io.IOUtils;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
@@ -40,7 +41,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.adobe.cq.commerce.demandware.DemandwareClient;
-import com.adobe.cq.commerce.demandware.RenderService;
 
 /**
  * Simple proxy for static content assets (images, js, css) with relative URLs to Demandware.
@@ -52,7 +52,7 @@ public class StaticContentProxyServlet extends SlingSafeMethodsServlet {
     private static final Logger LOG = LoggerFactory.getLogger(StaticContentProxyServlet.class);
 
     @Reference
-    private DemandwareClient demandwareClient;
+    private DemandwareClientProvider clientProvider;
 
     @Override
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) throws ServletException,
@@ -60,10 +60,10 @@ public class StaticContentProxyServlet extends SlingSafeMethodsServlet {
 
         RequestPathInfo pathInfo = request.getRequestPathInfo();
         LOG.debug("Proxy static content for {}", pathInfo.toString());
-        final String remoteUri = DemandwareClient.DEFAULT_SCHEMA + demandwareClient.getEndpoint() + pathInfo.getResourcePath() +
+        final String remoteUri = DemandwareClient.DEFAULT_SCHEMA + clientProvider.getDefaultClient().getEndpoint() + pathInfo.getResourcePath() +
                 "." + pathInfo.getExtension() + pathInfo.getSuffix();
 
-        final CloseableHttpClient httpClient = demandwareClient.getHttpClient();
+        final CloseableHttpClient httpClient = clientProvider.getDefaultClient().getHttpClient();
         CloseableHttpResponse responseObj = null;
         BufferedOutputStream output = null;
         try {

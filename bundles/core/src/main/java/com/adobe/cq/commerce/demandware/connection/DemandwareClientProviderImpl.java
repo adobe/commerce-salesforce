@@ -38,6 +38,7 @@ import java.util.Optional;
 public class DemandwareClientProviderImpl implements DemandwareClientProvider {
 	private static final Logger LOG = LoggerFactory.getLogger(DemandwareClientProviderImpl.class);
 	private static final String DWRE_SCHEME = "demandware://";
+	public static final String INSTANCE_ID_DEFAULT = "default";
 	@Reference(referenceInterface = DemandwareClient.class,
 			bind = "bindDemandwareClient",
 			unbind = "unbindDemandwareClient",
@@ -46,20 +47,28 @@ public class DemandwareClientProviderImpl implements DemandwareClientProvider {
 	protected HashMap<String, DemandwareClient> demandwareClients;
 
 	/**
-	 * Returns the first found configured Demandware client.
+	 * Returns DemandwareClient service, configured with "default" instance id
+	 * or, if not present, first found DemandwareClient service.
 	 *
 	 * @return
 	 */
-	public DemandwareClient getAnyClient() {
-		Optional<DemandwareClient> client = demandwareClients.entrySet()
+	public DemandwareClient getDefaultClient() {
+		DemandwareClient client = getDemandwareClientByInstanceId(INSTANCE_ID_DEFAULT);
+		if (client != null) {
+			return client;
+		}
+
+		LOG.debug("No default DemandwareClient configured: return first found service.");
+		Optional<DemandwareClient> clientOpt = demandwareClients.entrySet()
 				.stream()
 				.findFirst()
 				.map(Map.Entry::getValue);
-		if (!client.isPresent()) {
-			LOG.error("Failed to get DemandwareClient - no configuration found.");
-			return null;
+		if (clientOpt.isPresent()) {
+			return clientOpt.get();
 		}
-		return client.get();
+
+		LOG.error("Failed to get DemandwareClient - no configuration found.");
+		return null;
 	}
 
 	/**
@@ -71,7 +80,7 @@ public class DemandwareClientProviderImpl implements DemandwareClientProvider {
 	public DemandwareClient getClientForSpecificInstance(AgentConfig config) {
 		return getInstanceId(config)
 				.map(this::getDemandwareClientByInstanceId)
-				.orElseGet(this::getAnyClient);
+				.orElse(null);
 	}
 
 	/**

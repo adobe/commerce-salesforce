@@ -21,6 +21,7 @@ import javax.jcr.Session;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 
+import com.adobe.cq.commerce.demandware.DemandwareClientProvider;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.felix.scr.annotations.Reference;
@@ -45,7 +46,6 @@ import org.apache.sling.api.servlets.SlingAllMethodsServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.adobe.cq.commerce.demandware.DemandwareClient;
 import com.day.cq.replication.ReplicationActionType;
 import com.day.cq.replication.ReplicationException;
 import com.day.cq.replication.Replicator;
@@ -62,7 +62,7 @@ public class InitServlet extends SlingAllMethodsServlet {
     private static final Logger LOG = LoggerFactory.getLogger(InitServlet.class);
 
     @Reference
-    DemandwareClient demandwareClient;
+    DemandwareClientProvider clientProvider;
 
     @Reference
     private Replicator replicator;
@@ -107,14 +107,14 @@ public class InitServlet extends SlingAllMethodsServlet {
         final Cookie token = slingRequest.getCookie("login-token");
         requestBuilder.addHeader(new BasicHeader("Cookie", token.getName() + "=" + token.getValue()));
         final HttpHost localHost = new HttpHost("localhost", 4502);
-        final HttpClient httpClient = demandwareClient.getHttpClientBuilder().build();
+        final HttpClient httpClient = clientProvider.getDefaultClient().getHttpClientBuilder().build();
         try {
             // get the from AEM content
             final HttpResponse response = httpClient.execute(localHost, requestBuilder.build());
 
             if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 final HttpEntity entity = response.getEntity();
-                HttpClientBuilder httpClientBuilder = demandwareClient.getHttpClientBuilder();
+                HttpClientBuilder httpClientBuilder = clientProvider.getDefaultClient().getHttpClientBuilder();
                 httpClientBuilder.setDefaultCredentialsProvider(
                     getWebDAVCredentials(slingRequest.getResource().getValueMap()));
                 // upload to webDAV
