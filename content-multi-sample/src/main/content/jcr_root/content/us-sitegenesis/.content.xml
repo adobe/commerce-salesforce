@@ -14,13 +14,20 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-<workspaceFilter version="1.0">
-    <filter root="/content/sitegenesis" mode="merge"/>
-    <filter root="/content/dam/dwre"/>
-    <filter root="/apps/commerce/demandware/components/init"/>
-    <filter root="/apps/commerce/demandware/config" mode="merge"/>
-    <filter root="/apps/commerce/demandware/config.author" mode="merge" />
-    <filter root="/etc/replication/agents.author/demandware"/>
-    <filter root="/etc/designs/demandware"/>
-    <filter root="/etc/demandware"/>
-</workspaceFilter>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    jcr:primaryType="cq:Page">
+    <content/>
+    <templates/>
+    <jcr:content
+        cq:designPath="/etc/designs/demandware"
+        jcr:primaryType="nt:unstructured"
+        jcr:title="US Demandware SiteGenesis"
+        dwreSite="{FILL ME}"
+        dwreLibrary="{FILL ME}"
+        sling:resourceType="commerce/demandware/components/page/page_root"
+        cq:template="/apps/commerce/demandware/templates/page-root">
+        <image jcr:primaryType="nt:unstructured">
+            <file/>
+        </image>
+    </jcr:content>
+</jcr:root>

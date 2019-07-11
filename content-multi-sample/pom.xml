@@ -32,22 +32,11 @@
     <!-- P R O J E C T  D E S C R I P T I O N                                   -->
     <!-- ====================================================================== -->
     <groupId>com.adobe.cq.commerce</groupId>
-    <artifactId>cq-commerce-demandware-content</artifactId>
+    <artifactId>cq-commerce-demandware-multi-sample-content</artifactId>
+    <version>0.3.3-SNAPSHOT</version>
     <packaging>content-package</packaging>
-    <name>Adobe AEM Commerce - Salesforce Commerce Integration Content Package</name>
-    <description>Adobe AEM Commerce - Salesforce Commerce integration application content package</description>
-    <version>1.3.5-SNAPSHOT</version>
-
-    <!-- ====================================================================== -->
-    <!-- P R O P E R T I E S                                                    -->
-    <!-- ====================================================================== -->
-    <properties>
-        <vault.package.version>${project.version}</vault.package.version>
-        <vault.package.group>day/cq61/product</vault.package.group>
-        <vault.package.company>Adobe Systems Incorporated</vault.package.company>
-        <quickstart.url>http://localhost:4502</quickstart.url>
-        <install.target>/libs/commerce/demandware/install</install.target>
-    </properties>
+    <name>Adobe AEM Commerce -  Salesforce Commerce Integration Multi Demo Content</name>
+    <description>Adobe AEM Commerce - Salesforce Commerce integration Multi demo content package</description>
 
     <!-- ====================================================================== -->
     <!-- B U I L D   D E F I N I T I O N                                        -->
@@ -71,39 +60,18 @@
                 <artifactId>filevault-package-maven-plugin</artifactId>
                 <extensions>true</extensions>
                 <configuration>
-                    <requiresRoot>true</requiresRoot>
-                    <showImportPackageReport>false</showImportPackageReport>
                     <properties>
                         <acHandling>merge</acHandling>
                         <description>${project.description}</description>
                         <createdBy>Adobe Systems Incorporated</createdBy>
                     </properties>
                     <group>adobe/cq60</group>
+                    <showImportPackageReport>false</showImportPackageReport>
                     <embeddedTarget>/apps/commerce/demandware/install</embeddedTarget>
                     <embeddeds>
                         <embedded>
                             <groupId>${project.groupId}</groupId>
-                            <artifactId>cq-commerce-demandware-core</artifactId>
-                            <target>/apps/commerce/demandware/install</target>
-                        </embedded>
-                        <embedded>
-                            <groupId>${project.groupId}</groupId>
-                            <artifactId>cq-commerce-demandware-commerce</artifactId>
-                            <target>/apps/commerce/demandware/install</target>
-                        </embedded>
-                        <embedded>
-                            <groupId>${project.groupId}</groupId>
-                            <artifactId>cq-commerce-demandware-libs</artifactId>
-                            <target>/apps/commerce/demandware/install</target>
-                        </embedded>
-                        <embedded>
-                            <groupId>${project.groupId}</groupId>
-                            <artifactId>cq-commerce-demandware-pim</artifactId>
-                            <target>/apps/commerce/demandware/install</target>
-                        </embedded>
-                        <embedded>
-                            <groupId>${project.groupId}</groupId>
-                            <artifactId>cq-commerce-demandware-replication</artifactId>
+                            <artifactId>cq-commerce-demandware-sample-init</artifactId>
                             <target>/apps/commerce/demandware/install</target>
                         </embedded>
                     </embeddeds>
@@ -118,8 +86,6 @@
                 <artifactId>apache-rat-plugin</artifactId>
                 <configuration>
                     <excludes combine.children="append">
-                        <!-- Ignore Demandware velocity markup templates -->
-                        <exclude>**/*vm.html</exclude>
                         <!-- Ignore OSGI configs -->
                         <exclude>**/*.config</exclude>
                     </excludes>
@@ -134,9 +100,6 @@
     <profiles>
         <profile>
             <id>autoInstallPackage</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
             <build>
                 <plugins>
                     <plugin>
@@ -144,7 +107,8 @@
                         <artifactId>content-package-maven-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>install-package</id>
+                                <id>install-content-package</id>
+                                <phase>install</phase>
                                 <goals>
                                     <goal>install</goal>
                                 </goals>
@@ -162,33 +126,8 @@
     <dependencies>
         <dependency>
             <groupId>com.adobe.cq.commerce</groupId>
-            <artifactId>cq-commerce-demandware-core</artifactId>
-            <version>2.0.0-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.adobe.cq.commerce</groupId>
-            <artifactId>cq-commerce-demandware-commerce</artifactId>
-            <version>1.3.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.adobe.cq.commerce</groupId>
-            <artifactId>cq-commerce-demandware-replication</artifactId>
-            <version>2.0.0-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.adobe.cq.commerce</groupId>
-            <artifactId>cq-commerce-demandware-libs</artifactId>
-            <version>1.2.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.adobe.cq.commerce</groupId>
-            <artifactId>cq-commerce-demandware-pim</artifactId>
-            <version>1.3.5-SNAPSHOT</version>
-            <scope>provided</scope>
+            <artifactId>cq-commerce-demandware-sample-init</artifactId>
+            <version>0.3.3-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ~ Copyright 2018 Adobe Systems Incorporated
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0"
+          xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          jcr:primaryType="cq:Page">
+    <jcr:content jcr:primaryType="nt:unstructured" jcr:title="Demandware SiteGenisis Design"
+                 sling:resourceType="wcm/core/components/designer">
+        <page jcr:primaryType="nt:unstructured">
+            <par jcr:primaryType="nt:unstructured" sling:resourceType="commerce/demandware/components/placeholder/parsys"
+                 components="[group:Demandware,/apps/commerce/demandware/components/placeholder/content-navigation,/apps/commerce/demandware/components/placeholder/product]">
+                <colctrl jcr:primaryType="nt:unstructured" sling:resourceType="commerce/demandware/components/content/colctrl"
+                         layouts="2;cq-colctrl-lt0&#x9;2 Columns (50%, 50%)&#xa;2;cq-colctrl-lt1&#x9;2 Columns (20%, 80%)&#xa;3;cq-colctrl-lt2&#x9;3 Columns (33%, 33%, 33%)"/>
+                <cq:authoring jcr:primaryType="nt:unstructured">
+                    <assetToComponentMapping jcr:primaryType="nt:unstructured">
+                        <image jcr:primaryType="nt:unstructured" assetGroup="media" assetMimetype="image/*"
+                               droptarget="image" resourceType="commerce/demandware/components/content/image" type="Images"/>
+                    </assetToComponentMapping>
+                </cq:authoring>
+                <section jcr:primaryType="nt:unstructured"/>
+            </par>
+            <logo jcr:primaryType="nt:unstructured" sling:resourceType="commerce/demandware/components/page/logo" absParent="2">
+                <image/>
+            </logo>
+        </page>
+        <page_category jcr:primaryType="nt:unstructured">
+            <par jcr:primaryType="nt:unstructured" sling:resourceType="commerce/demandware/components/placeholder/parsys"
+                 components="[group:Demandware,/apps/commerce/demandware/components/placeholder/category-slot,/apps/commerce/demandware/components/placeholder/product,/apps/commerce/demandware/components/placeholder/search-navigation]">
+                <colctrl jcr:primaryType="nt:unstructured" sling:resourceType="commerce/demandware/components/content/colctrl"
+                         layouts="2;cq-colctrl-lt0&#x9;2 Columns (50%, 50%)&#xa;2;cq-colctrl-lt1&#x9;2 Columns (20%, 80%)&#xa;3;cq-colctrl-lt2&#x9;3 Columns (33%, 33%, 33%)&#xa;4;cq-colctrl-lt3&#x9;4 Columns (25%, 25%, 25%, 25%)"/>
+                <cq:authoring jcr:primaryType="nt:unstructured">
+                    <assetToComponentMapping jcr:primaryType="nt:unstructured">
+                        <image jcr:primaryType="nt:unstructured" assetGroup="media" assetMimetype="image/*"
+                               droptarget="image" resourceType="commerce/demandware/components/content/image" type="Images"/>
+                    </assetToComponentMapping>
+                </cq:authoring>
+                <section jcr:primaryType="nt:unstructured"/>
+            </par>
+            <logo jcr:primaryType="nt:unstructured" sling:resourceType="commerce/demandware/components/page/logo" absParent="2">
+                <image/>
+            </logo>
+        </page_category>
+    </jcr:content>
+    <clientlib-all/>
+    <clientlib-site/>
+    <favicon.ico/>
+</jcr:root>

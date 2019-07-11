@@ -14,13 +14,19 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-<workspaceFilter version="1.0">
-    <filter root="/content/sitegenesis" mode="merge"/>
-    <filter root="/content/dam/dwre"/>
-    <filter root="/apps/commerce/demandware/components/init"/>
-    <filter root="/apps/commerce/demandware/config" mode="merge"/>
-    <filter root="/apps/commerce/demandware/config.author" mode="merge" />
-    <filter root="/etc/replication/agents.author/demandware"/>
-    <filter root="/etc/designs/demandware"/>
-    <filter root="/etc/demandware"/>
-</workspaceFilter>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0"
+          xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          jcr:primaryType="cq:Page">
+    <jcr:content
+            cq:template="/libs/cq/replication/templates/agent"
+            jcr:primaryType="nt:unstructured"
+            jcr:title="Demandware Content Export Agent US"
+            sling:resourceType="commerce/demandware/components/replication/demandware"
+            enabled="true"
+            enableOauth="true"
+            logLevel="info"
+            serializationType="demandware"
+            ssl="relaxed"
+            transportUri="demandware:///us"
+            userId="dwre-replication-service-us"/>
+</jcr:root>

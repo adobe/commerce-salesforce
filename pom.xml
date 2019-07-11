@@ -52,7 +52,6 @@
         <module>bundles/libs</module>
         <module>bundles/init</module>
         <module>content</module>
-        <module>content-sample</module>
     </modules>
 
     <!-- ====================================================================== -->
