@@ -28,6 +28,7 @@ import javax.jcr.Value;
 import javax.jcr.ValueFactory;
 import javax.net.ssl.SSLContext;
 
+import com.adobe.cq.commerce.demandware.DemandwareClientProvider;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.felix.scr.annotations.Activate;
@@ -82,7 +83,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import aQute.bnd.annotation.component.Deactivate;
-import com.adobe.cq.commerce.demandware.DemandwareClient;
 import com.adobe.granite.auth.oauth.AccessTokenProvider;
 import com.adobe.granite.crypto.CryptoException;
 import com.adobe.granite.crypto.CryptoSupport;
@@ -172,7 +172,7 @@ public class AccessTokenProviderImpl implements AccessTokenProvider {
     private CryptoSupport cryptoSupport;
 
     @Reference
-    private DemandwareClient demandwareClient;
+    private DemandwareClientProvider clientProvider;
 
     private CloseableHttpClient httpClient;
 
@@ -208,7 +208,7 @@ public class AccessTokenProviderImpl implements AccessTokenProvider {
         if (HTTPS.equals(uri.getScheme())) {
             relativeUri = uri.toString();
 
-            HttpClientBuilder builder = demandwareClient.getHttpClientBuilder();
+            HttpClientBuilder builder = clientProvider.getDefaultClient().getHttpClientBuilder();
 
             //set a default destination host
             HttpRoutePlanner routePlanner = new DefaultRoutePlanner(DefaultSchemePortResolver.INSTANCE) {

@@ -19,9 +19,8 @@
     <filter root="/apps/commerce/demandware"/>
     <filter root="/apps/commerce/gui/content/products/importproductswizard/importers"/>
     <filter root="/etc/replication/agents.author/demandware"/>
+    <filter root="/etc/replication/agents.author/demandware-eu"/>
+    <filter root="/etc/replication/agents.author/demandware-us"/>
     <filter root="/etc/scaffolding/demandware"/>
     <filter root="/home/users/system/demandware"/>
-    <filter root="/content" mode="merge">
-        <include pattern=".*/rep:policy(/.*)?"/>
-    </filter>
 </workspaceFilter>

@@ -13,9 +13,12 @@
  ~ See the License for the specific language governing permissions and
  ~ limitations under the License.
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-@Version("2.0.0")
-@Export(optional = "provide:=true")
+
 package com.adobe.cq.commerce.demandware;
 
-import aQute.bnd.annotation.Export;
-import aQute.bnd.annotation.Version;
+import com.day.cq.replication.AgentConfig;
+
+public interface DemandwareClientProvider {
+	DemandwareClient getDefaultClient();
+	DemandwareClient getClientForSpecificInstance(AgentConfig config);
+}

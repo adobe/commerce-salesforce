@@ -16,17 +16,14 @@
 
 package com.adobe.cq.commerce.demandware.replication.transport;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Collections;
-import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentSkipListMap;
-import javax.jcr.Session;
-
+import com.adobe.cq.commerce.demandware.DemandwareClient;
+import com.adobe.cq.commerce.demandware.DemandwareCommerceConstants;
+import com.adobe.granite.auth.oauth.AccessTokenProvider;
+import com.day.cq.replication.AgentConfig;
+import com.day.cq.replication.ReplicationAction;
+import com.day.cq.replication.ReplicationActionType;
+import com.day.cq.replication.ReplicationException;
+import com.day.cq.replication.ReplicationLog;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
@@ -56,14 +53,16 @@ import org.apache.sling.commons.osgi.PropertiesUtil;
 import org.apache.sling.commons.osgi.ServiceUtil;
 import org.osgi.service.component.ComponentContext;
 
-import com.adobe.cq.commerce.demandware.DemandwareClient;
-import com.adobe.cq.commerce.demandware.DemandwareCommerceConstants;
-import com.adobe.granite.auth.oauth.AccessTokenProvider;
-import com.day.cq.replication.AgentConfig;
-import com.day.cq.replication.ReplicationAction;
-import com.day.cq.replication.ReplicationActionType;
-import com.day.cq.replication.ReplicationException;
-import com.day.cq.replication.ReplicationLog;
+import javax.jcr.Session;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Collections;
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 /**
  * Abstract {@code TransportHandlerPlugin} class used as base for all Demandware OCAPI transport handlers.
@@ -73,7 +72,6 @@ import com.day.cq.replication.ReplicationLog;
         referenceInterface = AccessTokenProvider.class, bind = "bindAccessTokenProvider", unbind = "unbindAccessTokenProvider",
         cardinality = ReferenceCardinality.OPTIONAL_MULTIPLE, policy = ReferencePolicy.DYNAMIC)
 public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHandlerPlugin {
-
     static final String ACCESS_TOKEN_PROPERTY = "accessTokenProvider";
     static final String BEARER_AUTHENTICATION_FORMAT = "Bearer %s";
 
@@ -93,9 +91,6 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
     @Reference
     protected ResourceResolverFactory rrf;
 
-    @Reference
-    protected DemandwareClient demandwareClient;
-
     private Map<String, Comparable<Object>> accessTokenProvidersProps =
             new ConcurrentSkipListMap<>(Collections.reverseOrder());
     private Map<Comparable<Object>, AccessTokenProvider> accessTokenProviders =
@@ -104,11 +99,6 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
     private String accessTokenProviderId;
     private String ocapiVersion;
     private String ocapiPath;
-
-    @Override
-    DemandwareClient getDemandwareClient() {
-        return demandwareClient;
-    }
 
     @Override
     String getApiType() {
@@ -216,7 +206,8 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
         try {
             // construct the OCAPI request
             final StringBuilder transportUriBuilder = new StringBuilder();
-            transportUriBuilder.append(DemandwareClient.DEFAULT_SCHEMA).append(demandwareClient.getEndpoint());
+            //TODO
+            transportUriBuilder.append(DemandwareClient.DEFAULT_SCHEMA).append(clientProvider.getDefaultClient().getEndpoint());
             transportUriBuilder.append(getOCApiPath()).append(getOCApiVersion());
             transportUriBuilder.append(
                     constructEndpointURL(delivery.getString(DemandwareCommerceConstants.ATTR_API_ENDPOINT), delivery));

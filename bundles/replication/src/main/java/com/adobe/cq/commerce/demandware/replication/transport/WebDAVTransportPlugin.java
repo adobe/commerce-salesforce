@@ -16,11 +16,17 @@
 
 package com.adobe.cq.commerce.demandware.replication.transport;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.Dictionary;
-
+import com.adobe.cq.commerce.demandware.DemandwareClient;
+import com.adobe.cq.commerce.demandware.DemandwareCommerceConstants;
+import com.adobe.cq.commerce.demandware.replication.TransportHandlerPlugin;
+import com.day.cq.replication.AgentConfig;
+import com.day.cq.replication.ReplicationAction;
+import com.day.cq.replication.ReplicationActionType;
+import com.day.cq.replication.ReplicationException;
+import com.day.cq.replication.ReplicationLog;
+import com.github.sardine.Sardine;
+import com.github.sardine.impl.SardineException;
+import com.github.sardine.impl.SardineImpl;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.felix.scr.annotations.Activate;
@@ -28,7 +34,6 @@ import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.ConfigurationPolicy;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
-import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
 import org.apache.http.HttpStatus;
 import org.apache.http.auth.AuthScope;
@@ -44,17 +49,10 @@ import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.adobe.cq.commerce.demandware.DemandwareClient;
-import com.adobe.cq.commerce.demandware.DemandwareCommerceConstants;
-import com.adobe.cq.commerce.demandware.replication.TransportHandlerPlugin;
-import com.day.cq.replication.AgentConfig;
-import com.day.cq.replication.ReplicationAction;
-import com.day.cq.replication.ReplicationActionType;
-import com.day.cq.replication.ReplicationException;
-import com.day.cq.replication.ReplicationLog;
-import com.github.sardine.Sardine;
-import com.github.sardine.impl.SardineException;
-import com.github.sardine.impl.SardineImpl;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Dictionary;
 
 /**
  * <code>TransportHandlerPlugin</code> to send static files to WebDAV.
@@ -64,7 +62,6 @@ import com.github.sardine.impl.SardineImpl;
 @Properties({@Property(name = TransportHandlerPlugin.PN_TASK, value = "WebDAVTransportPlugin", propertyPrivate = true),
     @Property(name = Constants.SERVICE_RANKING, intValue = 30)})
 public class WebDAVTransportPlugin extends AbstractTransportHandlerPlugin {
-
     private static final Logger LOG = LoggerFactory.getLogger(WebDAVTransportPlugin.class);
 
     @Property(label = "WebDAV instance endpoint", description = "Optional: WebDAV server hostname or ip if different from instance endpoint")
@@ -75,9 +72,6 @@ public class WebDAVTransportPlugin extends AbstractTransportHandlerPlugin {
 
     @Property(label = "WebDAV user password")
     private static final String WEBDAV_PASSWORD = "webdav.password";
-
-    @Reference
-    DemandwareClient demandwareClient;
 
     private String webDavEndpoint;
     private String webDavUser;
@@ -94,19 +88,17 @@ public class WebDAVTransportPlugin extends AbstractTransportHandlerPlugin {
     }
 
     @Override
-    DemandwareClient getDemandwareClient() {
-        return demandwareClient;
-    }
-
-    @Override
     public boolean deliver(JSONObject delivery, AgentConfig config, ReplicationLog log, ReplicationAction action)
         throws ReplicationException {
 
         // construct the WebDAV request
         String path = null;
+        final String endpoint = StringUtils.isNotEmpty(webDavEndpoint)
+                ? webDavEndpoint
+                : getDemandwareClientEndpoint(config);
         final StringBuilder transportUriBuilder = new StringBuilder();
         transportUriBuilder.append(DemandwareClient.DEFAULT_SCHEMA);
-        transportUriBuilder.append(StringUtils.isNotEmpty(webDavEndpoint) ? webDavEndpoint : demandwareClient.getEndpoint());
+        transportUriBuilder.append(endpoint);
         try {
             transportUriBuilder.append(
                 constructEndpointURL(delivery.getString(DemandwareCommerceConstants.ATTR_WEBDAV_SHARE), delivery));
@@ -243,6 +235,15 @@ public class WebDAVTransportPlugin extends AbstractTransportHandlerPlugin {
                 }
             }
         }
+    }
+
+    final String getDemandwareClientEndpoint(final AgentConfig config) {
+        final DemandwareClient demandwareClient = clientProvider.getClientForSpecificInstance(config);
+        if (demandwareClient == null) {
+            LOG.error("Failed to get DemandwareClient endpoint - no configuration found.");
+            return null;
+        }
+        return demandwareClient.getEndpoint();
     }
 
     /**

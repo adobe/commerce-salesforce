@@ -61,13 +61,13 @@ import com.adobe.cq.commerce.demandware.DemandwareClient;
  * Central Demandware client service providing Demandware instance endpoint and already prepared, ready to use HTTP
  * clients to access the instance via OCAPI or WebDAV.
  */
-@Component(metatype = true, policy = ConfigurationPolicy.REQUIRE, label = "Demandware Client")
-@Service()
+@Service
+@Component(metatype = true, configurationFactory = true, immediate = true,
+        policy = ConfigurationPolicy.REQUIRE, label = "Demandware Client")
 public class DemandwareClientImpl implements DemandwareClient {
-
     private static final Logger LOG = LoggerFactory.getLogger(DemandwareClientImpl.class);
 
-    @Property(label = "Instance endpoint ip or hostname")
+    @Property(label = "Instance endpoint ip or hostname", value = "{FILL ME}.demandware.net")
     private static final String INSTANCE_ENDPOINT = "endpoint";
 
     @Property(label = "Socket timeout")
@@ -79,7 +79,7 @@ public class DemandwareClientImpl implements DemandwareClient {
     @Property(label = "Local network interface to be used")
     private static final String PROTOCOL_INTERFACE = "interface";
 
-    @Property(label = "SSL version", value = "TLSv1.2")
+    @Property(label = "SSL version", value = "TLSv1.1")
     private static final String PROTOCOL_SSL = "ssl";
 
     @Property(label = "Keystore type", options = {@PropertyOption(name = "JKS", value = "JKS"), @PropertyOption(name = "PKCS12", value = "PKCS12")})
@@ -94,6 +94,9 @@ public class DemandwareClientImpl implements DemandwareClient {
     @Property(label = "Key password", description = "Leave empty for no password")
     private static final String KEY_PWD = "key.password";
 
+    @Property(label = "Instance id", description = "Demandware instance id that corresponds to Replication Agent config")
+    private static final String INSTANCE_ID = "instance.id";
+
     private String instanceEndPoint;
     private int socketTimeout;
     private int connectionTimeout;
@@ -103,6 +106,7 @@ public class DemandwareClientImpl implements DemandwareClient {
     private String keyStorePath;
     private String keyStorePwd;
     private String keyPwd;
+    private String instanceId;
 
     @Override
     public String getEndpoint() {
@@ -236,9 +240,15 @@ public class DemandwareClientImpl implements DemandwareClient {
         return getHttpClientBuilder().build();
     }
 
+    @Override
+    public String getInstanceId() {
+        return instanceId;
+    }
+
     @Activate
     protected void activate(Map<String, Object> configuration) {
         instanceEndPoint = PropertiesUtil.toString(configuration.get(INSTANCE_ENDPOINT), null);
+        instanceId = PropertiesUtil.toString(configuration.get(INSTANCE_ID), null);
         protocolInterface = PropertiesUtil.toString(configuration.get(PROTOCOL_INTERFACE), null);
         protocolSSL = StringUtils.trimToNull(PropertiesUtil.toString(configuration.get(PROTOCOL_SSL), "TLSv1.2"));
         keystoreType = StringUtils.trimToNull(PropertiesUtil.toString(configuration.get(KEYSTORE_TYPE), "JKS"));

@@ -14,12 +14,9 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-<workspaceFilter version="1.0">
-    <filter root="/content/sitegenesis" mode="merge"/>
-    <filter root="/content/dam/dwre"/>
-    <filter root="/apps/commerce/demandware/components/init"/>
-    <filter root="/apps/commerce/demandware/config" mode="merge"/>
-    <filter root="/apps/commerce/demandware/config.author" mode="merge" />
-    <filter root="/etc/designs/demandware"/>
-    <filter root="/etc/demandware"/>
-</workspaceFilter>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:rep="internal"
+          jcr:primaryType="rep:SystemUser"
+          jcr:uuid="76723e04-0238-37f2-95b4-30d11724c6e4"
+          rep:authorizableId="dwre-replication-service-us"
+          rep:principalName="dwre-replication-service-us">
+</jcr:root>

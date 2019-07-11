@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.adobe.cq.commerce.demandware.DemandwareClientProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
@@ -101,7 +102,7 @@ public class PreviewServiceImpl implements PreviewService {
 
 
     @Reference
-    DemandwareClient demandwareClient;
+    DemandwareClientProvider clientProvider;
 
     @Reference
     RenderService renderService;
@@ -163,7 +164,7 @@ public class PreviewServiceImpl implements PreviewService {
         final String renderedComponentContent = renderService.render(resource, null, selectores);
 
         // call Demandware to render preview for component
-        final HttpClientBuilder httpClientBuilder = demandwareClient.getHttpClientBuilder();
+        final HttpClientBuilder httpClientBuilder = clientProvider.getDefaultClient().getHttpClientBuilder();
         if (credentialsProvider != null) {
             httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
         }
@@ -225,7 +226,7 @@ public class PreviewServiceImpl implements PreviewService {
     }
 
     private String getInstanceEndPoint() {
-        return demandwareClient.getEndpoint();
+        return clientProvider.getDefaultClient().getEndpoint();
     }
 
     /**
@@ -260,7 +261,7 @@ public class PreviewServiceImpl implements PreviewService {
         if (PropertiesUtil.toString(configuration.get(STORFRONT_PROTECTION_USER), null) != null && PropertiesUtil
                 .toString(configuration.get(STORFRONT_PROTECTION_PASSWORD), null) != null) {
             final CredentialsProvider credsProvider = new BasicCredentialsProvider();
-            credsProvider.setCredentials(new AuthScope(demandwareClient.getEndpoint(), AuthScope.ANY_PORT),
+            credsProvider.setCredentials(new AuthScope(clientProvider.getDefaultClient().getEndpoint(), AuthScope.ANY_PORT),
                     new UsernamePasswordCredentials(PropertiesUtil.toString(configuration.get
                             (STORFRONT_PROTECTION_USER), null),
                             PropertiesUtil.toString(configuration.get(STORFRONT_PROTECTION_PASSWORD), null)));

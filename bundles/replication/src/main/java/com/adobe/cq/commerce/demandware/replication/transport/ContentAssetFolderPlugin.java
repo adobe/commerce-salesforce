@@ -16,6 +16,13 @@
 
 package com.adobe.cq.commerce.demandware.replication.transport;
 
+import com.adobe.cq.commerce.demandware.DemandwareClient;
+import com.adobe.cq.commerce.demandware.DemandwareCommerceConstants;
+import com.adobe.cq.commerce.demandware.replication.TransportHandlerPlugin;
+import com.day.cq.replication.AgentConfig;
+import com.day.cq.replication.ReplicationAction;
+import com.day.cq.replication.ReplicationException;
+import com.day.cq.replication.ReplicationLog;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
@@ -32,14 +39,6 @@ import org.apache.sling.commons.json.JSONArray;
 import org.apache.sling.commons.json.JSONException;
 import org.apache.sling.commons.json.JSONObject;
 import org.osgi.framework.Constants;
-
-import com.adobe.cq.commerce.demandware.DemandwareClient;
-import com.adobe.cq.commerce.demandware.DemandwareCommerceConstants;
-import com.adobe.cq.commerce.demandware.replication.TransportHandlerPlugin;
-import com.day.cq.replication.AgentConfig;
-import com.day.cq.replication.ReplicationAction;
-import com.day.cq.replication.ReplicationException;
-import com.day.cq.replication.ReplicationLog;
 
 /**
  * <code>TransportHandlerPlugin</code> to associate content assets to one or more folders within the Demandware
@@ -76,7 +75,8 @@ public class ContentAssetFolderPlugin extends AbstractOCAPITransportPlugin {
                         log.info("Assign content asset %s to folder %s (%s)", id, folder, action.getType().getName());
 
                         // construct URL for folder assignment
-                        final String transportUriBuilder = DemandwareClient.DEFAULT_SCHEMA + demandwareClient.getEndpoint() + getOCApiPath() + getOCApiVersion() + constructEndpointURL(
+                        //TODO
+                        final String transportUriBuilder = DemandwareClient.DEFAULT_SCHEMA + clientProvider.getDefaultClient().getEndpoint() + getOCApiPath() + getOCApiVersion() + constructEndpointURL(
                                 delivery.getString(DemandwareCommerceConstants.ATTR_API_ENDPOINT), folder, delivery);
                         final RequestBuilder requestBuilder = RequestBuilder.put();
                         requestBuilder.setUri(transportUriBuilder);
