@@ -67,6 +67,7 @@ public interface DemandwareCommerceConstants {
      * special, Demandware specify page properties which need to be mapped
      */
     String PN_DWRE_SITE = "dwreSite";
+    String PN_DWRE_INSTANCE_ID = "dwreInstanceId";
     String PN_DWRE_LIBRARY = "dwreLibrary";
     String PN_DWRE_TEMPLATE_PATH = "dwreTemplatePath";
     String PN_DWRE_FOLDER = "dwreFolder";

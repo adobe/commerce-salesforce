@@ -18,7 +18,10 @@ package com.adobe.cq.commerce.demandware.connection;
 
 import com.adobe.cq.commerce.demandware.DemandwareClient;
 import com.adobe.cq.commerce.demandware.DemandwareClientProvider;
+import com.adobe.cq.commerce.demandware.DemandwareCommerceConstants;
+import com.day.cq.commons.inherit.HierarchyNodeInheritanceValueMap;
 import com.day.cq.replication.AgentConfig;
+import com.day.cq.wcm.api.Page;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.felix.scr.annotations.Component;
@@ -36,80 +39,91 @@ import java.util.Optional;
 @Component(label = "Demandware Demandware Client Provider", immediate = true)
 @Service(value = DemandwareClientProvider.class)
 public class DemandwareClientProviderImpl implements DemandwareClientProvider {
-	private static final Logger LOG = LoggerFactory.getLogger(DemandwareClientProviderImpl.class);
-	private static final String DWRE_SCHEME = "demandware://";
-	public static final String INSTANCE_ID_DEFAULT = "default";
-	@Reference(referenceInterface = DemandwareClient.class,
-			bind = "bindDemandwareClient",
-			unbind = "unbindDemandwareClient",
-			cardinality = ReferenceCardinality.MANDATORY_MULTIPLE, // TODO check if works with one
-			policy = ReferencePolicy.DYNAMIC)
-	protected HashMap<String, DemandwareClient> demandwareClients;
-
-	/**
-	 * Returns DemandwareClient service, configured with "default" instance id
-	 * or, if not present, first found DemandwareClient service.
-	 *
-	 * @return
-	 */
-	public DemandwareClient getDefaultClient() {
-		DemandwareClient client = getDemandwareClientByInstanceId(INSTANCE_ID_DEFAULT);
-		if (client != null) {
-			return client;
-		}
-
-		LOG.debug("No default DemandwareClient configured: return first found service.");
-		Optional<DemandwareClient> clientOpt = demandwareClients.entrySet()
-				.stream()
-				.findFirst()
-				.map(Map.Entry::getValue);
-		if (clientOpt.isPresent()) {
-			return clientOpt.get();
-		}
-
-		LOG.error("Failed to get DemandwareClient - no configuration found.");
-		return null;
-	}
-
-	/**
-	 * Returns the configured Demandware client defined for specific SFCC instance
-	 * @param config Replication config containing id of the SFCC instance
-	 *
-	 * @return DemandwareClient or null if client not found
-	 */
-	public DemandwareClient getClientForSpecificInstance(AgentConfig config) {
-		return getInstanceId(config)
-				.map(this::getDemandwareClientByInstanceId)
-				.orElse(null);
-	}
-
-	/**
-	 * Returns the configured Demandware client defined for specific SFCC instance
-	 * @param instanceId id of the SFCC instance. should match Replication Agent condig (URI field)
-	 *
-	 * @return DemandwareClient or null if client not found
-	 */
-	private DemandwareClient getDemandwareClientByInstanceId(final String instanceId) {
-		DemandwareClient demandwareClient = demandwareClients.get(instanceId.replace("/", ""));
-		if (demandwareClient == null) {
-			LOG.error("DemandwareClient not found for instanceId [{}]", instanceId);
-		}
-		return demandwareClient;
-	}
-
-	private Optional<String> getInstanceId(final AgentConfig config) {
-		return Optional.ofNullable(config.getTransportURI())
-				.map(uri -> uri.replace(DWRE_SCHEME, StringUtils.EMPTY));
-	}
-
-	protected void bindDemandwareClient(final DemandwareClient client, final Map<String, Object> properties) {
-		if (demandwareClients == null) {
-			demandwareClients = Maps.newHashMap();
-		}
-		demandwareClients.put(client.getInstanceId(), client);
-	}
-
-	protected void unbindDemandwareClient(final DemandwareClient client, final Map<String, Object> properties) {
-		demandwareClients.remove(client.getInstanceId());
-	}
+    private static final Logger LOG = LoggerFactory.getLogger(DemandwareClientProviderImpl.class);
+    private static final String DWRE_SCHEME = "demandware://";
+    public static final String INSTANCE_ID_DEFAULT = "default";
+    public String previewInstanceId;
+    @Reference(referenceInterface = DemandwareClient.class,
+            bind = "bindDemandwareClient",
+            unbind = "unbindDemandwareClient",
+            cardinality = ReferenceCardinality.MANDATORY_MULTIPLE, // TODO check if works with one
+            policy = ReferencePolicy.DYNAMIC)
+    protected HashMap<String, DemandwareClient> demandwareClients;
+    
+    /**
+     * Returns DemandwareClient service, configured with "default" instance id
+     * or, if not present, first found DemandwareClient service.
+     *
+     * @return
+     */
+    public DemandwareClient getDefaultClient() {
+        DemandwareClient client = getDemandwareClientByInstanceId(INSTANCE_ID_DEFAULT);
+        if (client != null) {
+            return client;
+        }
+        
+        LOG.debug("No default DemandwareClient configured: return first found service.");
+        Optional<DemandwareClient> clientOpt = demandwareClients.entrySet()
+                .stream()
+                .findFirst()
+                .map(Map.Entry::getValue);
+        if (clientOpt.isPresent()) {
+            return clientOpt.get();
+        }
+        
+        LOG.error("Failed to get DemandwareClient - no configuration found.");
+        return null;
+    }
+    
+    /**
+     * Returns the configured Demandware client defined for specific SFCC instance
+     *
+     * @param config Replication config containing id of the SFCC instance
+     * @return DemandwareClient or null if client not found
+     */
+    public DemandwareClient getClientForSpecificInstance(AgentConfig config) {
+        return getInstanceId(config)
+                .map(this::getDemandwareClientByInstanceId)
+                .orElse(null);
+    }
+    
+    /**
+     * Returns the configured Demandware client defined for specific SFCC instance
+     *
+     * @param instanceId id of the SFCC instance. should match Replication Agent condig (URI field)
+     * @return DemandwareClient or null if client not found
+     */
+    public DemandwareClient getDemandwareClientByInstanceId(final String instanceId) {
+        DemandwareClient demandwareClient = demandwareClients.get(instanceId.replace("/", ""));
+        if (demandwareClient == null) {
+            LOG.error("DemandwareClient not found for instanceId [{}]", instanceId);
+        }
+        return demandwareClient;
+    }
+    
+    private Optional<String> getInstanceId(final AgentConfig config) {
+        return Optional.ofNullable(config.getTransportURI())
+                .map(uri -> uri.replace(DWRE_SCHEME, StringUtils.EMPTY));
+    }
+    
+    
+    public String getInstanceId(final Page page) {
+        final HierarchyNodeInheritanceValueMap pageProperties = new HierarchyNodeInheritanceValueMap(
+                page.getContentResource());
+        if (pageProperties != null) {
+            return pageProperties.getInherited(DemandwareCommerceConstants.PN_DWRE_INSTANCE_ID, previewInstanceId);
+        }
+        return previewInstanceId;
+    }
+    
+    protected void bindDemandwareClient(final DemandwareClient client, final Map<String, Object> properties) {
+        if (demandwareClients == null) {
+            demandwareClients = Maps.newHashMap();
+        }
+        demandwareClients.put(client.getInstanceId(), client);
+    }
+    
+    protected void unbindDemandwareClient(final DemandwareClient client, final Map<String, Object> properties) {
+        demandwareClients.remove(client.getInstanceId());
+    }
 }

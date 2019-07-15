@@ -17,8 +17,11 @@
 package com.adobe.cq.commerce.demandware;
 
 import com.day.cq.replication.AgentConfig;
+import com.day.cq.wcm.api.Page;
 
 public interface DemandwareClientProvider {
 	DemandwareClient getDefaultClient();
 	DemandwareClient getClientForSpecificInstance(AgentConfig config);
+	DemandwareClient getDemandwareClientByInstanceId(final String instanceId);
+	String getInstanceId(final Page page);
 }
