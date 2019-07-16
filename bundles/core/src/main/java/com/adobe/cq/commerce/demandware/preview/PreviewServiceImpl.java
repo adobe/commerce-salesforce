@@ -16,14 +16,12 @@
 
 package com.adobe.cq.commerce.demandware.preview;
 
-import com.adobe.cq.commerce.demandware.DemandwareClient;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import com.adobe.cq.commerce.demandware.DemandwareClientProvider;
-import com.adobe.cq.commerce.demandware.DemandwareCommerceConstants;
-import com.adobe.cq.commerce.demandware.PreviewService;
-import com.adobe.cq.commerce.demandware.RenderService;
-import com.day.cq.commons.inherit.HierarchyNodeInheritanceValueMap;
-import com.day.cq.wcm.api.Page;
-import com.day.cq.wcm.api.PageManager;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
@@ -55,10 +53,13 @@ import org.apache.sling.commons.osgi.PropertiesUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import com.adobe.cq.commerce.demandware.DemandwareClient;
+import com.adobe.cq.commerce.demandware.DemandwareCommerceConstants;
+import com.adobe.cq.commerce.demandware.PreviewService;
+import com.adobe.cq.commerce.demandware.RenderService;
+import com.day.cq.commons.inherit.HierarchyNodeInheritanceValueMap;
+import com.day.cq.wcm.api.Page;
+import com.day.cq.wcm.api.PageManager;
 
 /**
  * Component previewComponent service to render component previewComponent for Demandware placeholder components. The rendered previewComponent
@@ -67,55 +68,55 @@ import java.util.Map;
 @Component(metatype = true, policy = ConfigurationPolicy.REQUIRE, label = "Demandware Component Preview Service")
 @Service()
 public class PreviewServiceImpl implements PreviewService {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(PreviewServiceImpl.class);
     private static final String ERROR_MSG = "<p>Live Demandware preview failed to render. See log for details.</p>";
-    
+
     @Property(label = "Preview endpoint")
     private static final String PREVIEW_PAGE_ENDPOINT = "endpointPage";
-    
+
     @Property(label = "Preview endpoint for category pages")
     private static final String PREVIEW_SEARCH_ENDPOINT = "endpointSearch";
-    
+
     @Property(label = "Preview template path")
     private static final String PREVIEW_TEMPLATE = "template";
-    
+
     @Property(label = "Preview default site")
     private static final String PREVIEW_DEFAULT_SITE = "site";
-    
+
     @Property(label = "Enable preview cache", boolValue = true)
     private static final String PREVIEW_CACHE_ENABLED = "cache.enabled";
-    
+
     private static final int DEFAULT_PREVIEW_CACHE_TIME = 60;
     @Property(label = "Caching time in seconds", intValue = DEFAULT_PREVIEW_CACHE_TIME)
     private static final String PREVIEW_CACHE_TIME = "cache.time";
-    
+
     @Property(label = "Enable storefront protection", boolValue = false)
     private static final String STORFRONT_PROTECTION_ENABLED = "storefront.protected";
-    
+
     @Property(label = "Protected storefront user")
     private static final String STORFRONT_PROTECTION_USER = "storefront.user";
-    
+
     @Property(label = "Protected storefront password")
     private static final String STORFRONT_PROTECTION_PASSWORD = "storefront.password";
-    
-    
+
+
     @Reference
     DemandwareClientProvider clientProvider;
-    
+
     @Reference
     RenderService renderService;
-    
+
     private String previewPageEndPoint;
     private String previewSearchEndPoint;
     private String previewTemplate;
     private String previewDefaultSite;
-    
+
     private PreviewCache cache;
-    
+
     private CredentialsProvider credentialsProvider;
-    
-    
+
+
     @Override
     public String previewComponent(Resource resource, boolean useCache) {
         if (resource != null) {
@@ -124,7 +125,7 @@ public class PreviewServiceImpl implements PreviewService {
             return null;
         }
     }
-    
+
     @Override
     public String previewComponent(Resource resource, boolean useCache, String... selectors) {
         if (resource != null) {
@@ -133,7 +134,7 @@ public class PreviewServiceImpl implements PreviewService {
             return null;
         }
     }
-    
+
     @Override
     public String previewCategoryComponent(Resource resource, boolean useCache) {
         if (resource != null) {
@@ -146,7 +147,7 @@ public class PreviewServiceImpl implements PreviewService {
             return null;
         }
     }
-    
+
     private String getPreviewContent(final String endPoint, final Resource resource, final boolean useCache,
                                      final List<NameValuePair> params, final String... selectores) {
         String renderedPreview = "";
@@ -158,17 +159,17 @@ public class PreviewServiceImpl implements PreviewService {
                 return renderedPreview;
             }
         }
-        
+
         // render AEM component for Demandware
         final String renderedComponentContent = renderService.render(resource, null, selectores);
-        
+
         // call Demandware to render preview for component
         final HttpClientBuilder httpClientBuilder = clientProvider.getDefaultClient().getHttpClientBuilder();
         if (credentialsProvider != null) {
             httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
         }
         final CloseableHttpClient httpClient = httpClientBuilder.build();
-        
+
         CloseableHttpResponse responseObj = null;
         try {
             final RequestBuilder requestBuilder = RequestBuilder.post();
@@ -179,11 +180,11 @@ public class PreviewServiceImpl implements PreviewService {
             previewEndpoint = StringUtils.replace(endPoint, "{site}", getSite(containingPage));
             previewEndpoint = StringUtils.replace(previewEndpoint, "{locale}", getLanguage(containingPage));
             try {
-                requestBuilder.setUri(DemandwareClient.DEFAULT_SCHEMA + getInstanceEndPoint(clientProvider.getInstanceId(containingPage)) + previewEndpoint);
+                requestBuilder.setUri(DemandwareClient.DEFAULT_SCHEMA + getInstanceEndPoint() + previewEndpoint);
             } catch (IllegalArgumentException e) {
                 LOG.error("Unable to set preview URI: {}", e.getMessage());
             }
-            
+
             // add parameters, headers, body
             if (params != null) {
                 for (NameValuePair param : params) {
@@ -193,7 +194,7 @@ public class PreviewServiceImpl implements PreviewService {
             requestBuilder.addParameter("template", previewTemplate);
             requestBuilder.addHeader(HttpHeaders.CONTENT_TYPE, ContentType.TEXT_HTML.getMimeType());
             requestBuilder.setEntity(new StringEntity(renderedComponentContent, ContentType.TEXT_HTML));
-            
+
             final HttpUriRequest requestObj = requestBuilder.build();
             responseObj = httpClient.execute(requestObj);
             if (responseObj != null) {
@@ -216,18 +217,18 @@ public class PreviewServiceImpl implements PreviewService {
             HttpClientUtils.closeQuietly(responseObj);
             HttpClientUtils.closeQuietly(httpClient);
         }
-        
+
         if (StringUtils.isEmpty(renderedPreview)) {
             renderedPreview = ERROR_MSG;
         }
-        
+
         return renderedPreview;
     }
-    
-    private String getInstanceEndPoint(String previewInstanceId) {
-        return clientProvider.getDemandwareClientByInstanceId(previewInstanceId).getEndpoint();
+
+    private String getInstanceEndPoint() {
+        return clientProvider.getDefaultClient().getEndpoint();
     }
-    
+
     /**
      * Get the Demandware site for the current resource, which is configured at page level up to root page. If no
      * site is define we fall beack to the default site.
@@ -243,15 +244,15 @@ public class PreviewServiceImpl implements PreviewService {
         }
         return previewDefaultSite;
     }
-    
-    
+
+
     protected final String getLanguage(final Page page) {
         final String locale = StringUtils.replaceChars(page.getLanguage(false).toString(), "_", "-");
         return StringUtils.isNotEmpty(
                 new HierarchyNodeInheritanceValueMap(page.getContentResource()).getInherited(JcrConstants.JCR_LANGUAGE,
                         String.class)) ? locale : "default";
     }
-    
+
     /**
      * Setup storefront user credentials.
      */
@@ -268,7 +269,7 @@ public class PreviewServiceImpl implements PreviewService {
         }
         return null;
     }
-    
+
     @Activate
     protected void activate(Map<String, Object> configuration) {
         previewPageEndPoint = StringUtils.prependIfMissing(PropertiesUtil.toString(configuration.get
@@ -277,16 +278,16 @@ public class PreviewServiceImpl implements PreviewService {
                 PropertiesUtil.toString(configuration.get(PREVIEW_SEARCH_ENDPOINT), null), "/", "/");
         previewTemplate = PropertiesUtil.toString(configuration.get(PREVIEW_TEMPLATE), null);
         previewDefaultSite = PropertiesUtil.toString(configuration.get(PREVIEW_DEFAULT_SITE), null);
-        
+
         if (PropertiesUtil.toBoolean(configuration.get(PREVIEW_CACHE_ENABLED), true)) {
             cache = new PreviewCache(PropertiesUtil.toInteger(configuration.get(PREVIEW_CACHE_TIME),
                     DEFAULT_PREVIEW_CACHE_TIME));
         }
-        
+
         if (PropertiesUtil.toBoolean(configuration.get(STORFRONT_PROTECTION_ENABLED), true)) {
             credentialsProvider = createCredentialsProvider(configuration);
         }
-        
+
         LOG.debug("activating preview service");
     }
 }
