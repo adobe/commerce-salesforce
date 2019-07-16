@@ -35,7 +35,7 @@
     <artifactId>cq-commerce-demandware-multi-sample-content</artifactId>
     <version>0.3.3-SNAPSHOT</version>
     <packaging>content-package</packaging>
-    <name>Adobe AEM Commerce -  Salesforce Commerce Integration Multi Demo Content</name>
+    <name>Adobe AEM Commerce - Salesforce Commerce Integration Multi Demo Content</name>
     <description>Adobe AEM Commerce - Salesforce Commerce integration Multi demo content package</description>
 
     <!-- ====================================================================== -->
