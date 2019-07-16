@@ -24,8 +24,6 @@
 
     <filter root="/etc/replication/agents.author/demandware-eu-sitegenesis"/>
     <filter root="/etc/replication/agents.author/demandware-us-sitegenesis"/>
-    <filter root="/etc/designs/demandware"/>
-    <filter root="/etc/demandware"/>
 
     <filter root="/home/users/system/demandware" mode="merge"/>
 </workspaceFilter>

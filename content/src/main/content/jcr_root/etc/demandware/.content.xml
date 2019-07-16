@@ -21,9 +21,9 @@
                 jcr:primaryType="nt:unstructured"
                 jcr:title="Demandware Instance initializer"
                 sling:resourceType="commerce/demandware/components/init"
-                assetWebDAV="https://adobe01-tech-prtnr-na01-dw.demandware.net/on/demandware.servlet/webdav/Sites/Libraries/SiteGenesisSharedLibrary/default"
-                assetWebDAVUser="admin"
-                assetWebDAVPassword="Rm4oeAWULy%W9g"
+                assetWebDAV="https://{FILL ME}.demandware.net/on/demandware.servlet/webdav/Sites/Libraries/{FILL ME}/default"
+                assetWebDAVUser="{FILL ME}"
+                assetWebDAVPassword="{FILL ME}"
                 assetUris="[/etc/cloudsettings/dwre/contexthub.kernel.js,/etc/designs/demandware/clientlib-all.css,/etc/designs/demandware/clientlib-all.js,/etc/clientlibs/foundation/testandtarget/testandtarget.js,/etc/clientlibs/sitecatalyst/tracking.js,/etc/clientlibs/granite/jquery.js,/etc/clientlibs/granite/utils.js,/etc/clientlibs/granite/jquery/granite.js,/etc/clientlibs/foundation/jquery.js,/etc/clientlibs/foundation/shared.js,/etc/clientlibs/granite/lodash/modern.js,/etc/clientlibs/foundation/personalization/kernel.js]"
                 templatePaths="[/content/sitegenesis/templates/preview,/content/sitegenesis/templates/contenttemplate]"/>
     </init>

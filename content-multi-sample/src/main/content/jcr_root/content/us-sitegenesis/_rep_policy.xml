@@ -16,8 +16,12 @@
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 <jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:rep="internal"
           jcr:primaryType="rep:ACL">
-    <allow39
+    <allowDemandwareService
             jcr:primaryType="rep:GrantACE"
             rep:principalName="dwre-replication-service"
+            rep:privileges="{Name}[jcr:read,crx:replicate]"/>
+    <allowUSSitegenesis
+            jcr:primaryType="rep:GrantACE"
+            rep:principalName="dwre-replication-agent-us-sitegenesis"
             rep:privileges="{Name}[jcr:read,crx:replicate]"/>
 </jcr:root>
