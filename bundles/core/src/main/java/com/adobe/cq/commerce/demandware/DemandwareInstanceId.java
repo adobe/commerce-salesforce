@@ -27,4 +27,6 @@ public interface DemandwareInstanceId {
     String getEndPoint(DemandwareClientProvider clientProvider, Page page);
     
     String getEndpoint(DemandwareClientProvider clientProvider, SlingHttpServletRequest request);
+    
+    String getEndpoint(DemandwareClientProvider clientProvider, String instanceId);
 }

@@ -46,6 +46,11 @@ public class DemandwareInstanceIdImpl implements DemandwareInstanceId {
         return endpoint != null ? endpoint : clientProvider.getDefaultClient().getEndpoint();
     }
     
+    @Override
+    public String getEndpoint(DemandwareClientProvider clientProvider, String instanceId) {
+        return instanceId != null ? clientProvider.getDemandwareClientByInstanceId(instanceId).getEndpoint() : clientProvider.getDefaultClient().getEndpoint();
+    }
+    
     public String getInstanceId(final Page page) {
         String previewInstanceId = "";
         final HierarchyNodeInheritanceValueMap pageProperties = new HierarchyNodeInheritanceValueMap(

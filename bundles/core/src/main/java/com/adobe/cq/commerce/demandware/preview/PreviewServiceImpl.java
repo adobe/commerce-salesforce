@@ -108,7 +108,7 @@ public class PreviewServiceImpl implements PreviewService {
     RenderService renderService;
     
     @Reference
-    private DemandwareInstanceId demandWareInstanceId;
+    private DemandwareInstanceId demandwareInstanceId;
     
     private String previewPageEndPoint;
     private String previewSearchEndPoint;
@@ -183,7 +183,7 @@ public class PreviewServiceImpl implements PreviewService {
             previewEndpoint = StringUtils.replace(endPoint, "{site}", getSite(containingPage));
             previewEndpoint = StringUtils.replace(previewEndpoint, "{locale}", getLanguage(containingPage));
             try {
-                requestBuilder.setUri(DemandwareClient.DEFAULT_SCHEMA + demandWareInstanceId.getEndPoint(clientProvider, containingPage) + previewEndpoint);
+                requestBuilder.setUri(DemandwareClient.DEFAULT_SCHEMA + demandwareInstanceId.getEndPoint(clientProvider, containingPage) + previewEndpoint);
             } catch (IllegalArgumentException e) {
                 LOG.error("Unable to set preview URI: {}", e.getMessage());
             }

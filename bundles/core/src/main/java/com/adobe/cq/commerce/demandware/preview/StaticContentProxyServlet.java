@@ -54,7 +54,7 @@ public class StaticContentProxyServlet extends SlingSafeMethodsServlet {
     private DemandwareClientProvider clientProvider;
     
     @Reference
-    private DemandwareInstanceId demandWareInstanceId;
+    private DemandwareInstanceId demandwareInstanceId;
     
     @Override
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) throws ServletException,
@@ -62,7 +62,7 @@ public class StaticContentProxyServlet extends SlingSafeMethodsServlet {
         
         RequestPathInfo pathInfo = request.getRequestPathInfo();
         LOG.debug("Proxy static content for {}", pathInfo.toString());
-        final String remoteUri = DemandwareClient.DEFAULT_SCHEMA + demandWareInstanceId.getEndpoint(clientProvider, request) + pathInfo.getResourcePath() +
+        final String remoteUri = DemandwareClient.DEFAULT_SCHEMA + demandwareInstanceId.getEndpoint(clientProvider, request) + pathInfo.getResourcePath() +
                 "." + pathInfo.getExtension() + pathInfo.getSuffix();
         
         final CloseableHttpClient httpClient = clientProvider.getDefaultClient().getHttpClient();

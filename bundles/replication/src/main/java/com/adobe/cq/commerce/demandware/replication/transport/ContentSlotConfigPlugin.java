@@ -16,6 +16,10 @@
 
 package com.adobe.cq.commerce.demandware.replication.transport;
 
+import com.adobe.cq.commerce.demandware.DemandwareCommerceConstants;
+import com.adobe.cq.commerce.demandware.replication.TransportHandlerPlugin;
+import com.day.cq.replication.ReplicationAction;
+import com.day.cq.replication.ReplicationException;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
@@ -25,10 +29,6 @@ import org.apache.sling.commons.json.JSONException;
 import org.apache.sling.commons.json.JSONObject;
 import org.osgi.framework.Constants;
 
-import com.adobe.cq.commerce.demandware.DemandwareCommerceConstants;
-import com.adobe.cq.commerce.demandware.replication.TransportHandlerPlugin;
-import com.day.cq.replication.ReplicationException;
-
 /**
  * <code>TransportHandlerPlugin</code> to send content asset data to Demandware using OC data API.
  */
@@ -37,16 +37,16 @@ import com.day.cq.replication.ReplicationException;
 @Properties({@Property(name = TransportHandlerPlugin.PN_TASK, value = "ContentSlotConfigPlugin", propertyPrivate =
         true), @Property(name = Constants.SERVICE_RANKING, intValue = 10)})
 public class ContentSlotConfigPlugin extends AbstractOCAPITransportPlugin {
-
+    
     @Override
     String getContentType() {
         return "content-slot-config";
     }
-
+    
     @Override
-    protected RequestBuilder getRequestBuilder(final String method, final JSONObject delivery) throws
+    protected RequestBuilder getRequestBuilder(final String method, final JSONObject delivery, ReplicationAction action) throws
             ReplicationException {
-        final RequestBuilder requestBuilder = super.getRequestBuilder(method, delivery);
+        final RequestBuilder requestBuilder = super.getRequestBuilder(method, delivery, action);
         try {
             if (delivery.has(DemandwareCommerceConstants.ATTR_CONTEXT)) {
                 requestBuilder.addParameter(DemandwareCommerceConstants.ATTR_CONTEXT, delivery.getString
