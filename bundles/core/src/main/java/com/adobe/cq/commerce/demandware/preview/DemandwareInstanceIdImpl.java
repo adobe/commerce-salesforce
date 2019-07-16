@@ -65,9 +65,8 @@ public class DemandwareInstanceIdImpl implements DemandwareInstanceId {
         String path = getRequestedPath(request);
         
         ResourceResolver resourceResolver = request.getResourceResolver();
-        Resource resource = resourceResolver.resolve(path);
         
-        PageManager pageManager = resource.getResourceResolver().adaptTo(PageManager.class);
+        PageManager pageManager = resourceResolver.adaptTo(PageManager.class);
         return pageManager.getPage(path);
     }
     
