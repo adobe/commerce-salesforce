@@ -18,6 +18,9 @@
     <filter root="/libs/commerce/demandware" />
     <filter root="/apps/commerce/demandware"/>
     <filter root="/apps/commerce/gui/content/products/importproductswizard/importers"/>
+
+    <filter root="/etc/replication/agents.author/demandware"/>
     <filter root="/etc/scaffolding/demandware"/>
-    <filter root="/home/users/system/demandware"/>
+
+    <filter root="/home/users/system/demandware" mode="merge"/>
 </workspaceFilter>
