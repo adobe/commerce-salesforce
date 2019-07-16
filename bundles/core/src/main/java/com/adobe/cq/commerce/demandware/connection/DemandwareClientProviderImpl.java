@@ -107,15 +107,6 @@ public class DemandwareClientProviderImpl implements DemandwareClientProvider {
     }
     
     
-    public String getInstanceId(final Page page) {
-        final HierarchyNodeInheritanceValueMap pageProperties = new HierarchyNodeInheritanceValueMap(
-                page.getContentResource());
-        if (pageProperties != null) {
-            return pageProperties.getInherited(DemandwareCommerceConstants.PN_DWRE_INSTANCE_ID, previewInstanceId);
-        }
-        return previewInstanceId;
-    }
-    
     protected void bindDemandwareClient(final DemandwareClient client, final Map<String, Object> properties) {
         if (demandwareClients == null) {
             demandwareClients = Maps.newHashMap();

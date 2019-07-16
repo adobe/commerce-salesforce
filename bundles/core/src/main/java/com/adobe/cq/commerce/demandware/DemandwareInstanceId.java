@@ -16,11 +16,15 @@
 
 package com.adobe.cq.commerce.demandware;
 
-import com.day.cq.replication.AgentConfig;
 import com.day.cq.wcm.api.Page;
+import org.apache.sling.api.SlingHttpServletRequest;
 
-public interface DemandwareClientProvider {
-	DemandwareClient getDefaultClient();
-	DemandwareClient getClientForSpecificInstance(AgentConfig config);
-	DemandwareClient getDemandwareClientByInstanceId(final String instanceId);
+/**
+ * Component demandware instance id service to identify the instance id of configured demandware.
+ */
+public interface DemandwareInstanceId {
+    
+    String getEndPoint(DemandwareClientProvider clientProvider, Page page);
+    
+    String getEndpoint(DemandwareClientProvider clientProvider, SlingHttpServletRequest request);
 }

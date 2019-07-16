@@ -18,10 +18,8 @@ package com.adobe.cq.commerce.demandware.preview;
 
 import com.adobe.cq.commerce.demandware.DemandwareClient;
 import com.adobe.cq.commerce.demandware.DemandwareClientProvider;
-import com.day.cq.wcm.api.Page;
-import com.day.cq.wcm.api.PageManager;
+import com.adobe.cq.commerce.demandware.DemandwareInstanceId;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.sling.SlingServlet;
@@ -35,8 +33,6 @@ import org.apache.http.util.EntityUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.request.RequestPathInfo;
-import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,13 +53,16 @@ public class StaticContentProxyServlet extends SlingSafeMethodsServlet {
     @Reference
     private DemandwareClientProvider clientProvider;
     
+    @Reference
+    private DemandwareInstanceId demandWareInstanceId;
+    
     @Override
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) throws ServletException,
             IOException {
         
         RequestPathInfo pathInfo = request.getRequestPathInfo();
         LOG.debug("Proxy static content for {}", pathInfo.toString());
-        final String remoteUri = DemandwareClient.DEFAULT_SCHEMA + getEndpoint(request) + pathInfo.getResourcePath() +
+        final String remoteUri = DemandwareClient.DEFAULT_SCHEMA + demandWareInstanceId.getEndpoint(clientProvider, request) + pathInfo.getResourcePath() +
                 "." + pathInfo.getExtension() + pathInfo.getSuffix();
         
         final CloseableHttpClient httpClient = clientProvider.getDefaultClient().getHttpClient();
@@ -90,24 +89,5 @@ public class StaticContentProxyServlet extends SlingSafeMethodsServlet {
         }
     }
     
-    private String getEndpoint(SlingHttpServletRequest request) {
-        String endpoint = clientProvider.getDemandwareClientByInstanceId(clientProvider.getInstanceId(getPage(request))).getEndpoint();
-        return endpoint != null ? endpoint : clientProvider.getDefaultClient().getEndpoint();
-    }
     
-    private Page getPage(SlingHttpServletRequest request) {
-        String path = getRequestedPath(request);
-        
-        ResourceResolver resourceResolver = request.getResourceResolver();
-        Resource resource = resourceResolver.resolve(path);
-        
-        PageManager pageManager = resource.getResourceResolver().adaptTo(PageManager.class);
-        return pageManager.getPage(path);
-    }
-    
-    private String getRequestedPath(SlingHttpServletRequest request) {
-        String referer = request.getHeader("Referer");
-        String host = request.getHeader("Host");
-        return StringUtils.substringBetween(referer, host, ".html");
-    }
 }

@@ -19,6 +19,7 @@ package com.adobe.cq.commerce.demandware.preview;
 import com.adobe.cq.commerce.demandware.DemandwareClient;
 import com.adobe.cq.commerce.demandware.DemandwareClientProvider;
 import com.adobe.cq.commerce.demandware.DemandwareCommerceConstants;
+import com.adobe.cq.commerce.demandware.DemandwareInstanceId;
 import com.adobe.cq.commerce.demandware.PreviewService;
 import com.adobe.cq.commerce.demandware.RenderService;
 import com.day.cq.commons.inherit.HierarchyNodeInheritanceValueMap;
@@ -106,6 +107,9 @@ public class PreviewServiceImpl implements PreviewService {
     @Reference
     RenderService renderService;
     
+    @Reference
+    private DemandwareInstanceId demandWareInstanceId;
+    
     private String previewPageEndPoint;
     private String previewSearchEndPoint;
     private String previewTemplate;
@@ -179,7 +183,7 @@ public class PreviewServiceImpl implements PreviewService {
             previewEndpoint = StringUtils.replace(endPoint, "{site}", getSite(containingPage));
             previewEndpoint = StringUtils.replace(previewEndpoint, "{locale}", getLanguage(containingPage));
             try {
-                requestBuilder.setUri(DemandwareClient.DEFAULT_SCHEMA + getInstanceEndPoint(clientProvider.getInstanceId(containingPage)) + previewEndpoint);
+                requestBuilder.setUri(DemandwareClient.DEFAULT_SCHEMA + demandWareInstanceId.getEndPoint(clientProvider, containingPage) + previewEndpoint);
             } catch (IllegalArgumentException e) {
                 LOG.error("Unable to set preview URI: {}", e.getMessage());
             }
@@ -222,10 +226,6 @@ public class PreviewServiceImpl implements PreviewService {
         }
         
         return renderedPreview;
-    }
-    
-    private String getInstanceEndPoint(String previewInstanceId) {
-        return previewInstanceId != null ? clientProvider.getDemandwareClientByInstanceId(previewInstanceId).getEndpoint() : clientProvider.getDefaultClient().getEndpoint();
     }
     
     /**
