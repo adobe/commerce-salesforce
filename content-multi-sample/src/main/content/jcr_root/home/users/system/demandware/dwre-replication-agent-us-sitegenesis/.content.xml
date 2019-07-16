@@ -16,7 +16,7 @@
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 <jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:rep="internal"
           jcr:primaryType="rep:SystemUser"
-          jcr:uuid="76723e04-0238-37f2-95b4-30d11724c6e4"
-          rep:authorizableId="dwre-replication-service-us"
-          rep:principalName="dwre-replication-service-us">
+          jcr:uuid="34152842-6609-3c6c-8cff-b43bfbb11e7c"
+          rep:authorizableId="dwre-replication-agent-us-sitegenesis"
+          rep:principalName="dwre-replication-agent-us-sitegenesis">
 </jcr:root>
