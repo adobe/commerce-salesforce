@@ -18,7 +18,6 @@
     <filter root="/content/sitegenesis" mode="merge"/>
     <filter root="/content/dam/dwre"/>
 
-    <filter root="/apps/commerce/demandware/components/init"/>
     <filter root="/apps/commerce/demandware/config" mode="merge"/>
     <filter root="/apps/commerce/demandware/config.author" mode="merge" />
 
