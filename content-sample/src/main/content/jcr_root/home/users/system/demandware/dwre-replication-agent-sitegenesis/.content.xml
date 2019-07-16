@@ -14,11 +14,9 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-<workspaceFilter version="1.0">
-    <filter root="/content/sitegenesis"/>
-    <filter root="/content/us-sitegenesis"/>
-    <filter root="/content/eu-sitegenesis"/>
-    <filter root="/etc/replication/agents.author/demandware"/>
-    <filter root="/etc/replication/agents.author/demandware-us"/>
-    <filter root="/etc/replication/agents.author/demandware-eu"/>
-</workspaceFilter>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:rep="internal"
+          jcr:primaryType="rep:SystemUser"
+          rep:authorizableId="dwre-replication-agent-sitegenesis"
+          rep:principalName="dwre-replication-agent-sitegenesis"
+          jcr:uuid="bcedc450-f848-3e89-b144-5069acdc3dd9">
+</jcr:root>
