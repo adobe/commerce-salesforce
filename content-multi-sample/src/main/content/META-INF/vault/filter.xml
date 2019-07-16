@@ -21,8 +21,9 @@
     <filter root="/apps/commerce/demandware/components/init"/>
     <filter root="/apps/commerce/demandware/config" mode="merge"/>
     <filter root="/apps/commerce/demandware/config.author" mode="merge" />
-    <filter root="/etc/replication/agents.author/demandware-eu"/>
-    <filter root="/etc/replication/agents.author/demandware-us"/>
+
+    <filter root="/etc/replication/agents.author/demandware-eu-sitegenesis"/>
+    <filter root="/etc/replication/agents.author/demandware-us-sitegenesis"/>
     <filter root="/etc/designs/demandware"/>
     <filter root="/etc/demandware"/>
 </workspaceFilter>
