@@ -225,7 +225,7 @@ public class PreviewServiceImpl implements PreviewService {
     }
     
     private String getInstanceEndPoint(String previewInstanceId) {
-        return clientProvider.getDemandwareClientByInstanceId(previewInstanceId).getEndpoint();
+        return previewInstanceId != null ? clientProvider.getDemandwareClientByInstanceId(previewInstanceId).getEndpoint() : clientProvider.getDefaultClient().getEndpoint();
     }
     
     /**

@@ -63,7 +63,7 @@ public class StaticContentProxyServlet extends SlingSafeMethodsServlet {
         
         RequestPathInfo pathInfo = request.getRequestPathInfo();
         LOG.debug("Proxy static content for {}", pathInfo.toString());
-        final String remoteUri = DemandwareClient.DEFAULT_SCHEMA + clientProvider.getDemandwareClientByInstanceId(clientProvider.getInstanceId(getPage(request))) + pathInfo.getResourcePath() +
+        final String remoteUri = DemandwareClient.DEFAULT_SCHEMA + getEndpoint(request) + pathInfo.getResourcePath() +
                 "." + pathInfo.getExtension() + pathInfo.getSuffix();
         
         final CloseableHttpClient httpClient = clientProvider.getDefaultClient().getHttpClient();
@@ -88,6 +88,11 @@ public class StaticContentProxyServlet extends SlingSafeMethodsServlet {
             HttpClientUtils.closeQuietly(httpClient);
             IOUtils.closeQuietly(output);
         }
+    }
+    
+    private String getEndpoint(SlingHttpServletRequest request) {
+        String endpoint = clientProvider.getDemandwareClientByInstanceId(clientProvider.getInstanceId(getPage(request))).getEndpoint();
+        return endpoint != null ? endpoint : clientProvider.getDefaultClient().getEndpoint();
     }
     
     private Page getPage(SlingHttpServletRequest request) {
