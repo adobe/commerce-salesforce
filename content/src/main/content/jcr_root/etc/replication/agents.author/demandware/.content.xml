@@ -27,6 +27,6 @@
             logLevel="info"
             serializationType="demandware"
             ssl="relaxed"
-            transportUri="demandware://default"
+            transportUri="demandware://defaultInstance"
             userId="{FILL ME}"/>
 </jcr:root>

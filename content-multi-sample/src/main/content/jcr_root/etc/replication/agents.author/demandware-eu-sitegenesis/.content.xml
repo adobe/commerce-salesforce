@@ -20,7 +20,7 @@
     <jcr:content
             cq:template="/libs/cq/replication/templates/agent"
             jcr:primaryType="nt:unstructured"
-            jcr:title="Demandware Content Export Agent EU"
+            jcr:title="EU Sitegenesis Demandware Content Export Agent"
             sling:resourceType="commerce/demandware/components/replication/demandware"
             enabled="true"
             enableOauth="true"
