@@ -14,21 +14,15 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-<workspaceFilter version="1.0">
-    <filter root="/libs/commerce/demandware" />
-    <filter root="/apps/commerce/demandware/components"/>
-    <filter root="/apps/commerce/demandware/templates"/>
-    <filter root="/apps/commerce/demandware/config.author" mode="merge" />
-    <filter root="/apps/commerce/gui/content/products/importproductswizard/importers"/>
-
-    <filter root="/content" mode="merge">
-        <include pattern=".*/rep:policy(/.*)?"/>
-    </filter>
-
-    <filter root="/etc/demandware"/>
-    <filter root="/etc/designs/demandware"/>
-    <filter root="/etc/replication/agents.author/demandware"/>
-    <filter root="/etc/scaffolding/demandware"/>
-
-    <filter root="/home/users/system/demandware" mode="merge"/>
-</workspaceFilter>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    cq:designPath="/etc/designs/demandware"
+    jcr:primaryType="nt:unstructured"
+    jcr:title="EU Demandware SiteGenesis"
+    dwreSite="multisite"
+    dwreLibrary="multisite"
+    sling:resourceType="commerce/demandware/components/page/page_root"
+    cq:template="/apps/commerce/demandware/templates/page-root">
+    <image jcr:primaryType="nt:unstructured">
+        <file/>
+    </image>
+</jcr:root>
