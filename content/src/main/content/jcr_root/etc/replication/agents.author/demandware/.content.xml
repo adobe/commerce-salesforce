@@ -22,11 +22,11 @@
             jcr:primaryType="nt:unstructured"
             jcr:title="Demandware Content Export Agent"
             sling:resourceType="commerce/demandware/components/replication/demandware"
-            enabled="true"
+            enabled="false"
             enableOauth="true"
             logLevel="info"
             serializationType="demandware"
             ssl="relaxed"
-            transportUri="demandware:///us"
-            userId="dwre-replication-service"/>
+            transportUri="demandware://defaultInstance"
+            userId="fill-me"/>
 </jcr:root>
