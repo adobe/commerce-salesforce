@@ -28,5 +28,5 @@
             serializationType="demandware"
             ssl="relaxed"
             transportUri="demandware://defaultInstance"
-            userId="{FILL ME}"/>
+            userId="fill-me"/>
 </jcr:root>

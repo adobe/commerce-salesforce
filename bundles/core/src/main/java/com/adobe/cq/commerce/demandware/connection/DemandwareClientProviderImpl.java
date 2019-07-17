@@ -51,7 +51,7 @@ public class DemandwareClientProviderImpl implements DemandwareClientProvider {
 	 * or, if not present, first found DemandwareClient service.
 	 *
 	 * @return
-	 */
+	 *///TODO remove usages
 	public DemandwareClient getDefaultClient() {
 		DemandwareClient client = getDemandwareClientByInstanceId(INSTANCE_ID_DEFAULT);
 		if (client != null) {
