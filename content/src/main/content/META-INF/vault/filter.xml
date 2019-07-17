@@ -20,6 +20,10 @@
     <filter root="/apps/commerce/gui/content/products/importproductswizard/importers"/>
     <filter root="/apps/commerce/demandware/config.author" mode="merge" />
 
+    <filter root="/content" mode="merge">
+        <include pattern=".*/rep:policy(/.*)?"/>
+    </filter>
+
     <filter root="/etc/demandware"/>
     <filter root="/etc/designs/demandware"/>
     <filter root="/etc/replication/agents.author/demandware"/>
