@@ -30,6 +30,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.ConfigurationPolicy;
+import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.PropertyOption;
 import org.apache.felix.scr.annotations.Service;
@@ -52,6 +53,7 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.apache.http.ssl.SSLContexts;
 import org.apache.sling.commons.osgi.PropertiesUtil;
+import org.osgi.framework.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,8 +64,11 @@ import com.adobe.cq.commerce.demandware.DemandwareClient;
  * clients to access the instance via OCAPI or WebDAV.
  */
 @Service
-@Component(metatype = true, configurationFactory = true, immediate = true,
-        policy = ConfigurationPolicy.REQUIRE, label = "Demandware Client")
+@Component(metatype = true, configurationFactory = true, immediate = true, policy = ConfigurationPolicy.REQUIRE,
+        label = "Demandware Client", name = "com.adobe.cq.commerce.demandware.connection.DemandwareClientImpl")
+@Properties({
+        @Property(name = "webconsole.configurationFactory.nameHint", value = "{service.factoryPid} - {instance.id}")
+})
 public class DemandwareClientImpl implements DemandwareClient {
     private static final Logger LOG = LoggerFactory.getLogger(DemandwareClientImpl.class);
 
