@@ -99,7 +99,7 @@
     <!-- ====================================================================== -->
     <profiles>
         <profile>
-            <id>autoInstallPackage</id>
+            <id>cleanUpSampleContent</id>
             <build>
                 <plugins>
                     <plugin>

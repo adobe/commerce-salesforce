@@ -39,6 +39,8 @@ The project has the following requirements:
 
 For ease of build and installation the following profiles are provided:
 * autoInstallPackage - installs the package and embedded bundles to an existing AEM author instance
+* installSampleContent - installs the 2 packages containing sample content
+* cleanUpSampleContent - deletes all sample content from AEM instance
 
 ## Contributing
  

@@ -52,6 +52,9 @@
         <module>bundles/libs</module>
         <module>bundles/init</module>
         <module>content</module>
+        <module>content-sample</module>
+        <module>content-multi-sample</module>
+        <module>clean-up-sample-content</module>
     </modules>
 
     <!-- ====================================================================== -->
