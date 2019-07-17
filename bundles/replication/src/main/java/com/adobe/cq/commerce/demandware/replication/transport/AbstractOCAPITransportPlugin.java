@@ -18,7 +18,7 @@ package com.adobe.cq.commerce.demandware.replication.transport;
 
 import com.adobe.cq.commerce.demandware.DemandwareClient;
 import com.adobe.cq.commerce.demandware.DemandwareCommerceConstants;
-import com.adobe.cq.commerce.demandware.DemandwareInstanceId;
+import com.adobe.cq.commerce.demandware.InstanceIdProvider;
 import com.adobe.granite.auth.oauth.AccessTokenProvider;
 import com.day.cq.replication.AgentConfig;
 import com.day.cq.replication.ReplicationAction;
@@ -93,7 +93,7 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
     protected ResourceResolverFactory rrf;
     
     @Reference
-    private DemandwareInstanceId demandwareInstanceId;
+    private InstanceIdProvider InstanceId;
     
     
     private Map<String, Comparable<Object>> accessTokenProvidersProps =
@@ -213,7 +213,8 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
             // construct the OCAPI request
             final StringBuilder transportUriBuilder = new StringBuilder();
             //TODO
-            transportUriBuilder.append(DemandwareClient.DEFAULT_SCHEMA).append(demandwareInstanceId.getEndpoint(clientProvider, action.getPath()));
+            //transportUriBuilder.append(DemandwareClient.DEFAULT_SCHEMA).append(demandwareInstanceId.getEndpoint(clientProvider, action.getPath()));
+            transportUriBuilder.append(DemandwareClient.DEFAULT_SCHEMA).append(clientProvider.getDefaultClient().getEndpoint());
             transportUriBuilder.append(getOCApiPath()).append(getOCApiVersion());
             transportUriBuilder.append(
                     constructEndpointURL(delivery.getString(DemandwareCommerceConstants.ATTR_API_ENDPOINT), delivery));

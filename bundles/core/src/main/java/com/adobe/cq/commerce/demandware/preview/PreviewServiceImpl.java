@@ -19,17 +19,17 @@ package com.adobe.cq.commerce.demandware.preview;
 import com.adobe.cq.commerce.demandware.DemandwareClient;
 import com.adobe.cq.commerce.demandware.DemandwareClientProvider;
 import com.adobe.cq.commerce.demandware.DemandwareCommerceConstants;
-import com.adobe.cq.commerce.demandware.DemandwareInstanceId;
+import com.adobe.cq.commerce.demandware.InstanceIdProvider;
 import com.adobe.cq.commerce.demandware.PreviewService;
+import com.adobe.cq.commerce.demandware.PreviewServiceConfig;
+import com.adobe.cq.commerce.demandware.PreviewServiceConfigProvider;
 import com.adobe.cq.commerce.demandware.RenderService;
 import com.day.cq.commons.inherit.HierarchyNodeInheritanceValueMap;
 import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.api.PageManager;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.ConfigurationPolicy;
-import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
 import org.apache.http.HttpHeaders;
@@ -59,47 +59,17 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Component previewComponent service to render component previewComponent for Demandware placeholder components. The rendered previewComponent
  * will be cached by a simple cache, avoid unnecessary backend request.
  */
-@Component(metatype = true, policy = ConfigurationPolicy.REQUIRE, label = "Demandware Component Preview Service")
+@Component(metatype = false, policy = ConfigurationPolicy.REQUIRE, label = "Demandware Component Preview Service")
 @Service()
 public class PreviewServiceImpl implements PreviewService {
     
     private static final Logger LOG = LoggerFactory.getLogger(PreviewServiceImpl.class);
     private static final String ERROR_MSG = "<p>Live Demandware preview failed to render. See log for details.</p>";
-    
-    @Property(label = "Preview endpoint")
-    private static final String PREVIEW_PAGE_ENDPOINT = "endpointPage";
-    
-    @Property(label = "Preview endpoint for category pages")
-    private static final String PREVIEW_SEARCH_ENDPOINT = "endpointSearch";
-    
-    @Property(label = "Preview template path")
-    private static final String PREVIEW_TEMPLATE = "template";
-    
-    @Property(label = "Preview default site")
-    private static final String PREVIEW_DEFAULT_SITE = "site";
-    
-    @Property(label = "Enable preview cache", boolValue = true)
-    private static final String PREVIEW_CACHE_ENABLED = "cache.enabled";
-    
-    private static final int DEFAULT_PREVIEW_CACHE_TIME = 60;
-    @Property(label = "Caching time in seconds", intValue = DEFAULT_PREVIEW_CACHE_TIME)
-    private static final String PREVIEW_CACHE_TIME = "cache.time";
-    
-    @Property(label = "Enable storefront protection", boolValue = false)
-    private static final String STORFRONT_PROTECTION_ENABLED = "storefront.protected";
-    
-    @Property(label = "Protected storefront user")
-    private static final String STORFRONT_PROTECTION_USER = "storefront.user";
-    
-    @Property(label = "Protected storefront password")
-    private static final String STORFRONT_PROTECTION_PASSWORD = "storefront.password";
-    
     
     @Reference
     DemandwareClientProvider clientProvider;
@@ -108,22 +78,19 @@ public class PreviewServiceImpl implements PreviewService {
     RenderService renderService;
     
     @Reference
-    private DemandwareInstanceId demandwareInstanceId;
+    private InstanceIdProvider instanceId;
     
-    private String previewPageEndPoint;
-    private String previewSearchEndPoint;
-    private String previewTemplate;
-    private String previewDefaultSite;
-    
-    private PreviewCache cache;
+    @Reference
+    private PreviewServiceConfigProvider previewServiceConfigProvider;
     
     private CredentialsProvider credentialsProvider;
     
     
     @Override
     public String previewComponent(Resource resource, boolean useCache) {
+        PreviewServiceConfig previewServiceConfig = getPreviewServiceConfig(resource);
         if (resource != null) {
-            return getPreviewContent(previewPageEndPoint, resource, useCache, null, DemandwareCommerceConstants.DWRE_RENDERING_SELECTOR);
+            return getPreviewContent(previewServiceConfig.getPreviewPageEndPoint(), resource, useCache, null, previewServiceConfig, DemandwareCommerceConstants.DWRE_RENDERING_SELECTOR);
         } else {
             return null;
         }
@@ -131,8 +98,9 @@ public class PreviewServiceImpl implements PreviewService {
     
     @Override
     public String previewComponent(Resource resource, boolean useCache, String... selectors) {
+        PreviewServiceConfig previewServiceConfig = getPreviewServiceConfig(resource);
         if (resource != null) {
-            return getPreviewContent(previewPageEndPoint, resource, useCache, null, selectors);
+            return getPreviewContent(previewServiceConfig.getPreviewPageEndPoint(), resource, useCache, null, previewServiceConfig, selectors);
         } else {
             return null;
         }
@@ -140,20 +108,22 @@ public class PreviewServiceImpl implements PreviewService {
     
     @Override
     public String previewCategoryComponent(Resource resource, boolean useCache) {
+        PreviewServiceConfig previewServiceConfig = getPreviewServiceConfig(resource);
         if (resource != null) {
             final Page page = resource.getResourceResolver().adaptTo(PageManager.class).getContainingPage(resource);
             // add the category id parameter, using the page property if existing with fall back to page name
             final List<NameValuePair> params = new ArrayList<NameValuePair>();
             params.add(new BasicNameValuePair("cgid", page.getProperties().get("dwreCGID", page.getName())));
-            return getPreviewContent(previewSearchEndPoint, resource, useCache, params, DemandwareCommerceConstants.DWRE_RENDERING_SELECTOR);
+            return getPreviewContent(previewServiceConfig.getPreviewPageEndPoint(), resource, useCache, params, previewServiceConfig, DemandwareCommerceConstants.DWRE_RENDERING_SELECTOR);
         } else {
             return null;
         }
     }
     
     private String getPreviewContent(final String endPoint, final Resource resource, final boolean useCache,
-                                     final List<NameValuePair> params, final String... selectores) {
+                                     final List<NameValuePair> params, PreviewServiceConfig previewServiceConfig, final String... selectores) {
         String renderedPreview = "";
+        PreviewCache cache = previewServiceConfig.getCache();
         // check for cached preview content
         if (useCache && cache != null) {
             renderedPreview = cache.get(resource);
@@ -165,9 +135,15 @@ public class PreviewServiceImpl implements PreviewService {
         
         // render AEM component for Demandware
         final String renderedComponentContent = renderService.render(resource, null, selectores);
+        final Page containingPage = getPage(resource);
+        DemandwareClient demandwareClient = getDemandwareClient(containingPage);
         
-        // call Demandware to render preview for component
-        final HttpClientBuilder httpClientBuilder = clientProvider.getDefaultClient().getHttpClientBuilder();
+        final HttpClientBuilder httpClientBuilder = demandwareClient.getHttpClientBuilder();
+        
+        if (PropertiesUtil.toBoolean(previewServiceConfig.getStorfrontProtectionEnabled(), true)) {
+            credentialsProvider = createCredentialsProvider(previewServiceConfig, resource);
+        }
+        
         if (credentialsProvider != null) {
             httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
         }
@@ -176,14 +152,11 @@ public class PreviewServiceImpl implements PreviewService {
         CloseableHttpResponse responseObj = null;
         try {
             final RequestBuilder requestBuilder = RequestBuilder.post();
-            // prepare endpoint path and construct
-            final PageManager pageManager = resource.getResourceResolver().adaptTo(PageManager.class);
-            final Page containingPage = pageManager.getContainingPage(resource);
             String previewEndpoint;
-            previewEndpoint = StringUtils.replace(endPoint, "{site}", getSite(containingPage));
+            previewEndpoint = StringUtils.replace(endPoint, "{site}", getSite(previewServiceConfig, containingPage));
             previewEndpoint = StringUtils.replace(previewEndpoint, "{locale}", getLanguage(containingPage));
             try {
-                requestBuilder.setUri(DemandwareClient.DEFAULT_SCHEMA + demandwareInstanceId.getEndPoint(clientProvider, containingPage) + previewEndpoint);
+                requestBuilder.setUri(DemandwareClient.DEFAULT_SCHEMA + demandwareClient.getEndpoint() + previewEndpoint);
             } catch (IllegalArgumentException e) {
                 LOG.error("Unable to set preview URI: {}", e.getMessage());
             }
@@ -194,7 +167,7 @@ public class PreviewServiceImpl implements PreviewService {
                     requestBuilder.addParameter(param);
                 }
             }
-            requestBuilder.addParameter("template", previewTemplate);
+            requestBuilder.addParameter("template", previewServiceConfig.getPreviewTemplate());
             requestBuilder.addHeader(HttpHeaders.CONTENT_TYPE, ContentType.TEXT_HTML.getMimeType());
             requestBuilder.setEntity(new StringEntity(renderedComponentContent, ContentType.TEXT_HTML));
             
@@ -228,20 +201,36 @@ public class PreviewServiceImpl implements PreviewService {
         return renderedPreview;
     }
     
+    private DemandwareClient getDemandwareClient(Page containingPage) {
+        // call Demandware to render preview for component
+        return clientProvider.getDemandwareClientByInstanceId(instanceId.getInstanceId(containingPage));
+    }
+    
+    private PreviewServiceConfig getPreviewServiceConfig(Resource resource) {
+        return previewServiceConfigProvider.getPreviewServiceConfigByInstanceId(instanceId.getInstanceId(getPage(resource)));
+    }
+    
+    private Page getPage(Resource resource) {
+        // prepare endpoint path and construct
+        final PageManager pageManager = resource.getResourceResolver().adaptTo(PageManager.class);
+        return pageManager.getContainingPage(resource);
+    }
+    
     /**
      * Get the Demandware site for the current resource, which is configured at page level up to root page. If no
      * site is define we fall beack to the default site.
      *
-     * @param page the current page
+     * @param page                 the current page
+     * @param previewServiceConfig the preview service config
      * @return the Demandware site to be used
      */
-    private String getSite(final Page page) {
+    private String getSite(PreviewServiceConfig previewServiceConfig, final Page page) {
         final HierarchyNodeInheritanceValueMap pageProperties = new HierarchyNodeInheritanceValueMap(
                 page.getContentResource());
         if (pageProperties != null) {
-            return pageProperties.getInherited(DemandwareCommerceConstants.PN_DWRE_SITE, previewDefaultSite);
+            return pageProperties.getInherited(DemandwareCommerceConstants.PN_DWRE_SITE, previewServiceConfig.getPreviewDefaultSite());
         }
-        return previewDefaultSite;
+        return previewServiceConfig.getPreviewDefaultSite();
     }
     
     
@@ -255,38 +244,18 @@ public class PreviewServiceImpl implements PreviewService {
     /**
      * Setup storefront user credentials.
      */
-    protected CredentialsProvider createCredentialsProvider(Map<String, Object> configuration) {
+    protected CredentialsProvider createCredentialsProvider(PreviewServiceConfig previewServiceConfig, Resource resource) {
         // set default user/pass
-        if (PropertiesUtil.toString(configuration.get(STORFRONT_PROTECTION_USER), null) != null && PropertiesUtil
-                .toString(configuration.get(STORFRONT_PROTECTION_PASSWORD), null) != null) {
+        if (PropertiesUtil.toString(previewServiceConfig.getStorfrontProtectionUser(), null) != null && PropertiesUtil
+                .toString(previewServiceConfig.getStorfrontProtectionPassword(), null) != null) {
             final CredentialsProvider credsProvider = new BasicCredentialsProvider();
-            credsProvider.setCredentials(new AuthScope(clientProvider.getDefaultClient().getEndpoint(), AuthScope.ANY_PORT),
-                    new UsernamePasswordCredentials(PropertiesUtil.toString(configuration.get
-                            (STORFRONT_PROTECTION_USER), null),
-                            PropertiesUtil.toString(configuration.get(STORFRONT_PROTECTION_PASSWORD), null)));
+            
+            credsProvider.setCredentials(new AuthScope(getDemandwareClient(getPage(resource)).getEndpoint(), AuthScope.ANY_PORT),
+                    new UsernamePasswordCredentials(PropertiesUtil.toString(previewServiceConfig.getStorfrontProtectionUser(), null),
+                            PropertiesUtil.toString(previewServiceConfig.getStorfrontProtectionPassword(), null)));
             return credsProvider;
         }
         return null;
     }
     
-    @Activate
-    protected void activate(Map<String, Object> configuration) {
-        previewPageEndPoint = StringUtils.prependIfMissing(PropertiesUtil.toString(configuration.get
-                (PREVIEW_PAGE_ENDPOINT), null), "/", "/");
-        previewSearchEndPoint = StringUtils.prependIfMissing(
-                PropertiesUtil.toString(configuration.get(PREVIEW_SEARCH_ENDPOINT), null), "/", "/");
-        previewTemplate = PropertiesUtil.toString(configuration.get(PREVIEW_TEMPLATE), null);
-        previewDefaultSite = PropertiesUtil.toString(configuration.get(PREVIEW_DEFAULT_SITE), null);
-        
-        if (PropertiesUtil.toBoolean(configuration.get(PREVIEW_CACHE_ENABLED), true)) {
-            cache = new PreviewCache(PropertiesUtil.toInteger(configuration.get(PREVIEW_CACHE_TIME),
-                    DEFAULT_PREVIEW_CACHE_TIME));
-        }
-        
-        if (PropertiesUtil.toBoolean(configuration.get(STORFRONT_PROTECTION_ENABLED), true)) {
-            credentialsProvider = createCredentialsProvider(configuration);
-        }
-        
-        LOG.debug("activating preview service");
-    }
 }

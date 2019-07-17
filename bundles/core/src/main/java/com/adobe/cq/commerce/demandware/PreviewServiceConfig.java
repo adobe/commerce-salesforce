@@ -16,10 +16,27 @@
 
 package com.adobe.cq.commerce.demandware;
 
-import com.day.cq.replication.AgentConfig;
+import com.adobe.cq.commerce.demandware.preview.PreviewCache;
 
-public interface DemandwareClientProvider {
-	DemandwareClient getDefaultClient();
-	DemandwareClient getClientForSpecificInstance(AgentConfig config);
-	DemandwareClient getDemandwareClientByInstanceId(final String instanceId);
+/**
+ * WHAT IS IT ???
+ * <p>
+ * WHAT PURPOSE THAT IT HAS ???
+ * </p>
+ *
+ * @author allwardt
+ * @since 2019-07-17
+ */
+public interface PreviewServiceConfig {
+    
+    String getPreviewPageEndPoint();
+    PreviewCache getCache();
+    String getStorfrontProtectionEnabled();
+    String getPreviewTemplate();
+    String getPreviewDefaultSite();
+    String getStorfrontProtectionUser();
+    String getStorfrontProtectionPassword();
+    String getInstanceId();
+
+
 }

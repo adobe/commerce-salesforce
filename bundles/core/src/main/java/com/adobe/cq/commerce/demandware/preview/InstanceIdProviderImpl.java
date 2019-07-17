@@ -16,9 +16,8 @@
 
 package com.adobe.cq.commerce.demandware.preview;
 
-import com.adobe.cq.commerce.demandware.DemandwareClientProvider;
 import com.adobe.cq.commerce.demandware.DemandwareCommerceConstants;
-import com.adobe.cq.commerce.demandware.DemandwareInstanceId;
+import com.adobe.cq.commerce.demandware.InstanceIdProvider;
 import com.day.cq.commons.inherit.HierarchyNodeInheritanceValueMap;
 import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.api.PageManager;
@@ -26,31 +25,14 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Service;
 import org.apache.sling.api.SlingHttpServletRequest;
-import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 
 
 @Component(label = "Demandware Component Instance Id Service")
 @Service()
-public class DemandwareInstanceIdImpl implements DemandwareInstanceId {
+public class InstanceIdProviderImpl implements InstanceIdProvider {
     
     @Override
-    public String getEndPoint(DemandwareClientProvider clientProvider, Page page) {
-        String previewInstanceId = getInstanceId(page);
-        return previewInstanceId != null ? clientProvider.getDemandwareClientByInstanceId(previewInstanceId).getEndpoint() : clientProvider.getDefaultClient().getEndpoint();
-    }
-    
-    @Override
-    public String getEndpoint(DemandwareClientProvider clientProvider, SlingHttpServletRequest request) {
-        String endpoint = clientProvider.getDemandwareClientByInstanceId(getInstanceId(getPage(request))).getEndpoint();
-        return endpoint != null ? endpoint : clientProvider.getDefaultClient().getEndpoint();
-    }
-    
-    @Override
-    public String getEndpoint(DemandwareClientProvider clientProvider, String instanceId) {
-        return instanceId != null ? clientProvider.getDemandwareClientByInstanceId(instanceId).getEndpoint() : clientProvider.getDefaultClient().getEndpoint();
-    }
-    
     public String getInstanceId(final Page page) {
         String previewInstanceId = "";
         final HierarchyNodeInheritanceValueMap pageProperties = new HierarchyNodeInheritanceValueMap(
@@ -58,11 +40,22 @@ public class DemandwareInstanceIdImpl implements DemandwareInstanceId {
         if (pageProperties != null) {
             return pageProperties.getInherited(DemandwareCommerceConstants.PN_DWRE_INSTANCE_ID, previewInstanceId);
         }
-        return previewInstanceId;
+        return previewInstanceId != null ? previewInstanceId : "";
+    }
+    
+    @Override
+    public String getInstanceId(SlingHttpServletRequest request) {
+        String previewInstanceId = getInstanceId(getPage(request));
+        return previewInstanceId != null ? previewInstanceId : "";
     }
     
     private Page getPage(SlingHttpServletRequest request) {
-        String path = getRequestedPath(request);
+        String path;
+        if (request.getParameterMap().containsKey("pathInfo")) {
+            path = request.getParameter("pathInfo");
+        }else{
+            path = getRequestedPath(request);
+        }
         
         ResourceResolver resourceResolver = request.getResourceResolver();
         

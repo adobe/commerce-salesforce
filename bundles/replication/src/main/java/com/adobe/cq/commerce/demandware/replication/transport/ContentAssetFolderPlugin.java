@@ -18,7 +18,7 @@ package com.adobe.cq.commerce.demandware.replication.transport;
 
 import com.adobe.cq.commerce.demandware.DemandwareClient;
 import com.adobe.cq.commerce.demandware.DemandwareCommerceConstants;
-import com.adobe.cq.commerce.demandware.DemandwareInstanceId;
+import com.adobe.cq.commerce.demandware.InstanceIdProvider;
 import com.adobe.cq.commerce.demandware.replication.TransportHandlerPlugin;
 import com.day.cq.replication.AgentConfig;
 import com.day.cq.replication.ReplicationAction;
@@ -53,7 +53,7 @@ import org.osgi.framework.Constants;
 public class ContentAssetFolderPlugin extends AbstractOCAPITransportPlugin {
     
     @Reference
-    private DemandwareInstanceId demandwareInstanceId;
+    private InstanceIdProvider instanceIdProvider;
     
     @Override
     String getContentType() {
@@ -81,7 +81,9 @@ public class ContentAssetFolderPlugin extends AbstractOCAPITransportPlugin {
                         
                         // construct URL for folder assignment
                         //TODO
-                        final String transportUriBuilder = DemandwareClient.DEFAULT_SCHEMA + demandwareInstanceId.getEndpoint(clientProvider, action.getPath()) + getOCApiPath() + getOCApiVersion() + constructEndpointURL(
+                        /*final String transportUriBuilder = DemandwareClient.DEFAULT_SCHEMA + instanceIdProvider.getEndpoint(clientProvider, action.getPath()) + getOCApiPath() + getOCApiVersion() + constructEndpointURL(
+                                delivery.getString(DemandwareCommerceConstants.ATTR_API_ENDPOINT), folder, delivery);*/
+                        final String transportUriBuilder = DemandwareClient.DEFAULT_SCHEMA + clientProvider.getDefaultClient().getEndpoint() + getOCApiPath() + getOCApiVersion() + constructEndpointURL(
                                 delivery.getString(DemandwareCommerceConstants.ATTR_API_ENDPOINT), folder, delivery);
                         final RequestBuilder requestBuilder = RequestBuilder.put();
                         requestBuilder.setUri(transportUriBuilder);

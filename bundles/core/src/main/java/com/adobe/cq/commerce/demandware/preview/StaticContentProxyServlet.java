@@ -18,7 +18,7 @@ package com.adobe.cq.commerce.demandware.preview;
 
 import com.adobe.cq.commerce.demandware.DemandwareClient;
 import com.adobe.cq.commerce.demandware.DemandwareClientProvider;
-import com.adobe.cq.commerce.demandware.DemandwareInstanceId;
+import com.adobe.cq.commerce.demandware.InstanceIdProvider;
 import org.apache.commons.io.IOUtils;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
@@ -54,18 +54,19 @@ public class StaticContentProxyServlet extends SlingSafeMethodsServlet {
     private DemandwareClientProvider clientProvider;
     
     @Reference
-    private DemandwareInstanceId demandwareInstanceId;
+    private InstanceIdProvider instanceId;
     
     @Override
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) throws ServletException,
             IOException {
         
         RequestPathInfo pathInfo = request.getRequestPathInfo();
+        DemandwareClient demandwareClient = clientProvider.getDemandwareClientByInstanceId(instanceId.getInstanceId(request));
         LOG.debug("Proxy static content for {}", pathInfo.toString());
-        final String remoteUri = DemandwareClient.DEFAULT_SCHEMA + demandwareInstanceId.getEndpoint(clientProvider, request) + pathInfo.getResourcePath() +
+        final String remoteUri = DemandwareClient.DEFAULT_SCHEMA + demandwareClient.getEndpoint() + pathInfo.getResourcePath() +
                 "." + pathInfo.getExtension() + pathInfo.getSuffix();
         
-        final CloseableHttpClient httpClient = clientProvider.getDefaultClient().getHttpClient();
+        final CloseableHttpClient httpClient = demandwareClient.getHttpClient();
         CloseableHttpResponse responseObj = null;
         BufferedOutputStream output = null;
         try {

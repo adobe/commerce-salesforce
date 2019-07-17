@@ -22,11 +22,10 @@ import org.apache.sling.api.SlingHttpServletRequest;
 /**
  * Component demandware instance id service to identify the instance id of configured demandware.
  */
-public interface DemandwareInstanceId {
+public interface InstanceIdProvider {
     
-    String getEndPoint(DemandwareClientProvider clientProvider, Page page);
+    String getInstanceId(Page page);
     
-    String getEndpoint(DemandwareClientProvider clientProvider, SlingHttpServletRequest request);
+    String getInstanceId(SlingHttpServletRequest request);
     
-    String getEndpoint(DemandwareClientProvider clientProvider, String instanceId);
 }
