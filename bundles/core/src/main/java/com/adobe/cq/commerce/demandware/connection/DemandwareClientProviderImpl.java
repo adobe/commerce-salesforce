@@ -53,9 +53,9 @@ public class DemandwareClientProviderImpl implements DemandwareClientProvider {
 	 * @return
 	 *///TODO remove usages
 	public DemandwareClient getDefaultClient() {
-		DemandwareClient client = getDemandwareClientByInstanceId(INSTANCE_ID_DEFAULT);
-		if (client != null) {
-			return client;
+		Optional<DemandwareClient> client = getClientForSpecificInstance(INSTANCE_ID_DEFAULT);
+		if (client.isPresent()) {
+			return client.get();
 		}
 
 		LOG.debug("No default DemandwareClient configured: return first found service.");
@@ -71,35 +71,30 @@ public class DemandwareClientProviderImpl implements DemandwareClientProvider {
 		return null;
 	}
 
+	@Override
+	public Optional<DemandwareClient> getClientForSpecificInstance(final String instanceId) {
+		DemandwareClient demandwareClient = demandwareClients.get(instanceId.replace("/", ""));
+		if (demandwareClient == null) {
+			LOG.error("DemandwareClient not found for instanceId [{}]", instanceId);
+			return Optional.empty();
+		}
+		return Optional.of(demandwareClient);
+	}
+
 	/**
 	 * Returns the configured Demandware client defined for specific SFCC instance
 	 * @param config Replication config containing id of the SFCC instance
 	 *
-	 * @return DemandwareClient or null if client not found
+	 * @return DemandwareClient or Optional.empty() if client not found
 	 */
-	public DemandwareClient getClientForSpecificInstance(AgentConfig config) {
-		return getInstanceId(config)
-				.map(this::getDemandwareClientByInstanceId)
-				.orElse(null);
+	public Optional<DemandwareClient> getClientForSpecificInstance(final AgentConfig config) {
+		return getClientForSpecificInstance(getInstanceId(config));
 	}
 
-	/**
-	 * Returns the configured Demandware client defined for specific SFCC instance
-	 * @param instanceId id of the SFCC instance. should match Replication Agent condig (URI field)
-	 *
-	 * @return DemandwareClient or null if client not found
-	 */
-	private DemandwareClient getDemandwareClientByInstanceId(final String instanceId) {
-		DemandwareClient demandwareClient = demandwareClients.get(instanceId.replace("/", ""));
-		if (demandwareClient == null) {
-			LOG.error("DemandwareClient not found for instanceId [{}]", instanceId);
-		}
-		return demandwareClient;
-	}
-
-	private Optional<String> getInstanceId(final AgentConfig config) {
+	private String getInstanceId(final AgentConfig config) {
 		return Optional.ofNullable(config.getTransportURI())
-				.map(uri -> uri.replace(DWRE_SCHEME, StringUtils.EMPTY));
+				.map(uri -> uri.replace(DWRE_SCHEME, StringUtils.EMPTY))
+				.orElse(StringUtils.EMPTY);
 	}
 
 	protected void bindDemandwareClient(final DemandwareClient client, final Map<String, Object> properties) {

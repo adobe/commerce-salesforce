@@ -44,9 +44,9 @@ public class ContentSlotConfigPlugin extends AbstractOCAPITransportPlugin {
     }
 
     @Override
-    protected RequestBuilder getRequestBuilder(final String method, final JSONObject delivery) throws
+    protected RequestBuilder getRequestBuilder(final String method, final JSONObject delivery, String dwInstanceId) throws
             ReplicationException {
-        final RequestBuilder requestBuilder = super.getRequestBuilder(method, delivery);
+        final RequestBuilder requestBuilder = super.getRequestBuilder(method, delivery, dwInstanceId);
         try {
             if (delivery.has(DemandwareCommerceConstants.ATTR_CONTEXT)) {
                 requestBuilder.addParameter(DemandwareCommerceConstants.ATTR_CONTEXT, delivery.getString

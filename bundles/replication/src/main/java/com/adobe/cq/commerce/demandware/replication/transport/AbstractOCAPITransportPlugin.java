@@ -18,6 +18,7 @@ package com.adobe.cq.commerce.demandware.replication.transport;
 
 import com.adobe.cq.commerce.demandware.DemandwareClient;
 import com.adobe.cq.commerce.demandware.DemandwareCommerceConstants;
+import com.adobe.cq.commerce.demandware.replication.utils.DemandwareInstanceIdProvider;
 import com.adobe.granite.auth.oauth.AccessTokenProvider;
 import com.day.cq.replication.AgentConfig;
 import com.day.cq.replication.ReplicationAction;
@@ -91,6 +92,9 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
     @Reference
     protected ResourceResolverFactory rrf;
 
+    @Reference
+    private DemandwareInstanceIdProvider instanceIdProvider;
+
     private Map<String, Comparable<Object>> accessTokenProvidersProps =
             new ConcurrentSkipListMap<>(Collections.reverseOrder());
     private Map<Comparable<Object>, AccessTokenProvider> accessTokenProviders =
@@ -120,10 +124,11 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
             throws ReplicationException {
         final String id = delivery.optString(DemandwareCommerceConstants.ATTR_ID,
                 StringUtils.substringAfterLast(action.getPath(), "/"));
+        final String dwInstanceId = instanceIdProvider.getInstanceId(config);
 
         // step 1: check if the content asset already exists
         RequestBuilder requestBuilder;
-        requestBuilder = getRequestBuilder("GET", delivery);
+        requestBuilder = getRequestBuilder("GET", delivery, dwInstanceId);
         log.info("Deliver %s to %s (%s)", id, requestBuilder.build().getRequestLine().toString(), action.getType().getName());
 
         log.info("Check if %s %s already exists", getContentType(), id);
@@ -154,10 +159,10 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
             // step 3: deliver the content asset using PUT or PATCH request
             if (requestInput.getContentLength() > 0) {
                 if (StringUtils.isEmpty(eTagHeaderValue)) {
-                    requestBuilder = getRequestBuilder("POST", delivery);
+                    requestBuilder = getRequestBuilder("POST", delivery, dwInstanceId);
                     requestBuilder.addHeader(DW_HTTP_METHOD_OVERRIDE_HEADER, "PUT");
                 } else {
-                    requestBuilder = getRequestBuilder("PATCH", delivery);
+                    requestBuilder = getRequestBuilder("PATCH", delivery, dwInstanceId);
                     requestBuilder.addHeader(HttpHeaders.IF_MATCH, eTagHeaderValue);
                 }
                 log.debug("Send %s %s using %s", getContentType(), id, requestBuilder.getMethod());
@@ -177,7 +182,7 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
         } else {
             // check we there is an eTag header from the get, if not there is nothing to delete
             if (StringUtils.isNotEmpty(eTagHeaderValue)) {
-                requestBuilder = getRequestBuilder("DELETE", delivery);
+                requestBuilder = getRequestBuilder("DELETE", delivery, dwInstanceId);
                 log.info("Delete %s %s", getContentType(), id);
                 response = executeRequest(httpClient, requestBuilder.build(), log);
                 HttpClientUtils.closeQuietly(response);
@@ -195,19 +200,22 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
      *
      * @param method   the HTTP request method
      * @param delivery the JSON data
+     * @param dwInstanceId
      * @return the created request builder
      * @throws ReplicationException in case request builder can not be created
      */
-    protected RequestBuilder getRequestBuilder(final String method, final JSONObject delivery)
-            throws ReplicationException {
+    protected RequestBuilder getRequestBuilder(final String method, final JSONObject delivery,
+                                               final String dwInstanceId) throws ReplicationException {
         if (StringUtils.isEmpty(method)) {
             throw new ReplicationException("No request method provided");
         }
         try {
             // construct the OCAPI request
             final StringBuilder transportUriBuilder = new StringBuilder();
-            //TODO
-            transportUriBuilder.append(DemandwareClient.DEFAULT_SCHEMA).append(clientProvider.getDefaultClient().getEndpoint());
+            final String endpoint = clientProvider.getClientForSpecificInstance(dwInstanceId)
+                    .map(DemandwareClient::getEndpoint)
+                    .orElse(StringUtils.EMPTY);
+            transportUriBuilder.append(DemandwareClient.DEFAULT_SCHEMA).append(endpoint);
             transportUriBuilder.append(getOCApiPath()).append(getOCApiVersion());
             transportUriBuilder.append(
                     constructEndpointURL(delivery.getString(DemandwareCommerceConstants.ATTR_API_ENDPOINT), delivery));

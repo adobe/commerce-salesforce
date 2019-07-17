@@ -33,6 +33,7 @@ import org.apache.sling.commons.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -92,8 +93,11 @@ public abstract class AbstractTransportHandlerPlugin implements TransportHandler
      */
     protected HttpClientBuilder getHttpClientBuilder(final AgentConfig config, final ReplicationLog log) {
         // create and configure the Http client builder
-        final DemandwareClient demandwareClient = clientProvider.getClientForSpecificInstance(config);
-        final HttpClientBuilder httpClientBuilder = demandwareClient.getHttpClientBuilder();
+        final Optional<DemandwareClient> demandwareClient = clientProvider.getClientForSpecificInstance(config);
+        if (!demandwareClient.isPresent()) {
+            return null;
+        }
+        final HttpClientBuilder httpClientBuilder = demandwareClient.get().getHttpClientBuilder();
 
         // configure credentials
         final CredentialsProvider credentialsProvider = createCredentialsProvider(config, log);

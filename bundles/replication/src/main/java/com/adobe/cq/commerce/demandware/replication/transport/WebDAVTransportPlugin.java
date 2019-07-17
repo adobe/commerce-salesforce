@@ -53,6 +53,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Dictionary;
+import java.util.Optional;
 
 /**
  * <code>TransportHandlerPlugin</code> to send static files to WebDAV.
@@ -238,12 +239,12 @@ public class WebDAVTransportPlugin extends AbstractTransportHandlerPlugin {
     }
 
     final String getDemandwareClientEndpoint(final AgentConfig config) {
-        final DemandwareClient demandwareClient = clientProvider.getClientForSpecificInstance(config);
-        if (demandwareClient == null) {
+        final Optional<DemandwareClient> demandwareClient = clientProvider.getClientForSpecificInstance(config);
+        if (!demandwareClient.isPresent()) {
             LOG.error("Failed to get DemandwareClient endpoint - no configuration found.");
             return null;
         }
-        return demandwareClient.getEndpoint();
+        return demandwareClient.get().getEndpoint();
     }
 
     /**
