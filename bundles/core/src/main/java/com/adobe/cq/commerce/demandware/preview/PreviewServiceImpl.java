@@ -65,7 +65,7 @@ import java.util.Optional;
  * Component previewComponent service to render component previewComponent for Demandware placeholder components. The rendered previewComponent
  * will be cached by a simple cache, avoid unnecessary backend request.
  */
-@Component(metatype = true, policy = ConfigurationPolicy.REQUIRE, label = "Demandware Component Preview Service")
+@Component(metatype = false, policy = ConfigurationPolicy.REQUIRE, label = "Demandware Component Preview Service")
 @Service()
 public class PreviewServiceImpl implements PreviewService {
     
