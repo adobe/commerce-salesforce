@@ -50,15 +50,8 @@ public class InstanceIdProviderImpl implements InstanceIdProvider {
     }
     
     private Page getPage(SlingHttpServletRequest request) {
-        String path;
-        if (request.getParameterMap().containsKey("pathInfo")) {
-            path = request.getParameter("pathInfo");
-        }else{
-            path = getRequestedPath(request);
-        }
-        
+        String path = getRequestedPath(request);
         ResourceResolver resourceResolver = request.getResourceResolver();
-        
         PageManager pageManager = resourceResolver.adaptTo(PageManager.class);
         return pageManager.getPage(path);
     }
