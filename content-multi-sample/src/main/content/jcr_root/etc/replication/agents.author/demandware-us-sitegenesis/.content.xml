@@ -27,6 +27,6 @@
             logLevel="info"
             serializationType="demandware"
             ssl="relaxed"
-            transportUri="demandware://us"
+            transportUri="demandware://us-sitegenesis"
             userId="dwre-replication-agent-us-sitegenesis"/>
 </jcr:root>
