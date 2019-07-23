@@ -18,8 +18,8 @@ package com.adobe.cq.commerce.demandware.replication.transport;
 
 import com.adobe.cq.commerce.demandware.DemandwareClient;
 import com.adobe.cq.commerce.demandware.DemandwareCommerceConstants;
+import com.adobe.cq.commerce.demandware.InstanceId;
 import com.adobe.cq.commerce.demandware.replication.TransportHandlerPlugin;
-import com.adobe.cq.commerce.demandware.replication.utils.DemandwareInstanceIdProvider;
 import com.day.cq.replication.AgentConfig;
 import com.day.cq.replication.ReplicationAction;
 import com.day.cq.replication.ReplicationException;
@@ -53,7 +53,7 @@ import org.osgi.framework.Constants;
 public class ContentAssetFolderPlugin extends AbstractOCAPITransportPlugin {
     
     @Reference
-    private DemandwareInstanceIdProvider instanceIdProvider;
+    private InstanceId instanceId;
     
     @Override
     String getContentType() {
@@ -80,7 +80,7 @@ public class ContentAssetFolderPlugin extends AbstractOCAPITransportPlugin {
                         log.info("Assign content asset %s to folder %s (%s)", id, folder, action.getType().getName());
                         
                         // construct URL for folder assignment
-                        final String endpoint = clientProvider.getClientForSpecificInstance(instanceIdProvider.getInstanceId(config))
+                        final String endpoint = clientProvider.getClientForSpecificInstance(instanceId.getInstanceId(config))
                                 .map(DemandwareClient::getEndpoint)
                                 .orElse(StringUtils.EMPTY);
                         final String transportUriBuilder = DemandwareClient.DEFAULT_SCHEMA + endpoint + getOCApiPath() + getOCApiVersion() + constructEndpointURL(

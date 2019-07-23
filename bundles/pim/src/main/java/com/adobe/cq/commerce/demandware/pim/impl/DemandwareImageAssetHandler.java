@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.adobe.cq.commerce.demandware.DemandwareClientProvider;
+import com.adobe.cq.commerce.demandware.InstanceId;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
@@ -65,6 +66,9 @@ public class DemandwareImageAssetHandler implements ImportAssetHandler {
 
     @Reference
     DemandwareClientProvider clientProvider;
+    
+    @Reference
+    private InstanceId instanceId;
 
     private String downloadEndpoint;
 
@@ -80,6 +84,9 @@ public class DemandwareImageAssetHandler implements ImportAssetHandler {
             LOG.error("Missing asset path");
             return null;
         }
+        final String endpoint = clientProvider.getClientForSpecificInstance(instanceId.getInstanceId(null))
+                .map(DemandwareClient::getEndpoint)
+                .orElse(StringUtils.EMPTY);
         final String relativeImagePath = (String) properties.get(DemandwareCommerceConstants.ATTRIBUTE_ASSET_PATH);
         final String endPoint = DemandwareClient.DEFAULT_SCHEMA + clientProvider.getDefaultClient().getEndpoint()
                 + downloadEndpoint + StringUtils.prependIfMissing(relativeImagePath, "/", "/");

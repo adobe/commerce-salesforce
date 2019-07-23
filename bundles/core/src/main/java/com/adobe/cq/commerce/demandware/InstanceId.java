@@ -14,23 +14,20 @@
  ~ limitations under the License.
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-package com.adobe.cq.commerce.demandware.replication.utils;
+package com.adobe.cq.commerce.demandware;
 
 import com.day.cq.replication.AgentConfig;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Service;
 
-import java.util.Optional;
-
-@Component
-@Service(value = DemandwareInstanceIdProvider.class)
-public class DemandwareInstanceIdProvider {
-	private static final String DWRE_SCHEME = "demandware://";
-
-	public String getInstanceId(final AgentConfig config) {
-		return Optional.ofNullable(config.getTransportURI())
-				.map(uri -> uri.replace(DWRE_SCHEME, StringUtils.EMPTY))
-				.orElse(StringUtils.EMPTY);
-	}
+/**
+ * WHAT IS IT ???
+ * <p>
+ * WHAT PURPOSE THAT IT HAS ???
+ * </p>
+ *
+ * @author allwardt
+ * @since 2019-07-23
+ */
+public interface InstanceId {
+    
+    String getInstanceId(final AgentConfig config);
 }
