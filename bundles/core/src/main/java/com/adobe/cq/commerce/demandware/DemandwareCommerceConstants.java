@@ -16,31 +16,32 @@
 
 package com.adobe.cq.commerce.demandware;
 
-import aQute.bnd.annotation.ProviderType;
-
-@ProviderType
 public interface DemandwareCommerceConstants {
-
-    /** supported delivery types **/
+    
+    /**
+     * supported delivery types
+     **/
     String TYPE_OCAPI = "ocapi";
     String TYPE_WEBDAV = "webdav";
-
+    
     String DWRE_RENDERING_SELECTOR = "vm";
-
-    /** base attributes for internal JSON object **/
+    
+    /**
+     * base attributes for internal JSON object
+     **/
     String ATTR_API_TYPE = "api-type";
     String ATTR_API_ENDPOINT = "api-endpoint";
     String ATTR_WEBDAV_SHARE = "webdav-endpoint";
     String ATTR_CONTENT_TYPE = "content-type";
     String ATTR_PAYLOAD = "payload";
-
+    
     String ATTR_CONTEXT = "context";
     String ATTR_ID = "id";
     String ATTR_LIBRARY = "library_id";
     String ATTR_SLOT = "slot_id";
     String ATTR_SITE = "site_id";
     String ATTR_CONFIGURATION = "configuration_id";
-
+    
     String ATTR_FOLDER = "folder-id";
     String ATTR_PATH = "path";
     String ATTR_SCOPE = "scope";
@@ -56,13 +57,15 @@ public interface DemandwareCommerceConstants {
     String ATTR_SLOT_CUSTOMER_GROUPS = "customer_groups";
     String ATTR_SLOT_CALLOUT_MSG = "callout_msg";
     String ATTR_SLOT_RANK = "rank";
-
+    
     String ATTR_SIZE = "size";
     String ATTR_DATA = "data";
     String ATTR_MIMETYPE = "mimetype";
     String ATTR_BASE64 = "base64";
-
-    /** special, Demandware specify page properties which need to be mapped */
+    
+    /**
+     * special, Demandware specify page properties which need to be mapped
+     */
     String PN_DWRE_SITE = "dwreSite";
     String PN_DWRE_LIBRARY = "dwreLibrary";
     String PN_DWRE_TEMPLATE_PATH = "dwreTemplatePath";

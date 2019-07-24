@@ -16,12 +16,10 @@
 
 package com.adobe.cq.commerce.demandware.replication;
 
+import com.day.cq.replication.ReplicationAction;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.commons.json.JSONException;
 import org.apache.sling.commons.json.JSONObject;
-
-import aQute.bnd.annotation.ProviderType;
-import com.day.cq.replication.ReplicationAction;
 
 /**
  * A <code>ContentBuilderPlugin</code> prepares the content (JSON format) for the given resource. The JSON object is
@@ -29,11 +27,10 @@ import com.day.cq.replication.ReplicationAction;
  * Plugins are implemented as OSGI services and called in the order of the service ranking. At the end of the plugin
  * chain a valid JSON object is expected which can be handled by the transport handler.
  */
-@ProviderType
 public interface ContentBuilderPlugin {
-
+    
     String PN_TASK = "plugin.name";
-
+    
     /**
      * Returns <code>true</code> if this content builder plugin can handle the given resource.
      *
@@ -42,7 +39,7 @@ public interface ContentBuilderPlugin {
      * @return <code>true</code> if this plugin can handle the resource
      */
     boolean canHandle(ReplicationAction action, Resource resource);
-
+    
     /**
      * Creates the JSON content object for the resource.
      *
@@ -53,5 +50,5 @@ public interface ContentBuilderPlugin {
      * @throws JSONException if an error occurs.
      */
     JSONObject create(ReplicationAction action, Resource resource, JSONObject content) throws JSONException;
-
+    
 }
