@@ -100,7 +100,7 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
     private Map<Comparable<Object>, AccessTokenProvider> accessTokenProviders =
             new ConcurrentSkipListMap<>(Collections.reverseOrder());
 
-    private String accessTokenProviderId;
+    private String atpClientId;
     private String ocapiVersion;
     private String ocapiPath;
 
@@ -274,23 +274,12 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
                 // obtain a valid access token and use it for authentication
                 if (config.isOAuthEnabled()) {
                     log.debug("* Using OAuth 2.0 Authorization Grants");
-                    AccessTokenProvider accessTokenProvider = null;
-                    if (accessTokenProvidersProps.size() > 0 && accessTokenProviders.size() > 0) {
-                        if (StringUtils.isNotBlank(accessTokenProviderId) && null != accessTokenProvidersProps.get(
-                                accessTokenProviderId)) {
-                            accessTokenProvider = accessTokenProviders.get(accessTokenProvidersProps.get(
-                                    accessTokenProviderId));
-                        }
-                        if (null == accessTokenProvider) {
-                            accessTokenProvider = (AccessTokenProvider) accessTokenProviders.values().toArray()[0];
-                        }
-                    }
+                    AccessTokenProvider accessTokenProvider = getAccessTokenProvider(config);
                     if (accessTokenProvider != null) {
                         final String agentUserID = conf.get(AgentConfig.AGENT_USER_ID, "");
                         log.debug("* OAuth 2.0 User: %s", agentUserID);
                         // get an access token for agent user
                         Map<String, Object> param = new HashMap<>();
-                        //param.put(ResourceResolverFactory.USER_IMPERSONATION, agentUserID);
                         param.put(ResourceResolverFactory.SUBSERVICE, "replication");
                         resolver = rrf.getServiceResourceResolver(param);
 
@@ -398,26 +387,53 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
         }
     }
 
+    private AccessTokenProvider getAccessTokenProvider(final AgentConfig agentConfig) {
+        final String instanceId = instanceIdProvider.getInstanceId(agentConfig);
+        final String accessTokenProviderId = getAccessTokenProviderId(atpClientId, instanceId);
+        AccessTokenProvider accessTokenProvider = null;
+        if (accessTokenProvidersProps.size() > 0 && accessTokenProviders.size() > 0) {
+            if (StringUtils.isNotBlank(accessTokenProviderId) && null != accessTokenProvidersProps.get(
+                    accessTokenProviderId)) {
+                accessTokenProvider = accessTokenProviders.get(accessTokenProvidersProps.get(
+                        accessTokenProviderId));
+            }
+            if (null == accessTokenProvider) {
+                accessTokenProvider = (AccessTokenProvider) accessTokenProviders.values().toArray()[0];
+            }
+        }
+        return accessTokenProvider;
+    }
+
+    private String getAccessTokenProviderId(final Map<String, Object> properties) {
+        String clientId = (String) properties.get("auth.token.provider.client.id");
+        String instanceId = (String) properties.get("instance.id");
+        return getAccessTokenProviderId(clientId, instanceId);
+    }
+
+    private String getAccessTokenProviderId(final String clientId, final String instanceId) {
+        return String.format("%s-%s", clientId, instanceId);
+    }
+
     /* OSGI stuff */
 
     @Activate
     protected void activate(final ComponentContext ctx) {
         final Dictionary<?, ?> config = ctx.getProperties();
-        accessTokenProviderId = PropertiesUtil.toString(config.get(ACCESS_TOKEN_PROVIDER), "");
+        atpClientId = PropertiesUtil.toString(config.get(ACCESS_TOKEN_PROVIDER), "");
         ocapiVersion = PropertiesUtil.toString(config.get(OCAPI_VERSION), DEFAULT_OCAPI_VERSION);
         ocapiPath = StringUtils.appendIfMissing(PropertiesUtil.toString(config.get(OCAPI_PATH), DEFAULT_OCAPI_PATH),
                 "/", "/");
     }
 
     protected void bindAccessTokenProvider(final AccessTokenProvider atp, final Map<String, Object> properties) {
-        String pid = (String) properties.get("auth.token.provider.client.id");
-        accessTokenProvidersProps.put(pid, ServiceUtil.getComparableForServiceRanking(properties));
+        String atpId = getAccessTokenProviderId(properties);
+        accessTokenProvidersProps.put(atpId, ServiceUtil.getComparableForServiceRanking(properties));
         accessTokenProviders.put(ServiceUtil.getComparableForServiceRanking(properties), atp);
     }
 
     protected void unbindAccessTokenProvider(final AccessTokenProvider atp, final Map<String, Object> properties) {
-        String pid = (String) properties.get("auth.token.provider.client.id");
-        accessTokenProviders.remove(accessTokenProvidersProps.get(pid));
-        accessTokenProvidersProps.remove(pid);
+        String atpId = getAccessTokenProviderId(properties);
+        accessTokenProviders.remove(accessTokenProvidersProps.get(atpId));
+        accessTokenProvidersProps.remove(atpId);
     }
 }
