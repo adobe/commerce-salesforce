@@ -16,10 +16,12 @@
 
 package com.adobe.cq.commerce.demandware.preview;
 
+import com.adobe.cq.commerce.demandware.PreviewServiceConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.ConfigurationPolicy;
+import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Service;
 import org.apache.sling.commons.osgi.PropertiesUtil;
@@ -33,8 +35,11 @@ import java.util.Map;
  */
 @Service
 @Component(metatype = true, configurationFactory = true, immediate = true,
-        policy = ConfigurationPolicy.REQUIRE, label = "Preview Service Configuration")
-public class PreviewServiceConfigImpl implements com.adobe.cq.commerce.demandware.PreviewServiceConfig {
+        policy = ConfigurationPolicy.REQUIRE, label = "Preview Service Configuration", name = "com.adobe.cq.commerce.demandware.preview.PreviewServiceConfigImpl")
+@Properties({
+        @Property(name = "webconsole.configurationFactory.nameHint", value = "{service.factoryPid} - {instance.id}")
+})
+public class PreviewServiceConfigImpl implements PreviewServiceConfig {
     private static final Logger LOG = LoggerFactory.getLogger(PreviewServiceConfigImpl.class);
     
     @Property(label = "Preview endpoint")

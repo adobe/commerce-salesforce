@@ -33,7 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@Component(label = "Demandware Demandware Client Provider", immediate = true)
+@Component(label = "Preview Service Config Provider", immediate = true)
 @Service(value = PreviewServiceConfigProvider.class)
 public class PreviewServiceConfigProviderImpl implements PreviewServiceConfigProvider {
     
@@ -50,8 +50,8 @@ public class PreviewServiceConfigProviderImpl implements PreviewServiceConfigPro
     protected HashMap<String, com.adobe.cq.commerce.demandware.PreviewServiceConfig> previewServiceConfigHashMap;
     
     /**
-     * todo eturns DemandwareClient service, configured with "default" instance id
-     * or, if not present, first found DemandwareClient service.
+     * returns Preview Service Config, configured with "default" instance id
+     * or, if not present, first found Preview Service Config.
      *
      * @return
      */
@@ -83,16 +83,16 @@ public class PreviewServiceConfigProviderImpl implements PreviewServiceConfigPro
     public PreviewServiceConfig getPreviewServiceConfigByInstanceId(final String instanceId) {
         PreviewServiceConfig config = previewServiceConfigHashMap.get(instanceId.replace("/", ""));
         if (config == null) {
-            LOG.error("DemandwareClient not found for instanceId [{}]", instanceId);
+            LOG.error("Preview Service Config not found for instanceId [{}]", instanceId);
         }
         return config;
     }
     
     /**
-     * Returns the configured Demandware client defined for specific SFCC instance
+     * Returns the configured Preview Service Config defined for specific SFCC instance
      *
      * @param config Replication config containing id of the SFCC instance
-     * @return DemandwareClient or null if client not found
+     * @return PreviewServiceConfig or null if client not found
      */
     public PreviewServiceConfig getClientForSpecificInstance(AgentConfig config) {
         return getInstanceId(config)

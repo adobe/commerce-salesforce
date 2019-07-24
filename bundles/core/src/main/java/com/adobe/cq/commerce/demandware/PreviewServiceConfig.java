@@ -18,25 +18,22 @@ package com.adobe.cq.commerce.demandware;
 
 import com.adobe.cq.commerce.demandware.preview.PreviewCache;
 
-/**
- * WHAT IS IT ???
- * <p>
- * WHAT PURPOSE THAT IT HAS ???
- * </p>
- *
- * @author allwardt
- * @since 2019-07-17
- */
 public interface PreviewServiceConfig {
     
     String getPreviewPageEndPoint();
+    
     PreviewCache getCache();
+    
     String getStorfrontProtectionEnabled();
+    
     String getPreviewTemplate();
+    
     String getPreviewDefaultSite();
+    
     String getStorfrontProtectionUser();
+    
     String getStorfrontProtectionPassword();
+    
     String getInstanceId();
-
-
+    
 }

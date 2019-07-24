@@ -18,15 +18,6 @@ package com.adobe.cq.commerce.demandware;
 
 import com.day.cq.replication.AgentConfig;
 
-/**
- * WHAT IS IT ???
- * <p>
- * WHAT PURPOSE THAT IT HAS ???
- * </p>
- *
- * @author allwardt
- * @since 2019-07-17
- */
 public interface PreviewServiceConfigProvider {
     
     PreviewServiceConfig getDefaultPreviewServiceConfig();
