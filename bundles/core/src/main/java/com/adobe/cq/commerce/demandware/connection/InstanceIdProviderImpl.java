@@ -14,11 +14,12 @@
  ~ limitations under the License.
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-package com.adobe.cq.commerce.demandware.preview;
+package com.adobe.cq.commerce.demandware.connection;
 
 import com.adobe.cq.commerce.demandware.DemandwareCommerceConstants;
 import com.adobe.cq.commerce.demandware.InstanceIdProvider;
 import com.day.cq.commons.inherit.HierarchyNodeInheritanceValueMap;
+import com.day.cq.replication.AgentConfig;
 import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.api.PageManager;
 import org.apache.commons.lang.StringUtils;
@@ -27,10 +28,13 @@ import org.apache.felix.scr.annotations.Service;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.ResourceResolver;
 
+import java.util.Optional;
+
 
 @Component(label = "Demandware Component Instance Id Service")
 @Service()
 public class InstanceIdProviderImpl implements InstanceIdProvider {
+    private static final String DWRE_SCHEME = "demandware://";
     
     @Override
     public String getInstanceId(final Page page) {
@@ -47,6 +51,13 @@ public class InstanceIdProviderImpl implements InstanceIdProvider {
     public String getInstanceId(SlingHttpServletRequest request) {
         String previewInstanceId = getInstanceId(getPage(request));
         return previewInstanceId != null ? previewInstanceId : "";
+    }
+    
+    @Override
+    public String getInstanceId(final AgentConfig config) {
+        return Optional.ofNullable(config.getTransportURI())
+                .map(uri -> uri.replace(DWRE_SCHEME, org.apache.commons.lang3.StringUtils.EMPTY))
+                .orElse(org.apache.commons.lang3.StringUtils.EMPTY);
     }
     
     private Page getPage(SlingHttpServletRequest request) {

@@ -16,6 +16,7 @@
 
 package com.adobe.cq.commerce.demandware;
 
+import com.day.cq.replication.AgentConfig;
 import com.day.cq.wcm.api.Page;
 import org.apache.sling.api.SlingHttpServletRequest;
 
@@ -27,5 +28,7 @@ public interface InstanceIdProvider {
     String getInstanceId(Page page);
     
     String getInstanceId(SlingHttpServletRequest request);
+    
+    String getInstanceId(AgentConfig config);
     
 }
