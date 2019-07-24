@@ -18,7 +18,12 @@
 (function(){
     request.setAttribute("com.adobe.granite.contexthub.path", "/etc/cloudsettings/dwre/contexthub");
 
-    var demandwareClient = sling.getService(Packages.com.adobe.cq.commerce.demandware.DemandwareClient);
+    //var demandwareClient = sling.getService(Packages.com.adobe.cq.commerce.demandware.DemandwareClient);
+    var demandwareClientProvider = sling.getService(Packages.com.adobe.cq.commerce.demandware.DemandwareClientProvider);
+    var instanceIdProvider = sling.getService(Packages.com.adobe.cq.commerce.demandware.InstanceIdProvider);
+
+    var instanceId = instanceIdProvider.getInstanceId(currentPage);
+    var demandwareClient = demandwareClientProvider.getClientForSpecificInstance(instanceId).get();
 
     return {
         endpoint: demandwareClient != null ? demandwareClient.getEndpoint() : ""
