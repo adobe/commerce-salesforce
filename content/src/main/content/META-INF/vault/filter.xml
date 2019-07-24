@@ -30,7 +30,6 @@
     <filter root="/etc/replication/agents.author/demandware"/>
     <filter root="/etc/scaffolding/demandware"/>
 
-    <filter root="/home/users" mode="merge">
-        <include pattern=".*/rep:policy(/.*)?"/>
-    </filter>
+    <filter root="/home/users/system/demandware"/>
+    <filter root="/home/users/rep:policy/allowDWREReplicationService"/>
 </workspaceFilter>
