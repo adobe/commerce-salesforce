@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.adobe.cq.commerce.demandware.DemandwareClientProvider;
-import com.adobe.cq.commerce.demandware.InstanceId;
+import com.adobe.cq.commerce.demandware.InstanceIdProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
@@ -68,12 +68,12 @@ public class DemandwareImageAssetHandler implements ImportAssetHandler {
     DemandwareClientProvider clientProvider;
     
     @Reference
-    private InstanceId instanceId;
+    private InstanceIdProvider instanceId;
 
     private String downloadEndpoint;
 
     @Override
-    public Asset retrieveAsset(ImportContext ctx, Map<String, Object> properties) {
+    public Asset retrieveAsset(ImportContext ctx, Map<String, Object> properties, String instanceId) {
         if (StringUtils.isBlank(downloadEndpoint)) {
             LOG.error("Missing download endpoint, can not download any asset");
             return null;
@@ -84,11 +84,11 @@ public class DemandwareImageAssetHandler implements ImportAssetHandler {
             LOG.error("Missing asset path");
             return null;
         }
-        final String endpoint = clientProvider.getClientForSpecificInstance(instanceId.getInstanceId(null))
+        final String relativeImagePath = (String) properties.get(DemandwareCommerceConstants.ATTRIBUTE_ASSET_PATH);
+        final String clientEndpoint = clientProvider.getClientForSpecificInstance(instanceId)
                 .map(DemandwareClient::getEndpoint)
                 .orElse(StringUtils.EMPTY);
-        final String relativeImagePath = (String) properties.get(DemandwareCommerceConstants.ATTRIBUTE_ASSET_PATH);
-        final String endPoint = DemandwareClient.DEFAULT_SCHEMA + clientProvider.getDefaultClient().getEndpoint()
+        final String endPoint = DemandwareClient.DEFAULT_SCHEMA + clientEndpoint
                 + downloadEndpoint + StringUtils.prependIfMissing(relativeImagePath, "/", "/");
 
         // call Demandware to render preview for component

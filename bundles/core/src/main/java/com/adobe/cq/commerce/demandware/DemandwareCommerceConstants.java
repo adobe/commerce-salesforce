@@ -75,4 +75,5 @@ public interface DemandwareCommerceConstants {
     String PN_DWRE_SLOT_CONTENT_TYPE = "dwreSlotContentType";
     String PN_DWRE_SLOT_CATEGORY_ID = "dwreSlotCategoryId";
     String PN_DWRE_SLOT_FOLDER_ID = "dwreSlotFolderId";
+    String PN_DWRE_INSTANCE_ID = "dwreInstanceId";
 }

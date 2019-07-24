@@ -18,7 +18,7 @@ package com.adobe.cq.commerce.demandware.replication.transport;
 
 import com.adobe.cq.commerce.demandware.DemandwareClient;
 import com.adobe.cq.commerce.demandware.DemandwareCommerceConstants;
-import com.adobe.cq.commerce.demandware.InstanceId;
+import com.adobe.cq.commerce.demandware.InstanceIdProvider;
 import com.adobe.cq.commerce.demandware.replication.TransportHandlerPlugin;
 import com.day.cq.replication.AgentConfig;
 import com.day.cq.replication.ReplicationAction;
@@ -53,7 +53,7 @@ import org.osgi.framework.Constants;
 public class ContentAssetFolderPlugin extends AbstractOCAPITransportPlugin {
     
     @Reference
-    private InstanceId instanceId;
+    private InstanceIdProvider instanceId;
     
     @Override
     String getContentType() {

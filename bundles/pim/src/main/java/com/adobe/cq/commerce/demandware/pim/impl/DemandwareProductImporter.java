@@ -31,6 +31,7 @@ import javax.jcr.Session;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.stream.XMLStreamException;
 
+import com.adobe.cq.commerce.demandware.InstanceIdProvider;
 import org.apache.commons.collections.MultiMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.felix.scr.annotations.Component;
@@ -69,7 +70,10 @@ import com.adobe.cq.commerce.pim.common.AbstractProductImporter;
         @Property(name = "commerceProvider", value = "demandware", propertyPrivate = true)
 })
 public class DemandwareProductImporter extends AbstractProductImporter implements ProductImporter {
-
+    
+    @Reference
+    private InstanceIdProvider instanceIdProvider;
+    
     private static final Logger LOG = LoggerFactory.getLogger(DemandwareProductImporter.class);
     /**
      * Internal log writer.
@@ -100,6 +104,7 @@ public class DemandwareProductImporter extends AbstractProductImporter implement
     private InputStream xmlStream = null;
     private boolean addToCollection;
     private String collectionPath;
+    private String instanceId;
     private Map<String, String> sourceProducts = new HashMap<String, String>();
 
     @Override
@@ -134,6 +139,7 @@ public class DemandwareProductImporter extends AbstractProductImporter implement
 
         addToCollection = "true".equals(request.getParameter("addToCollection"));
         collectionPath = request.getParameter("collectionPath");
+        instanceId = instanceIdProvider.getInstanceId(request);
 
         return true;
     }
@@ -323,7 +329,7 @@ public class DemandwareProductImporter extends AbstractProductImporter implement
                     .NT_UNSTRUCTURED);
             productAsset.put(DemandwareCommerceConstants.ATTRIBUTE_CATEGORY_ID, categoryId);
             productAsset.put(DemandwareCommerceConstants.ATTRIBUTE_PRODUCT_ID, productId);
-            importHandler.updateAsset(ctx, assetNode, new ValueMapDecorator(productAsset));
+            importHandler.updateAsset(ctx, assetNode, new ValueMapDecorator(productAsset), instanceId);
         }
     }
 

@@ -17,17 +17,18 @@
 package com.adobe.cq.commerce.demandware;
 
 import com.day.cq.replication.AgentConfig;
+import com.day.cq.wcm.api.Page;
+import org.apache.sling.api.SlingHttpServletRequest;
 
 /**
- * WHAT IS IT ???
- * <p>
- * WHAT PURPOSE THAT IT HAS ???
- * </p>
- *
- * @author allwardt
- * @since 2019-07-23
+ * Component demandware instance id service to identify the instance id of configured demandware.
  */
-public interface InstanceId {
+public interface InstanceIdProvider {
     
-    String getInstanceId(final AgentConfig config);
+    String getInstanceId(Page page);
+    
+    String getInstanceId(SlingHttpServletRequest request);
+    
+    String getInstanceId(AgentConfig config);
+    
 }

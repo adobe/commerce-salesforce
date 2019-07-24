@@ -33,5 +33,5 @@ public interface ImportAssetHandler {
      * @param properties the properties
      * @return the new or updated asset
      */
-    Asset retrieveAsset(ImportContext ctx, Map<String, Object> properties);
+    Asset retrieveAsset(ImportContext ctx, Map<String, Object> properties, String instanceId);
 }

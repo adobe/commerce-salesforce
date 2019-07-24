@@ -78,5 +78,5 @@ public interface ImportHandler {
      * @param values    the product's properties
      * @throws RepositoryException in case the product asset could not be updated
      */
-    void updateAsset(ImportContext ctx, Node imageNode, ValueMap values) throws RepositoryException;
+    void updateAsset(ImportContext ctx, Node imageNode, ValueMap values, String instanceId) throws RepositoryException;
 }
