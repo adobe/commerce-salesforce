@@ -85,15 +85,13 @@ public class DemandwareImageAssetHandler implements ImportAssetHandler {
             return null;
         }
         final String relativeImagePath = (String) properties.get(DemandwareCommerceConstants.ATTRIBUTE_ASSET_PATH);
-        final String clientEndpoint = clientProvider.getClientForSpecificInstance(instanceId)
-                .map(DemandwareClient::getEndpoint)
-                .orElse(StringUtils.EMPTY);
-        final String endPoint = DemandwareClient.DEFAULT_SCHEMA + clientEndpoint
+        final DemandwareClient demandwareClient = clientProvider.getClientForSpecificInstance(instanceId).get();
+        final String endPoint = DemandwareClient.DEFAULT_SCHEMA + demandwareClient.getEndpoint()
                 + downloadEndpoint + StringUtils.prependIfMissing(relativeImagePath, "/", "/");
 
         // call Demandware to render preview for component
         CloseableHttpResponse responseObj = null;
-        CloseableHttpClient httpClient = clientProvider.getDefaultClient().getHttpClient();
+        CloseableHttpClient httpClient = demandwareClient.getHttpClient();
         try {
             final RequestBuilder requestBuilder = RequestBuilder.get();
 
