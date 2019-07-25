@@ -99,7 +99,7 @@
     <!-- ====================================================================== -->
     <profiles>
         <profile>
-            <id>installSampleContent</id>
+            <id>installMultiSampleContent</id>
             <build>
                 <plugins>
                     <plugin>
