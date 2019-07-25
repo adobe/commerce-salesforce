@@ -91,9 +91,9 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
 
     @Reference
     protected ResourceResolverFactory rrf;
-
+    
     @Reference
-    private InstanceIdProvider instanceId;
+    private InstanceIdProvider instanceIdProvider;
 
     private Map<String, Comparable<Object>> accessTokenProvidersProps =
             new ConcurrentSkipListMap<>(Collections.reverseOrder());
@@ -124,7 +124,7 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
             throws ReplicationException {
         final String id = delivery.optString(DemandwareCommerceConstants.ATTR_ID,
                 StringUtils.substringAfterLast(action.getPath(), "/"));
-        final String dwInstanceId = instanceId.getInstanceId(config);
+        final String dwInstanceId = instanceIdProvider.getInstanceId(config);
 
         // step 1: check if the content asset already exists
         RequestBuilder requestBuilder;
