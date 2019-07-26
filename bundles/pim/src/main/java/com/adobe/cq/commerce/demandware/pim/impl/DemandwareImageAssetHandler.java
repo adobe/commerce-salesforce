@@ -47,6 +47,7 @@ import java.io.IOException;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Component(label = "Demandware Product Import Image Asset Handler", metatype = true)
 @Service
@@ -80,13 +81,18 @@ public class DemandwareImageAssetHandler implements ImportAssetHandler {
             return null;
         }
         final String relativeImagePath = (String) properties.get(DemandwareCommerceConstants.ATTRIBUTE_ASSET_PATH);
-        final DemandwareClient demandwareClient = clientProvider.getClientForSpecificInstance(instanceId).get();
-        final String endPoint = DemandwareClient.DEFAULT_SCHEMA + demandwareClient.getEndpoint()
+        Optional<DemandwareClient> demandwareClient = clientProvider.getClientForSpecificInstance(instanceId);
+        if (!demandwareClient.isPresent()) {
+            LOG.error("Failed to get DemandwareClient for [{}] Demandware instanceId.", instanceId);
+            return null;
+        }
+        
+        final String endPoint = DemandwareClient.DEFAULT_SCHEMA + demandwareClient.get().getEndpoint()
                 + downloadEndpoint + StringUtils.prependIfMissing(relativeImagePath, "/", "/");
         
         // call Demandware to render preview for component
         CloseableHttpResponse responseObj = null;
-        CloseableHttpClient httpClient = demandwareClient.getHttpClient();
+        CloseableHttpClient httpClient = demandwareClient.get().getHttpClient();
         try {
             final RequestBuilder requestBuilder = RequestBuilder.get();
             
