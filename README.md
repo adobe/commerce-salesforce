@@ -39,7 +39,8 @@ The project has the following requirements:
 
 For ease of build and installation the following profiles are provided:
 * autoInstallPackage - installs the package and embedded bundles to an existing AEM author instance
-* installSampleContent - installs the 2 packages containing sample content
+* installSampleContent - installs the package with a sample project configured to 1 SFCC instance
+* installMultiSampleContent - installs the package with 2 sample projects and configurations for 2 SFCC instances
 * cleanUpSampleContent - deletes all sample content from AEM instance
 
 ## Contributing

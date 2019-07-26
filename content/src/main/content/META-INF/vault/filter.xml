@@ -31,4 +31,5 @@
     <filter root="/etc/scaffolding/demandware"/>
 
     <filter root="/home/users/system/demandware" mode="merge"/>
+    <filter root="/home/users/rep:policy/allowDWREReplicationService"/>
 </workspaceFilter>

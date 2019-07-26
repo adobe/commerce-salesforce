@@ -99,7 +99,7 @@ public class DemandwareClientImpl implements DemandwareClient {
     @Property(label = "Key password", description = "Leave empty for no password")
     private static final String KEY_PWD = "key.password";
 
-    @Property(label = "Instance id", description = "Demandware instance id that corresponds to Replication Agent config")
+    @Property(label = "Instance id", description = "Demandware instance identifier.")
     private static final String INSTANCE_ID = "instance.id";
 
     private String instanceEndPoint;
