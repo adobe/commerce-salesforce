@@ -63,13 +63,15 @@ public class StaticContentProxyServlet extends SlingSafeMethodsServlet {
         
         RequestPathInfo pathInfo = request.getRequestPathInfo();
         Optional<DemandwareClient> demandwareClient = clientProvider.getClientForSpecificInstance(instanceId.getInstanceId(request));
-        //DemandwareClient client = demandwareClient.isPresent() ? demandwareClient.get() : null; ?
-        DemandwareClient client = demandwareClient.get();
+        if(!demandwareClient.isPresent()){
+            LOG.error("FailedtogetDemandwareClientfor[{}]DemandwareinstanceId.",instanceId.getInstanceId(request));
+            return;
+        }
         LOG.debug("Proxy static content for {}", pathInfo.toString());
-        final String remoteUri = DemandwareClient.DEFAULT_SCHEMA + client.getEndpoint() + pathInfo.getResourcePath() +
+        final String remoteUri = DemandwareClient.DEFAULT_SCHEMA + demandwareClient.get().getEndpoint() + pathInfo.getResourcePath() +
                 "." + pathInfo.getExtension() + pathInfo.getSuffix();
         
-        final CloseableHttpClient httpClient = client.getHttpClient();
+        final CloseableHttpClient httpClient = demandwareClient.get().getHttpClient();
         CloseableHttpResponse responseObj = null;
         BufferedOutputStream output = null;
         try {

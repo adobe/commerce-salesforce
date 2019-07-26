@@ -205,7 +205,12 @@ public class PreviewServiceImpl implements PreviewService {
     private DemandwareClient getDemandwareClient(Page containingPage) {
         // call Demandware to render preview for component
         Optional<DemandwareClient> client = clientProvider.getClientForSpecificInstance(instanceId.getInstanceId(containingPage));
-        return client.isPresent() ? client.get() : null;
+        if(client.isPresent()){
+            return client.get();
+        }else{
+            LOG.error("FailedtogetDemandwareClientfor[{}]DemandwareinstanceId.",instanceId.getInstanceId(containingPage));
+            return null;
+        }
     }
     
     private PreviewServiceConfig getPreviewServiceConfig(Resource resource) {
