@@ -48,9 +48,9 @@ import java.util.Optional;
 @Component(label = "Demandware Static Content Proxy Servlet", immediate = true)
 @SlingServlet(paths = {"/on/demandware"}, extensions = {"static"}, methods = "GET", generateComponent = false)
 public class StaticContentProxyServlet extends SlingSafeMethodsServlet {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(StaticContentProxyServlet.class);
-    
+
     @Reference
     private DemandwareClientProvider clientProvider;
     
@@ -60,7 +60,7 @@ public class StaticContentProxyServlet extends SlingSafeMethodsServlet {
     @Override
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) throws ServletException,
             IOException {
-        
+
         RequestPathInfo pathInfo = request.getRequestPathInfo();
         Optional<DemandwareClient> demandwareClient = clientProvider.getClientForSpecificInstance(instanceId.getInstanceId(request));
         if(!demandwareClient.isPresent()){
@@ -70,7 +70,7 @@ public class StaticContentProxyServlet extends SlingSafeMethodsServlet {
         LOG.debug("Proxy static content for {}", pathInfo.toString());
         final String remoteUri = DemandwareClient.DEFAULT_SCHEMA + demandwareClient.get().getEndpoint() + pathInfo.getResourcePath() +
                 "." + pathInfo.getExtension() + pathInfo.getSuffix();
-        
+
         final CloseableHttpClient httpClient = demandwareClient.get().getHttpClient();
         CloseableHttpResponse responseObj = null;
         BufferedOutputStream output = null;
@@ -78,7 +78,7 @@ public class StaticContentProxyServlet extends SlingSafeMethodsServlet {
             final RequestBuilder requestBuilder = RequestBuilder.get();
             requestBuilder.setUri(remoteUri);
             final HttpUriRequest requestObj = requestBuilder.build();
-            
+
             responseObj = httpClient.execute(requestObj);
             final HttpEntity responseObjEntity = responseObj.getEntity();
             if (responseObjEntity != null) {
@@ -94,6 +94,4 @@ public class StaticContentProxyServlet extends SlingSafeMethodsServlet {
             IOUtils.closeQuietly(output);
         }
     }
-    
-    
 }
