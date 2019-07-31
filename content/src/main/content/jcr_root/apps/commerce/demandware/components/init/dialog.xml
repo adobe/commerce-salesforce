@@ -37,6 +37,12 @@
                                     fieldLabel="WebDAV Share"
                                     name="./assetWebDAV"
                                     xtype="textfield"/>
+                            <dwInstanceId
+                                    jcr:primaryType="cq:Widget"
+                                    fieldDescription="Instance Id to match correct Demandware Client."
+                                    fieldLabel="Instance Id"
+                                    name="./dwInstanceId"
+                                    xtype="textfield"/>
                             <user
                                     jcr:primaryType="cq:Widget"
                                     fieldDescription="user name for the transport credentials"

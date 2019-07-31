@@ -22,7 +22,7 @@
                 jcr:title="Demandware Instance initializer"
                 sling:resourceType="commerce/demandware/components/init"
                 assetWebDAV="https://FILL ME.demandware.net/on/demandware.servlet/webdav/Sites/Libraries/{FILL ME}/default"
-                dwInstanceId="FILL ME"
+                dwInstanceId="sitegenesis"
                 assetWebDAVUser="FILL ME"
                 assetWebDAVPassword="FILL ME"
                 assetUris="[/etc/cloudsettings/dwre/contexthub.kernel.js,/etc/designs/demandware/clientlib-all.css,/etc/designs/demandware/clientlib-all.js,/etc/clientlibs/foundation/testandtarget/testandtarget.js,/etc/clientlibs/sitecatalyst/tracking.js,/etc/clientlibs/granite/jquery.js,/etc/clientlibs/granite/utils.js,/etc/clientlibs/granite/jquery/granite.js,/etc/clientlibs/foundation/jquery.js,/etc/clientlibs/foundation/shared.js,/etc/clientlibs/granite/lodash/modern.js,/etc/clientlibs/foundation/personalization/kernel.js]"
