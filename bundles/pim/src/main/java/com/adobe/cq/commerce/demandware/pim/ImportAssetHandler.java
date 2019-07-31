@@ -31,6 +31,7 @@ public interface ImportAssetHandler {
      *
      * @param ctx the <code>ImportContext</code>
      * @param properties the properties
+     * @param instanceId instanceId to identify Demandware Client
      * @return the new or updated asset
      */
     Asset retrieveAsset(ImportContext ctx, Map<String, Object> properties, String instanceId);

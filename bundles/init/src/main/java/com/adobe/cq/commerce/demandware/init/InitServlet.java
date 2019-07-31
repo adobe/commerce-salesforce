@@ -16,12 +16,14 @@
 
 package com.adobe.cq.commerce.demandware.init;
 
-import java.io.IOException;
-import javax.jcr.Session;
-import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
-
+import com.adobe.cq.commerce.demandware.DemandwareClient;
 import com.adobe.cq.commerce.demandware.DemandwareClientProvider;
+import com.adobe.cq.commerce.demandware.InstanceIdProvider;
+import com.day.cq.replication.ReplicationActionType;
+import com.day.cq.replication.ReplicationException;
+import com.day.cq.replication.Replicator;
+import com.github.sardine.Sardine;
+import com.github.sardine.impl.SardineImpl;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.felix.scr.annotations.Reference;
@@ -46,11 +48,11 @@ import org.apache.sling.api.servlets.SlingAllMethodsServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.day.cq.replication.ReplicationActionType;
-import com.day.cq.replication.ReplicationException;
-import com.day.cq.replication.Replicator;
-import com.github.sardine.Sardine;
-import com.github.sardine.impl.SardineImpl;
+import javax.jcr.Session;
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import java.io.IOException;
+import java.util.Optional;
 
 /**
  * Simple init servlet to preload static resources and velocity templates to demandware.
@@ -58,21 +60,24 @@ import com.github.sardine.impl.SardineImpl;
 
 @SlingServlet(resourceTypes = "commerce/demandware/components/init", extensions = "html", methods = "POST", label = "Demandware Init Servlet")
 public class InitServlet extends SlingAllMethodsServlet {
-
+    
     private static final Logger LOG = LoggerFactory.getLogger(InitServlet.class);
-
+    
     @Reference
     DemandwareClientProvider clientProvider;
-
+    
     @Reference
     private Replicator replicator;
-
+    
+    @Reference
+    private InstanceIdProvider instanceId;
+    
     @Override
     protected void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response) throws
-        ServletException, IOException {
+            ServletException, IOException {
         LOG.debug("Init Demandware Sandbox");
         ValueMap config = request.getResource().getValueMap();
-
+        
         // get assets and push to webdav
         final String webDAVEndpoint = config.get("assetWebDAV", String.class);
         final String[] assetURIs = config.get("assetUris", String[].class);
@@ -81,7 +86,7 @@ public class InitServlet extends SlingAllMethodsServlet {
                 upload(request, webDAVEndpoint, assetURI);
             }
         }
-
+        
         // replicate templates
         if (config.containsKey("templatePaths")) {
             String[] templatePaths = config.get("templatePaths", String[].class);
@@ -96,32 +101,37 @@ public class InitServlet extends SlingAllMethodsServlet {
                 }
             }
         }
-
+        
         response.sendRedirect(request.getResource().getParent().getPath() + "." +
-            request.getRequestPathInfo().getExtension());
+                request.getRequestPathInfo().getExtension());
     }
-
+    
     private void upload(SlingHttpServletRequest slingRequest, String endPoint, String assetURI) {
         final RequestBuilder requestBuilder = RequestBuilder.get();
         requestBuilder.setUri(assetURI);
         final Cookie token = slingRequest.getCookie("login-token");
         requestBuilder.addHeader(new BasicHeader("Cookie", token.getName() + "=" + token.getValue()));
         final HttpHost localHost = new HttpHost("localhost", 4502);
-        final HttpClient httpClient = clientProvider.getDefaultClient().getHttpClientBuilder().build();
+        Optional<DemandwareClient> demandwareClient = clientProvider.getClientForSpecificInstance(instanceId.getInstanceId(slingRequest));
+        if (!demandwareClient.isPresent()) {
+            LOG.error("Failed to get DemandwareClient for [{}] Demandware instanceId.", instanceId);
+            return;
+        }
+        final HttpClient httpClient = demandwareClient.get().getHttpClientBuilder().build();
         try {
             // get the from AEM content
             final HttpResponse response = httpClient.execute(localHost, requestBuilder.build());
-
+            
             if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 final HttpEntity entity = response.getEntity();
-                HttpClientBuilder httpClientBuilder = clientProvider.getDefaultClient().getHttpClientBuilder();
+                HttpClientBuilder httpClientBuilder = demandwareClient.get().getHttpClientBuilder();
                 httpClientBuilder.setDefaultCredentialsProvider(
-                    getWebDAVCredentials(slingRequest.getResource().getValueMap()));
+                        getWebDAVCredentials(slingRequest.getResource().getValueMap()));
                 // upload to webDAV
                 final Sardine webDav = new SardineImpl(httpClientBuilder);
                 getOrCreateFolders(webDav, endPoint, StringUtils.substringBeforeLast(assetURI, "."));
                 webDav.put(endPoint + assetURI, EntityUtils.toByteArray(entity),
-                    entity.getContentType().getValue());
+                        entity.getContentType().getValue());
             } else {
                 LOG.error("Could not get local AEM content for {}", assetURI);
             }
@@ -129,7 +139,7 @@ public class InitServlet extends SlingAllMethodsServlet {
             LOG.error("WebDAV upload failed", e);
         }
     }
-
+    
     /**
      * Get or creates the folder structure for a given asset path.
      *
@@ -139,7 +149,7 @@ public class InitServlet extends SlingAllMethodsServlet {
      * @throws IOException if an error occurs
      */
     private void getOrCreateFolders(Sardine sardine, String endPointUrl, String path) throws
-        IOException {
+            IOException {
         final String folderPath = StringUtils.substringBeforeLast(path, "/");
         final String[] folders = StringUtils.split(folderPath, "/");
         for (int i = 0; i < folders.length; i++) {
@@ -150,7 +160,7 @@ public class InitServlet extends SlingAllMethodsServlet {
             sardine.createDirectory(endPointUrl);
         }
     }
-
+    
     /**
      * Set up WebDAV credentials.
      *
@@ -166,13 +176,13 @@ public class InitServlet extends SlingAllMethodsServlet {
                 pass = "";
             }
             credsProvider.setCredentials(
-                AuthScope.ANY,
-                new UsernamePasswordCredentials(user, pass));
+                    AuthScope.ANY,
+                    new UsernamePasswordCredentials(user, pass));
             return credsProvider;
         }
         return null;
     }
-
+    
     private String getToken(SlingHttpServletRequest request) {
         return request.getCookie("login-token").getValue();
     }
