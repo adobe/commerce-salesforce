@@ -21,6 +21,7 @@
     <filter root="/apps/commerce/demandware/config" mode="merge"/>
     <filter root="/apps/commerce/demandware/config.author" mode="merge" />
 
+    <filter root="/etc/demandware/init"/>
     <filter root="/etc/replication/agents.author/demandware-sitegenesis"/>
 
     <filter root="/home/users/system/demandware" mode="merge"/>
