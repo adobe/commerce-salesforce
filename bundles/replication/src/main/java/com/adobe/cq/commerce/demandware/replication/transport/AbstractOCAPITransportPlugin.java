@@ -91,7 +91,7 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
 
     @Reference
     protected ResourceResolverFactory rrf;
-    
+
     @Reference
     private InstanceIdProvider instanceIdProvider;
 

@@ -60,12 +60,12 @@ import java.util.Optional;
 
 @SlingServlet(resourceTypes = "commerce/demandware/components/init", extensions = "html", methods = "POST", label = "Demandware Init Servlet")
 public class InitServlet extends SlingAllMethodsServlet {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(InitServlet.class);
-    
+
     @Reference
     DemandwareClientProvider clientProvider;
-    
+
     @Reference
     private Replicator replicator;
     
@@ -77,7 +77,7 @@ public class InitServlet extends SlingAllMethodsServlet {
             ServletException, IOException {
         LOG.debug("Init Demandware Sandbox");
         ValueMap config = request.getResource().getValueMap();
-        
+
         // get assets and push to webdav
         final String webDAVEndpoint = config.get("assetWebDAV", String.class);
         final String[] assetURIs = config.get("assetUris", String[].class);
@@ -86,7 +86,7 @@ public class InitServlet extends SlingAllMethodsServlet {
                 upload(request, webDAVEndpoint, assetURI);
             }
         }
-        
+
         // replicate templates
         if (config.containsKey("templatePaths")) {
             String[] templatePaths = config.get("templatePaths", String[].class);
@@ -101,11 +101,11 @@ public class InitServlet extends SlingAllMethodsServlet {
                 }
             }
         }
-        
+
         response.sendRedirect(request.getResource().getParent().getPath() + "." +
                 request.getRequestPathInfo().getExtension());
     }
-    
+
     private void upload(SlingHttpServletRequest slingRequest, String endPoint, String assetURI) {
         final RequestBuilder requestBuilder = RequestBuilder.get();
         requestBuilder.setUri(assetURI);
@@ -121,7 +121,7 @@ public class InitServlet extends SlingAllMethodsServlet {
         try {
             // get the from AEM content
             final HttpResponse response = httpClient.execute(localHost, requestBuilder.build());
-            
+
             if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 final HttpEntity entity = response.getEntity();
                 HttpClientBuilder httpClientBuilder = demandwareClient.get().getHttpClientBuilder();
@@ -139,7 +139,7 @@ public class InitServlet extends SlingAllMethodsServlet {
             LOG.error("WebDAV upload failed", e);
         }
     }
-    
+
     /**
      * Get or creates the folder structure for a given asset path.
      *
@@ -160,7 +160,7 @@ public class InitServlet extends SlingAllMethodsServlet {
             sardine.createDirectory(endPointUrl);
         }
     }
-    
+
     /**
      * Set up WebDAV credentials.
      *
@@ -182,7 +182,7 @@ public class InitServlet extends SlingAllMethodsServlet {
         }
         return null;
     }
-    
+
     private String getToken(SlingHttpServletRequest request) {
         return request.getCookie("login-token").getValue();
     }

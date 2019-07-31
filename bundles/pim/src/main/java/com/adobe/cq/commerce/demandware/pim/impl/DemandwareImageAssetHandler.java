@@ -57,24 +57,24 @@ import java.util.Optional;
                 "implementation", propertyPrivate = true)
 })
 public class DemandwareImageAssetHandler implements ImportAssetHandler {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(DemandwareImageAssetHandler.class);
-    
+
     @Property
     private static final String DOWNLOAD_ENDPOINT = "downloadEndpoint";
-    
+
     @Reference
     DemandwareClientProvider clientProvider;
-    
+
     private String downloadEndpoint;
-    
+
     @Override
     public Asset retrieveAsset(ImportContext ctx, Map<String, Object> properties, String instanceId) {
         if (StringUtils.isBlank(downloadEndpoint)) {
             LOG.error("Missing download endpoint, can not download any asset");
             return null;
         }
-        
+
         if (!properties.containsKey(DemandwareCommerceConstants.ATTRIBUTE_ASSET_PATH) && StringUtils.isBlank
                 ((String) properties.get(DemandwareCommerceConstants.ATTRIBUTE_ASSET_PATH))) {
             LOG.error("Missing asset path");
@@ -89,31 +89,31 @@ public class DemandwareImageAssetHandler implements ImportAssetHandler {
         
         final String endPoint = DemandwareClient.DEFAULT_SCHEMA + demandwareClient.get().getEndpoint()
                 + downloadEndpoint + StringUtils.prependIfMissing(relativeImagePath, "/", "/");
-        
+
         // call Demandware to render preview for component
         CloseableHttpResponse responseObj = null;
         CloseableHttpClient httpClient = demandwareClient.get().getHttpClient();
         try {
             final RequestBuilder requestBuilder = RequestBuilder.get();
-            
+
             requestBuilder.setUri(endPoint);
             final HttpUriRequest requestObj = requestBuilder.build();
             responseObj = httpClient.execute(requestObj);
             if (responseObj != null && responseObj.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 AssetManager assetManager = ctx.getResourceResolver().adaptTo(AssetManager.class);
-                
+
                 final String assetViewType = (String) properties.get(DemandwareCommerceConstants.ATTRIBUTE_ASSET_TYPE);
                 String filePath = (String) properties.get(DemandwareCommerceConstants.ATTRIBUTE_ASSET_PATH);
                 if (StringUtils.equals(assetViewType, "original")) {
                     filePath = StringUtils.substringAfterLast(filePath, "/");
                 }
-                
+
                 final String assetPath = "/content/dam/" + ctx.getBaseResource().getName() + "/products/"
                         + properties.get(DemandwareCommerceConstants.ATTRIBUTE_CATEGORY_ID) + "/"
                         + properties.get(DemandwareCommerceConstants.ATTRIBUTE_PRODUCT_ID) + "/"
                         + filePath;
-                
-                
+
+
                 Asset asset;
                 if (assetManager.assetExists(assetPath)) {
                     asset = assetManager.getAsset(assetPath);
@@ -137,9 +137,9 @@ public class DemandwareImageAssetHandler implements ImportAssetHandler {
         }
         return null;
     }
-    
+
     /* OSGI stuff */
-    
+
     @Activate
     protected void activate(final ComponentContext ctx) {
         final Dictionary<?, ?> config = ctx.getProperties();
