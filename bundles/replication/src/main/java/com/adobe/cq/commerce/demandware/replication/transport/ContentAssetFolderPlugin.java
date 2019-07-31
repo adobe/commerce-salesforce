@@ -63,10 +63,8 @@ public class ContentAssetFolderPlugin extends AbstractOCAPITransportPlugin {
     // TODO currently all folders assigned in AEM are pushed to DWRE, but deletions are not handled
     // TODO > should be get all folders first, check for new (and only push new) and remove deleted
     @Override
-    public boolean deliver(JSONObject delivery, AgentConfig config, ReplicationLog log,
-                           ReplicationAction action) throws ReplicationException {
-        final String id = delivery.optString(DemandwareCommerceConstants.ATTR_ID,
-                StringUtils.substringAfterLast(action.getPath(), "/"));
+    public boolean deliver(JSONObject delivery, AgentConfig config, ReplicationLog log, ReplicationAction action) throws ReplicationException {
+        final String id = delivery.optString(DemandwareCommerceConstants.ATTR_ID, StringUtils.substringAfterLast(action.getPath(), "/"));
         
         // check if we have some folder assignments
         if (delivery.has(DemandwareCommerceConstants.ATTR_FOLDER)) {
@@ -81,10 +79,9 @@ public class ContentAssetFolderPlugin extends AbstractOCAPITransportPlugin {
                         
                         // construct URL for folder assignment
                         final String endpoint = clientProvider.getClientForSpecificInstance(instanceId.getInstanceId(config))
-                                .map(DemandwareClient::getEndpoint)
-                                .orElse(StringUtils.EMPTY);
-                        final String transportUriBuilder = DemandwareClient.DEFAULT_SCHEMA + endpoint + getOCApiPath() + getOCApiVersion() + constructEndpointURL(
-                                delivery.getString(DemandwareCommerceConstants.ATTR_API_ENDPOINT), folder, delivery);
+                                .map(DemandwareClient::getEndpoint).orElse(StringUtils.EMPTY);
+                        final String transportUriBuilder = DemandwareClient.DEFAULT_SCHEMA + endpoint + getOCApiPath() + getOCApiVersion() +
+                                constructEndpointURL(delivery.getString(DemandwareCommerceConstants.ATTR_API_ENDPOINT), folder, delivery);
                         final RequestBuilder requestBuilder = RequestBuilder.put();
                         requestBuilder.setUri(transportUriBuilder);
                         requestBuilder.addHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType());
@@ -117,8 +114,8 @@ public class ContentAssetFolderPlugin extends AbstractOCAPITransportPlugin {
     }
     
     private String constructEndpointURL(String endpointUrl, String folder, JSONObject delivery) {
-        endpointUrl = StringUtils.appendIfMissing(StringUtils.replace(endpointUrl, "/content/",
-                "/folder_assignments/"), "/" + folder);
+        endpointUrl = StringUtils.appendIfMissing(StringUtils.replace(endpointUrl, "/content/", "/folder_assignments/"),
+                "/" + folder);
         return super.constructEndpointURL(endpointUrl, delivery);
     }
 }
