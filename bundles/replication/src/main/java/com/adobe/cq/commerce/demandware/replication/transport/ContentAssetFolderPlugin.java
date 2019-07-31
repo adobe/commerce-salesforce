@@ -51,10 +51,10 @@ import org.osgi.framework.Constants;
 @Properties({@Property(name = TransportHandlerPlugin.PN_TASK, value = "ContentAssetFolderPlugin", propertyPrivate = true),
         @Property(name = Constants.SERVICE_RANKING, intValue = 11)})
 public class ContentAssetFolderPlugin extends AbstractOCAPITransportPlugin {
-    
+
     @Reference
     private InstanceIdProvider instanceId;
-    
+
     @Override
     String getContentType() {
         return "content-asset";
@@ -63,9 +63,11 @@ public class ContentAssetFolderPlugin extends AbstractOCAPITransportPlugin {
     // TODO currently all folders assigned in AEM are pushed to DWRE, but deletions are not handled
     // TODO > should be get all folders first, check for new (and only push new) and remove deleted
     @Override
-    public boolean deliver(JSONObject delivery, AgentConfig config, ReplicationLog log, ReplicationAction action) throws ReplicationException {
-        final String id = delivery.optString(DemandwareCommerceConstants.ATTR_ID, StringUtils.substringAfterLast(action.getPath(), "/"));
-        
+    public boolean deliver(JSONObject delivery, AgentConfig config, ReplicationLog log, ReplicationAction action)
+		    throws ReplicationException {
+        final String id = delivery.optString(DemandwareCommerceConstants.ATTR_ID,
+		        StringUtils.substringAfterLast(action.getPath(), "/"));
+
         // check if we have some folder assignments
         if (delivery.has(DemandwareCommerceConstants.ATTR_FOLDER)) {
             boolean defaultFolder = true;
