@@ -46,8 +46,7 @@ public class InstanceIdProviderImpl implements InstanceIdProvider {
     
     @Override
     public String getInstanceId(SlingHttpServletRequest request) {
-        String instanceId = getInstanceId(getPage(request));
-        return instanceId;
+        return getInstanceId(getPage(request));
     }
     
     @Override
