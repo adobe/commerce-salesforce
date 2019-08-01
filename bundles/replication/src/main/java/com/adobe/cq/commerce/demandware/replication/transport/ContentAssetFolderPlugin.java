@@ -51,7 +51,7 @@ import org.osgi.framework.Constants;
 @Properties({@Property(name = TransportHandlerPlugin.PN_TASK, value = "ContentAssetFolderPlugin", propertyPrivate = true),
         @Property(name = Constants.SERVICE_RANKING, intValue = 11)})
 public class ContentAssetFolderPlugin extends AbstractOCAPITransportPlugin {
-
+    
     @Reference
     private InstanceIdProvider instanceId;
 
