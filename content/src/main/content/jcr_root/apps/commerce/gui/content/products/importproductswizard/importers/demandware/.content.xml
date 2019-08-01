@@ -26,6 +26,13 @@
                 fieldLabel="Demandware store name"
                 name="storeName"
                 required="{Boolean}true"/>
+        <instanceId
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="granite/ui/components/foundation/form/textfield"
+                emptyText="instanceId"
+                fieldLabel="Demandware Client Instance Id"
+                name="instanceId"
+                required="{Boolean}true"/>
         <button
                 jcr:primaryType="nt:unstructured"
                 sling:resourceType="granite/ui/components/coral/foundation/form/fileupload"

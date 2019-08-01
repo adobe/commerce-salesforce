@@ -132,14 +132,18 @@ public class DemandwareProductImporter extends AbstractProductImporter implement
 
         String storePath = request.getParameter("storePath");
         String storeName = request.getParameter("storeName");
-        if (StringUtils.isEmpty(storePath) || StringUtils.isEmpty(storeName)) {
+        instanceId = request.getParameter("instanceId");
+        if (StringUtils.isEmpty(storePath) || StringUtils.isEmpty(storeName) || StringUtils.isEmpty(instanceId)) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Destination not specified.");
+            return false;
+        }
+        if (StringUtils.isEmpty(instanceId)) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "InstanceId have to be set.");
             return false;
         }
 
         addToCollection = "true".equals(request.getParameter("addToCollection"));
         collectionPath = request.getParameter("collectionPath");
-        instanceId = instanceIdProvider.getInstanceId(request);
 
         return true;
     }
