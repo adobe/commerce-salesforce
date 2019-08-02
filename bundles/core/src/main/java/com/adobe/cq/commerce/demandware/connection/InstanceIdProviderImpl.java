@@ -38,19 +38,15 @@ public class InstanceIdProviderImpl implements InstanceIdProvider {
     
     @Override
     public String getInstanceId(final Page page) {
-        String previewInstanceId = "";
+        String instanceId = "";
         final HierarchyNodeInheritanceValueMap pageProperties = new HierarchyNodeInheritanceValueMap(
                 page.getContentResource());
-        if (pageProperties != null) {
-            return pageProperties.getInherited(DemandwareCommerceConstants.PN_DWRE_INSTANCE_ID, previewInstanceId);
-        }
-        return previewInstanceId != null ? previewInstanceId : "";
+        return pageProperties.getInherited(DemandwareCommerceConstants.PN_DWRE_INSTANCE_ID, instanceId);
     }
     
     @Override
     public String getInstanceId(SlingHttpServletRequest request) {
-        String previewInstanceId = getInstanceId(getPage(request));
-        return previewInstanceId != null ? previewInstanceId : "";
+        return getInstanceId(getPage(request));
     }
     
     @Override
@@ -61,13 +57,13 @@ public class InstanceIdProviderImpl implements InstanceIdProvider {
     }
     
     private Page getPage(SlingHttpServletRequest request) {
-        String path = getRequestedPath(request);
+        String path = getReferrerPath(request);
         ResourceResolver resourceResolver = request.getResourceResolver();
         PageManager pageManager = resourceResolver.adaptTo(PageManager.class);
         return pageManager.getPage(path);
     }
     
-    private String getRequestedPath(SlingHttpServletRequest request) {
+    private String getReferrerPath(SlingHttpServletRequest request) {
         String referer = request.getHeader("Referer");
         String host = request.getHeader("Host");
         return StringUtils.substringBetween(referer, host, ".html");

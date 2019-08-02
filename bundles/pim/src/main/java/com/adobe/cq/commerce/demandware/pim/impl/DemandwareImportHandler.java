@@ -138,11 +138,11 @@ public class DemandwareImportHandler implements ImportHandler {
     }
 
     @Override
-    public void updateAsset(ImportContext ctx, Node imageNode, ValueMap values) throws RepositoryException {
+    public void updateAsset(ImportContext ctx, Node imageNode, ValueMap values, String instanceId) throws RepositoryException {
         imageNode.setProperty(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, DEFAULT_ASSET_RESOURCE_TYPE);
         imageNode.setProperty(JcrConstants.JCR_LASTMODIFIED, Calendar.getInstance());
 
-        final Asset asset = importAssetHandler.retrieveAsset(ctx, values);
+        final Asset asset = importAssetHandler.retrieveAsset(ctx, values, instanceId);
         if (asset != null) {
             imageNode.setProperty("fileReference", asset.getPath());
             ctx.info("Attached asset", asset.getPath());

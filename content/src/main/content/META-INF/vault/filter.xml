@@ -25,9 +25,9 @@
         <include pattern=".*/rep:policy(/.*)?"/>
     </filter>
 
-    <filter root="/etc/demandware"/>
+    <filter root="/etc/demandware" mode="merge"/>
     <filter root="/etc/designs/demandware"/>
-    <filter root="/etc/replication/agents.author/demandware"/>
+    <filter root="/etc/replication/agents.author/demandware" mode="merge"/>
     <filter root="/etc/scaffolding/demandware"/>
 
     <filter root="/home/users/system/demandware" mode="merge"/>
