@@ -14,23 +14,21 @@
  ~ limitations under the License.
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-package com.adobe.cq.commerce.demandware.replication.utils;
+package com.adobe.cq.commerce.demandware;
 
 import com.day.cq.replication.AgentConfig;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Service;
+import com.day.cq.wcm.api.Page;
+import org.apache.sling.api.SlingHttpServletRequest;
 
-import java.util.Optional;
-
-@Component
-@Service(value = DemandwareInstanceIdProvider.class)
-public class DemandwareInstanceIdProvider {
-	private static final String DWRE_SCHEME = "demandware://";
-
-	public String getInstanceId(final AgentConfig config) {
-		return Optional.ofNullable(config.getTransportURI())
-				.map(uri -> uri.replace(DWRE_SCHEME, StringUtils.EMPTY))
-				.orElse(StringUtils.EMPTY);
-	}
+/**
+ * Component demandware instance id service to identify the instance id of configured demandware.
+ */
+public interface InstanceIdProvider {
+    
+    String getInstanceId(Page page);
+    
+    String getInstanceId(SlingHttpServletRequest request);
+    
+    String getInstanceId(AgentConfig config);
+    
 }

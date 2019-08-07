@@ -18,7 +18,7 @@ package com.adobe.cq.commerce.demandware.replication.transport;
 
 import com.adobe.cq.commerce.demandware.DemandwareClient;
 import com.adobe.cq.commerce.demandware.DemandwareCommerceConstants;
-import com.adobe.cq.commerce.demandware.replication.utils.DemandwareInstanceIdProvider;
+import com.adobe.cq.commerce.demandware.InstanceIdProvider;
 import com.adobe.granite.auth.oauth.AccessTokenProvider;
 import com.day.cq.replication.AgentConfig;
 import com.day.cq.replication.ReplicationAction;
@@ -93,7 +93,7 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
     protected ResourceResolverFactory rrf;
 
     @Reference
-    private DemandwareInstanceIdProvider instanceIdProvider;
+    private InstanceIdProvider instanceIdProvider;
 
     private Map<String, Comparable<Object>> accessTokenProvidersProps =
             new ConcurrentSkipListMap<>(Collections.reverseOrder());
