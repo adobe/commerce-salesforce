@@ -14,16 +14,12 @@
  ~ limitations under the License.
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-package com.adobe.cq.commerce.demandware;
+package com.adobe.cq.commerce.demandware.pim;
 
-import com.day.cq.replication.AgentConfig;
-
-import java.util.HashMap;
-import java.util.Optional;
-
-public interface DemandwareClientProvider {
-	DemandwareClient getDefaultClient();
-	Optional<DemandwareClient> getClientForSpecificInstance(final String instanceId);
-	Optional<DemandwareClient> getClientForSpecificInstance(final AgentConfig config);
-	HashMap<String, DemandwareClient> getDemandwareClients ();
+/**
+ * Provides Endpoint config by instance id
+ */
+public interface EndpointConfigProvider {
+    
+    EndpointConfig getEndpointConfigByInstanceId(final String instanceId);
 }

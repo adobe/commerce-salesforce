@@ -19,13 +19,14 @@ package com.adobe.cq.commerce.demandware.pim.impl;
 import com.adobe.cq.commerce.demandware.DemandwareClient;
 import com.adobe.cq.commerce.demandware.DemandwareClientProvider;
 import com.adobe.cq.commerce.demandware.pim.DemandwareCommerceConstants;
+import com.adobe.cq.commerce.demandware.pim.EndpointConfig;
+import com.adobe.cq.commerce.demandware.pim.EndpointConfigProvider;
 import com.adobe.cq.commerce.demandware.pim.ImportAssetHandler;
 import com.adobe.cq.commerce.demandware.pim.ImportContext;
 import com.adobe.granite.asset.api.Asset;
 import com.adobe.granite.asset.api.AssetManager;
 import com.adobe.granite.asset.api.RenditionHandler;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
@@ -37,14 +38,11 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.sling.commons.osgi.PropertiesUtil;
 import org.osgi.framework.Constants;
-import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -65,11 +63,20 @@ public class DemandwareImageAssetHandler implements ImportAssetHandler {
 
     @Reference
     DemandwareClientProvider clientProvider;
+    
+    @Reference
+    EndpointConfigProvider endpointConfigProvider;
 
     private String downloadEndpoint;
 
     @Override
     public Asset retrieveAsset(ImportContext ctx, Map<String, Object> properties, String instanceId) {
+        EndpointConfig endpointConfig = endpointConfigProvider.getEndpointConfigByInstanceId(instanceId);
+        if(endpointConfig == null){
+            LOG.error("Missing download endpoint configuration, can not download any asset");
+            return null;
+        }
+        downloadEndpoint = endpointConfig.getDownloadEndpoint();
         if (StringUtils.isBlank(downloadEndpoint)) {
             LOG.error("Missing download endpoint, can not download any asset");
             return null;
@@ -136,13 +143,5 @@ public class DemandwareImageAssetHandler implements ImportAssetHandler {
             HttpClientUtils.closeQuietly(httpClient);
         }
         return null;
-    }
-
-    /* OSGI stuff */
-
-    @Activate
-    protected void activate(final ComponentContext ctx) {
-        final Dictionary<?, ?> config = ctx.getProperties();
-        downloadEndpoint = PropertiesUtil.toString(config.get(DOWNLOAD_ENDPOINT), "");
     }
 }
