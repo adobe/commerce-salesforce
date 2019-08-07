@@ -28,8 +28,6 @@ import com.adobe.granite.asset.api.AssetManager;
 import com.adobe.granite.asset.api.RenditionHandler;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Properties;
-import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
 import org.apache.http.HttpStatus;
@@ -38,7 +36,6 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.osgi.framework.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,13 +44,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@Component(label = "Demandware Product Import Image Asset Handler", metatype = true)
+@Component(label = "Demandware Product Import Image Asset Handler")
 @Service
-@Properties(value = {
-    @Property(name = Constants.SERVICE_RANKING, intValue = 0, propertyPrivate = true),
-    @Property(name = Constants.SERVICE_DESCRIPTION, value = "Demandware specific import product image handler " +
-        "implementation", propertyPrivate = true)
-})
 public class DemandwareImageAssetHandler implements ImportAssetHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(DemandwareImageAssetHandler.class);
