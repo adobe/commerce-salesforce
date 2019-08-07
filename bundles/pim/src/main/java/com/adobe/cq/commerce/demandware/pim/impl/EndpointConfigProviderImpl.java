@@ -31,14 +31,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-@Component(label = "Endpoint Config Provider", immediate = true)
+@Component(label = "Demandware PIM Endpoint Config Provider", immediate = true)
 @Service(value = EndpointConfigProvider.class)
 public class EndpointConfigProviderImpl implements EndpointConfigProvider {
     
     private static final Logger LOG = LoggerFactory.getLogger(EndpointConfigProviderImpl.class);
     
     
-    @Reference(referenceInterface = com.adobe.cq.commerce.demandware.pim.EndpointConfig.class,
+    @Reference(referenceInterface = EndpointConfig.class,
             bind = "bindEndpointConfig",
             unbind = "unbindEndpointConfig",
             cardinality = ReferenceCardinality.MANDATORY_MULTIPLE,

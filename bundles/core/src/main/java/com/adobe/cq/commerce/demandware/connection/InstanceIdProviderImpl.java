@@ -22,11 +22,13 @@ import com.day.cq.commons.inherit.HierarchyNodeInheritanceValueMap;
 import com.day.cq.replication.AgentConfig;
 import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.api.PageManager;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Service;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.ResourceResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
@@ -34,37 +36,44 @@ import java.util.Optional;
 @Component(label = "Demandware Component Instance Id Service")
 @Service()
 public class InstanceIdProviderImpl implements InstanceIdProvider {
+    private static final Logger LOG = LoggerFactory.getLogger(InstanceIdProviderImpl.class);
     private static final String DWRE_SCHEME = "demandware://";
     
     @Override
     public String getInstanceId(final Page page) {
-        String instanceId = "";
+        if (page == null) {
+            LOG.error("Failed to fetch Demandware instance id. Page is missing.");
+            return StringUtils.EMPTY;
+        }
         final HierarchyNodeInheritanceValueMap pageProperties = new HierarchyNodeInheritanceValueMap(
                 page.getContentResource());
-        return pageProperties.getInherited(DemandwareCommerceConstants.PN_DWRE_INSTANCE_ID, instanceId);
+        return pageProperties.getInherited(DemandwareCommerceConstants.PN_DWRE_INSTANCE_ID, StringUtils.EMPTY);
     }
     
     @Override
-    public String getInstanceId(SlingHttpServletRequest request) {
-        return getInstanceId(getPage(request));
+    public String getInstanceId(final SlingHttpServletRequest request) {
+        String path = getReferrerPath(request);
+        ResourceResolver resourceResolver = request.getResourceResolver();
+        PageManager pageManager = resourceResolver.adaptTo(PageManager.class);
+        if (StringUtils.isEmpty(path) || pageManager == null) {
+            return StringUtils.EMPTY;
+        }
+        return getInstanceId(pageManager.getPage(path));
     }
     
     @Override
     public String getInstanceId(final AgentConfig config) {
         return Optional.ofNullable(config.getTransportURI())
-                .map(uri -> uri.replace(DWRE_SCHEME, org.apache.commons.lang3.StringUtils.EMPTY))
-                .orElse(org.apache.commons.lang3.StringUtils.EMPTY);
+                .map(uri -> uri.replace(DWRE_SCHEME, StringUtils.EMPTY))
+                .orElse(StringUtils.EMPTY);
     }
     
-    private Page getPage(SlingHttpServletRequest request) {
-        String path = getReferrerPath(request);
-        ResourceResolver resourceResolver = request.getResourceResolver();
-        PageManager pageManager = resourceResolver.adaptTo(PageManager.class);
-        return pageManager.getPage(path);
-    }
-    
-    private String getReferrerPath(SlingHttpServletRequest request) {
+    private String getReferrerPath(final SlingHttpServletRequest request) {
         String referer = request.getHeader("Referer");
+        if (StringUtils.isEmpty(referer)) {
+            LOG.error("Failed to fetch Demandware instance id. Request referrer header is missing [{}]", referer);
+            return StringUtils.EMPTY;
+        }
         String host = request.getHeader("Host");
         return StringUtils.substringBetween(referer, host, ".html");
     }

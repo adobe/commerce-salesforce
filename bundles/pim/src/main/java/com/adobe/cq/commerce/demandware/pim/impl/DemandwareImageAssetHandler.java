@@ -50,24 +50,19 @@ import java.util.Optional;
 @Component(label = "Demandware Product Import Image Asset Handler", metatype = true)
 @Service
 @Properties(value = {
-        @Property(name = Constants.SERVICE_RANKING, intValue = 0, propertyPrivate = true),
-        @Property(name = Constants.SERVICE_DESCRIPTION, value = "Demandware specific import product image handler " +
-                "implementation", propertyPrivate = true)
+    @Property(name = Constants.SERVICE_RANKING, intValue = 0, propertyPrivate = true),
+    @Property(name = Constants.SERVICE_DESCRIPTION, value = "Demandware specific import product image handler " +
+        "implementation", propertyPrivate = true)
 })
 public class DemandwareImageAssetHandler implements ImportAssetHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(DemandwareImageAssetHandler.class);
-
-    @Property
-    private static final String DOWNLOAD_ENDPOINT = "downloadEndpoint";
 
     @Reference
     DemandwareClientProvider clientProvider;
     
     @Reference
     EndpointConfigProvider endpointConfigProvider;
-
-    private String downloadEndpoint;
 
     @Override
     public Asset retrieveAsset(ImportContext ctx, Map<String, Object> properties, String instanceId) {
@@ -76,14 +71,14 @@ public class DemandwareImageAssetHandler implements ImportAssetHandler {
             LOG.error("Missing download endpoint configuration, can not download any asset");
             return null;
         }
-        downloadEndpoint = endpointConfig.getDownloadEndpoint();
+	    String downloadEndpoint = endpointConfig.getDownloadEndpoint();
         if (StringUtils.isBlank(downloadEndpoint)) {
             LOG.error("Missing download endpoint, can not download any asset");
             return null;
         }
 
-        if (!properties.containsKey(DemandwareCommerceConstants.ATTRIBUTE_ASSET_PATH) && StringUtils.isBlank
-                ((String) properties.get(DemandwareCommerceConstants.ATTRIBUTE_ASSET_PATH))) {
+        if (!properties.containsKey(DemandwareCommerceConstants.ATTRIBUTE_ASSET_PATH)
+                && StringUtils.isBlank((String) properties.get(DemandwareCommerceConstants.ATTRIBUTE_ASSET_PATH))) {
             LOG.error("Missing asset path");
             return null;
         }
@@ -116,9 +111,9 @@ public class DemandwareImageAssetHandler implements ImportAssetHandler {
                 }
 
                 final String assetPath = "/content/dam/" + ctx.getBaseResource().getName() + "/products/"
-                        + properties.get(DemandwareCommerceConstants.ATTRIBUTE_CATEGORY_ID) + "/"
-                        + properties.get(DemandwareCommerceConstants.ATTRIBUTE_PRODUCT_ID) + "/"
-                        + filePath;
+                    + properties.get(DemandwareCommerceConstants.ATTRIBUTE_CATEGORY_ID) + "/"
+                    + properties.get(DemandwareCommerceConstants.ATTRIBUTE_PRODUCT_ID) + "/"
+                    + filePath;
 
 
                 Asset asset;
@@ -130,10 +125,10 @@ public class DemandwareImageAssetHandler implements ImportAssetHandler {
                 Map<String, Object> config = new HashMap<String, Object>();
                 config.put(RenditionHandler.PROPERTY_ID, "jcr.default");
                 config.put(RenditionHandler.PROPERTY_RENDITION_MIME_TYPE, responseObj.getEntity().getContentType()
-                        .getValue());
+                    .getValue());
                 asset.setRendition("original", responseObj.getEntity().getContent(), config);
                 LOG.debug("Attached asset {} to {}", asset.getPath(),
-                        properties.get(DemandwareCommerceConstants.ATTRIBUTE_PRODUCT_ID));
+                    properties.get(DemandwareCommerceConstants.ATTRIBUTE_PRODUCT_ID));
                 return asset;
             }
         } catch (IOException e) {

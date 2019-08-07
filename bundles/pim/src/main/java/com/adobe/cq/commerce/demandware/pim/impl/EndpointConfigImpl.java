@@ -34,7 +34,8 @@ import java.util.Map;
  */
 @Service
 @Component(metatype = true, configurationFactory = true, immediate = true,
-        policy = ConfigurationPolicy.REQUIRE, label = "Endpoint Configuration for Product Import", name = "com.adobe.cq.commerce.demandware.pim.impl.EndpointConfigImpl")
+        policy = ConfigurationPolicy.REQUIRE, label = "Endpoint Configuration for Demandware Product Import",
+        name = "com.adobe.cq.commerce.demandware.pim.impl.EndpointConfigImpl")
 @Properties({
 @Property(name = "webconsole.configurationFactory.nameHint", value = "{service.factoryPid} - {instance.id}")
 })
