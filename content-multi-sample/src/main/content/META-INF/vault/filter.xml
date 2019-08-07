@@ -17,7 +17,8 @@
 <workspaceFilter version="1.0">
     <filter root="/content/eu-sitegenesis" mode="merge"/>
     <filter root="/content/us-sitegenesis" mode="merge"/>
-    <filter root="/content/dam/dwre"/>
+    <filter root="/content/dam/eu-sitegenesis" mode="merge"/>
+    <filter root="/content/dam/us-sitegenesis" mode="merge"/>
 
     <filter root="/apps/commerce/demandware/config" mode="merge"/>
     <filter root="/apps/commerce/demandware/config.author" mode="merge" />
