@@ -19,8 +19,6 @@ package com.adobe.cq.commerce.demandware.pim.impl;
 import com.adobe.cq.commerce.demandware.DemandwareClient;
 import com.adobe.cq.commerce.demandware.DemandwareClientProvider;
 import com.adobe.cq.commerce.demandware.pim.DemandwareCommerceConstants;
-import com.adobe.cq.commerce.demandware.pim.EndpointConfig;
-import com.adobe.cq.commerce.demandware.pim.EndpointConfigProvider;
 import com.adobe.cq.commerce.demandware.pim.ImportAssetHandler;
 import com.adobe.cq.commerce.demandware.pim.ImportContext;
 import com.adobe.granite.asset.api.Asset;
@@ -53,17 +51,16 @@ public class DemandwareImageAssetHandler implements ImportAssetHandler {
     @Reference
     DemandwareClientProvider clientProvider;
     
-    @Reference
-    EndpointConfigProvider endpointConfigProvider;
 
     @Override
     public Asset retrieveAsset(ImportContext ctx, Map<String, Object> properties, String instanceId) {
-        EndpointConfig endpointConfig = endpointConfigProvider.getEndpointConfigByInstanceId(instanceId);
-        if(endpointConfig == null){
-            LOG.error("Missing download endpoint configuration, can not download any asset");
+        Optional<DemandwareClient> demandwareClient = clientProvider.getClientForSpecificInstance(instanceId);
+        if (!demandwareClient.isPresent()) {
+            LOG.error("Failed to get DemandwareClient for [{}] Demandware instanceId.", instanceId);
             return null;
         }
-	    String downloadEndpoint = endpointConfig.getDownloadEndpoint();
+        
+        String downloadEndpoint = demandwareClient.get().getAssetDownloadEndpoint();
         if (StringUtils.isBlank(downloadEndpoint)) {
             LOG.error("Missing download endpoint, can not download any asset");
             return null;
@@ -75,11 +72,6 @@ public class DemandwareImageAssetHandler implements ImportAssetHandler {
             return null;
         }
         final String relativeImagePath = (String) properties.get(DemandwareCommerceConstants.ATTRIBUTE_ASSET_PATH);
-        Optional<DemandwareClient> demandwareClient = clientProvider.getClientForSpecificInstance(instanceId);
-        if (!demandwareClient.isPresent()) {
-            LOG.error("Failed to get DemandwareClient for [{}] Demandware instanceId.", instanceId);
-            return null;
-        }
         
         final String endPoint = DemandwareClient.DEFAULT_SCHEMA + demandwareClient.get().getEndpoint()
                 + downloadEndpoint + StringUtils.prependIfMissing(relativeImagePath, "/", "/");

@@ -37,9 +37,7 @@
     final ArrayList<Resource> resourceList = new ArrayList<Resource>();
     if (demandwareClientProvider != null) {
         Map<String, DemandwareClient> demandwareClientMap = demandwareClientProvider.getDemandwareClients();
-        int count = 0;
         for (DemandwareClient value : demandwareClientMap.values()) {
-            count++;
             HashMap map = new HashMap();
             map.put("text", value.getInstanceId());
             map.put("value", value.getInstanceId());
