@@ -32,7 +32,7 @@
     <!-- P R O J E C T  D E S C R I P T I O N                                   -->
     <!-- ====================================================================== -->
     <groupId>com.adobe.cq.commerce</groupId>
-    <artifactId>cq-commerce-demandware-clean-content</artifactId>
+    <artifactId>cq-commerce-demandware-clean-up-content</artifactId>
     <version>0.3.3-SNAPSHOT</version>
     <packaging>content-package</packaging>
     <name>Adobe AEM Commerce - Salesforce Commerce Clean Up Demo Content</name>

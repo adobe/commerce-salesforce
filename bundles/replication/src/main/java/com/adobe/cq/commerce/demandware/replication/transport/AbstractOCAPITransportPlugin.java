@@ -378,12 +378,18 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
         for (Header header : response.getAllHeaders()) {
             log.debug("> Header %s", header.getName() + ": " + header.getValue());
         }
-        if (!isRequestSuccessful(response)) {
-            try {
+        if (isRequestSuccessful(response)) {
+            return;
+        }
+
+        try {
+            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_NOT_FOUND) {
+                log.debug("Not found: %s", EntityUtils.toString(response.getEntity()));
+            } else {
                 log.error("> Error message: %s", EntityUtils.toString(response.getEntity()));
-            } catch (IOException e) {
-               // do nothing
             }
+        } catch (IOException e) {
+           // do nothing
         }
     }
 
