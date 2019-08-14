@@ -20,6 +20,7 @@
     jcr:title="US Demandware SiteGenesis"
     dwreSite="us-sitegenesis"
     dwreLibrary="us-sitegenesis"
+    dwreInstanceId="us-sitegenesis"
     sling:resourceType="commerce/demandware/components/page/page_root"
     cq:template="/apps/commerce/demandware/templates/page-root">
     <image jcr:primaryType="nt:unstructured">
