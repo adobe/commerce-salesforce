@@ -46,31 +46,6 @@ public class DemandwareClientProviderImpl implements DemandwareClientProvider {
 			policy = ReferencePolicy.DYNAMIC)
 	protected HashMap<String, DemandwareClient> demandwareClients;
 
-	/**
-	 * Returns DemandwareClient service, configured with "default" instance id
-	 * or, if not present, first found DemandwareClient service.
-	 *
-	 * @return
-	 *///TODO remove usages
-	public DemandwareClient getDefaultClient() {
-		Optional<DemandwareClient> client = getClientForSpecificInstance(INSTANCE_ID_DEFAULT);
-		if (client.isPresent()) {
-			return client.get();
-		}
-
-		LOG.debug("No default DemandwareClient configured: return first found service.");
-		Optional<DemandwareClient> clientOpt = demandwareClients.entrySet()
-				.stream()
-				.findFirst()
-				.map(Map.Entry::getValue);
-		if (clientOpt.isPresent()) {
-			return clientOpt.get();
-		}
-
-		LOG.error("Failed to get DemandwareClient - no configuration found.");
-		return null;
-	}
-
 	@Override
 	public Optional<DemandwareClient> getClientForSpecificInstance(final String instanceId) {
 		DemandwareClient demandwareClient = demandwareClients.get(instanceId.replace("/", ""));
