@@ -14,15 +14,18 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-<workspaceFilter version="1.0">
-    <filter root="/content/sitegenesis" mode="merge"/>
-    <filter root="/content/dam/sitegenesis" mode="merge"/>
-
-    <filter root="/apps/commerce/demandware/config" mode="merge"/>
-    <filter root="/apps/commerce/demandware/config.author" mode="merge" />
-
-    <filter root="/etc/demandware/init"/>
-    <filter root="/etc/replication/agents.author/demandware-sitegenesis"/>
-
-    <filter root="/home/users/system/demandware" mode="merge"/>
-</workspaceFilter>
+<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:rep="internal" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    jcr:primaryType="sling:Folder"
+    jcr:mixinTypes="[rep:AccessControllable]">
+    <jcr:content
+            jcr:primaryType="nt:unstructured"
+            jcr:title="US Sitegenesis"
+            dwreLibrary="us-sitegenesis"/>
+    <rep:policy
+            jcr:primaryType="rep:ACL">
+        <allowUSSitegenesisDam
+                jcr:primaryType="rep:GrantACE"
+                rep:principalName="dwre-replication-agent-us-sitegenesis"
+                rep:privileges="{Name}[jcr:read,crx:replicate]"/>
+    </rep:policy>
+</jcr:root>

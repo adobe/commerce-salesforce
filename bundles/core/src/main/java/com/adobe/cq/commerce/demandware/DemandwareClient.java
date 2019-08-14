@@ -54,4 +54,6 @@ public interface DemandwareClient {
      * @return configured Demandware instance id
      */
     String getInstanceId();
+    
+    String getAssetDownloadEndpoint();
 }

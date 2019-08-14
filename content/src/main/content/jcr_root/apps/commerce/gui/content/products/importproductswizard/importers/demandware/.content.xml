@@ -28,11 +28,15 @@
                 required="{Boolean}true"/>
         <instanceId
                 jcr:primaryType="nt:unstructured"
-                sling:resourceType="granite/ui/components/foundation/form/textfield"
-                emptyText="instanceId"
-                fieldLabel="Demandware Client Instance Id"
+                sling:resourceType="granite/ui/components/foundation/form/select"
                 name="instanceId"
-                required="{Boolean}true"/>
+                emptyText="Select"
+                fieldLabel="Demandware Client Instance Id"
+                renderReadOnly="{Boolean}true">
+                <datasource
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="/libs/commerce/demandware/components/datasources/instanceId"/>
+        </instanceId>
         <button
                 jcr:primaryType="nt:unstructured"
                 sling:resourceType="granite/ui/components/coral/foundation/form/fileupload"

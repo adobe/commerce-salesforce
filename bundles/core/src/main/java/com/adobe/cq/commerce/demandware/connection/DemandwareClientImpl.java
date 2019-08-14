@@ -98,6 +98,9 @@ public class DemandwareClientImpl implements DemandwareClient {
 
     @Property(label = "Key password", description = "Leave empty for no password")
     private static final String KEY_PWD = "key.password";
+    
+    @Property(label = "Asset download endpoint")
+    private static final String ASSET_DOWNLOAD_ENDPOINT = "assetDownloadEndpoint";
 
     @Property(label = "Instance id", description = "Demandware instance identifier.")
     private static final String INSTANCE_ID = "instance.id";
@@ -111,6 +114,7 @@ public class DemandwareClientImpl implements DemandwareClient {
     private String keyStorePath;
     private String keyStorePwd;
     private String keyPwd;
+    private String assetDownloadEndpoint;
     private String instanceId;
 
     @Override
@@ -249,10 +253,16 @@ public class DemandwareClientImpl implements DemandwareClient {
     public String getInstanceId() {
         return instanceId;
     }
+    
+    @Override
+    public String getAssetDownloadEndpoint(){
+        return assetDownloadEndpoint;
+    }
 
     @Activate
     protected void activate(Map<String, Object> configuration) {
         instanceEndPoint = PropertiesUtil.toString(configuration.get(INSTANCE_ENDPOINT), null);
+        assetDownloadEndpoint = PropertiesUtil.toString(configuration.get(ASSET_DOWNLOAD_ENDPOINT),"");
         instanceId = PropertiesUtil.toString(configuration.get(INSTANCE_ID), null);
         protocolInterface = PropertiesUtil.toString(configuration.get(PROTOCOL_INTERFACE), null);
         protocolSSL = StringUtils.trimToNull(PropertiesUtil.toString(configuration.get(PROTOCOL_SSL), "TLSv1.2"));

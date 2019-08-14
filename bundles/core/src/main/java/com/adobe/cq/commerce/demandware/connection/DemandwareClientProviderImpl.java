@@ -80,6 +80,11 @@ public class DemandwareClientProviderImpl implements DemandwareClientProvider {
 		}
 		return Optional.of(demandwareClient);
 	}
+	
+	@Override
+	public HashMap<String, DemandwareClient> getDemandwareClients (){
+		return demandwareClients;
+	}
 
 	/**
 	 * Returns the configured Demandware client defined for specific SFCC instance

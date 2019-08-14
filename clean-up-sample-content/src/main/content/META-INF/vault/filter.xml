@@ -22,6 +22,9 @@
     <filter root="/content/sitegenesis"/>
     <filter root="/content/us-sitegenesis"/>
     <filter root="/content/eu-sitegenesis"/>
+    <filter root="/content/dam/eu-sitegenesis"/>
+    <filter root="/content/dam/us-sitegenesis"/>
+    <filter root="/content/dam/sitegenesis"/>
 
     <filter root="/etc/replication/agents.author/demandware-sitegenesis"/>
     <filter root="/etc/replication/agents.author/demandware-us-sitegenesis"/>

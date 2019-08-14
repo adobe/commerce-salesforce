@@ -18,8 +18,8 @@
     cq:designPath="/etc/designs/demandware"
     jcr:primaryType="nt:unstructured"
     jcr:title="EU Demandware SiteGenesis"
-    dwreSite="multisite"
-    dwreLibrary="multisite"
+    dwreSite="eu-sitegenesis"
+    dwreLibrary="eu-sitegenesis"
     sling:resourceType="commerce/demandware/components/page/page_root"
     cq:template="/apps/commerce/demandware/templates/page-root">
     <image jcr:primaryType="nt:unstructured">
