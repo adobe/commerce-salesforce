@@ -38,11 +38,10 @@ import java.util.Optional;
 public class DemandwareClientProviderImpl implements DemandwareClientProvider {
 	private static final Logger LOG = LoggerFactory.getLogger(DemandwareClientProviderImpl.class);
 	private static final String DWRE_SCHEME = "demandware://";
-	public static final String INSTANCE_ID_DEFAULT = "default";
 	@Reference(referenceInterface = DemandwareClient.class,
 			bind = "bindDemandwareClient",
 			unbind = "unbindDemandwareClient",
-			cardinality = ReferenceCardinality.MANDATORY_MULTIPLE, // TODO check if works with one
+			cardinality = ReferenceCardinality.MANDATORY_MULTIPLE,
 			policy = ReferencePolicy.DYNAMIC)
 	protected HashMap<String, DemandwareClient> demandwareClients;
 
