@@ -52,7 +52,6 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.sling.api.resource.Resource;
-import org.apache.sling.commons.osgi.PropertiesUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -254,13 +253,12 @@ public class PreviewServiceImpl implements PreviewService {
      */
     protected CredentialsProvider createCredentialsProvider(PreviewServiceConfig previewServiceConfig, Resource resource) {
         // set default user/pass
-        if (PropertiesUtil.toString(previewServiceConfig.getStorfrontProtectionUser(), null) != null && PropertiesUtil
-                .toString(previewServiceConfig.getStorfrontProtectionPassword(), null) != null) {
+        if (previewServiceConfig.getStorfrontProtectionUser() != null && previewServiceConfig.getStorfrontProtectionPassword() != null) {
             final CredentialsProvider credsProvider = new BasicCredentialsProvider();
             
             credsProvider.setCredentials(new AuthScope(getDemandwareClient(getPage(resource)).getEndpoint(), AuthScope.ANY_PORT),
-                    new UsernamePasswordCredentials(PropertiesUtil.toString(previewServiceConfig.getStorfrontProtectionUser(), null),
-                            PropertiesUtil.toString(previewServiceConfig.getStorfrontProtectionPassword(), null)));
+                    new UsernamePasswordCredentials(previewServiceConfig.getStorfrontProtectionUser(),
+                            previewServiceConfig.getStorfrontProtectionPassword()));
             return credsProvider;
         }
         return null;

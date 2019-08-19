@@ -77,7 +77,6 @@ public class PreviewServiceConfigImpl implements PreviewServiceConfig {
     private String previewSearchEndPoint;
     private String previewTemplate;
     private String previewDefaultSite;
-    private String previewCacheEnabled;
     private String previewCacheTime;
     private Boolean storfrontProtectionEnabled;
     private String storfrontProtectionUser;
@@ -104,10 +103,6 @@ public class PreviewServiceConfigImpl implements PreviewServiceConfig {
     
     public String getPreviewDefaultSite() {
         return previewDefaultSite;
-    }
-    
-    public String getPreviewCacheEnabled() {
-        return previewCacheEnabled;
     }
     
     public String getPreviewCacheTime() {
