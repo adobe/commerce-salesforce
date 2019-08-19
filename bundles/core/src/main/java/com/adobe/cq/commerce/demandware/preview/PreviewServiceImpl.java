@@ -138,9 +138,6 @@ public class PreviewServiceImpl implements PreviewService {
         final String renderedComponentContent = renderService.render(resource, null, selectores);
         final Page containingPage = getPage(resource);
         DemandwareClient demandwareClient = getDemandwareClient(containingPage);
-        if(demandwareClient == null) {
-            LOG.error("Unable to get DemandwareClient for {}", containingPage.getName());
-        }
         
         final HttpClientBuilder httpClientBuilder = demandwareClient.getHttpClientBuilder();
         
