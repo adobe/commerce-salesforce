@@ -19,6 +19,7 @@
     jcr:primaryType="nt:unstructured"
     jcr:title="Demandware SiteGenesis"
     dwreSite="SiteGenesis"
+    dwreInstanceId="sitegenesis"
     sling:resourceType="commerce/demandware/components/page/page_root"
     cq:template="/apps/commerce/demandware/templates/page-root">
     <image jcr:primaryType="nt:unstructured">

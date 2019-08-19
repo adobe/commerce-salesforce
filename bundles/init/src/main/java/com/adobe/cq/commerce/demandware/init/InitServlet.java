@@ -111,7 +111,7 @@ public class InitServlet extends SlingAllMethodsServlet {
         final Cookie token = slingRequest.getCookie("login-token");
         requestBuilder.addHeader(new BasicHeader("Cookie", token.getName() + "=" + token.getValue()));
         final HttpHost localHost = new HttpHost("localhost", 4502);
-        final HttpClient httpClient = clientProvider.getDefaultClient().getHttpClientBuilder().build();
+        final HttpClient httpClient = dwClient.getHttpClientBuilder().build();
         try {
             // get the from AEM content
             final HttpResponse response = httpClient.execute(localHost, requestBuilder.build());

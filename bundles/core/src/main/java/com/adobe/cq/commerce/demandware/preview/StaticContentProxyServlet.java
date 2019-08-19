@@ -16,12 +16,9 @@
 
 package com.adobe.cq.commerce.demandware.preview;
 
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-
+import com.adobe.cq.commerce.demandware.DemandwareClient;
 import com.adobe.cq.commerce.demandware.DemandwareClientProvider;
+import com.adobe.cq.commerce.demandware.InstanceIdProvider;
 import org.apache.commons.io.IOUtils;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
@@ -40,7 +37,10 @@ import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.adobe.cq.commerce.demandware.DemandwareClient;
+import javax.servlet.ServletException;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.util.Optional;
 
 /**
  * Simple proxy for static content assets (images, js, css) with relative URLs to Demandware.
@@ -53,17 +53,21 @@ public class StaticContentProxyServlet extends SlingSafeMethodsServlet {
 
     @Reference
     private DemandwareClientProvider clientProvider;
-
+    
+    @Reference
+    private InstanceIdProvider instanceId;
+    
     @Override
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) throws ServletException,
             IOException {
 
         RequestPathInfo pathInfo = request.getRequestPathInfo();
+        Optional<DemandwareClient> demandwareClient = clientProvider.getClientForSpecificInstance(instanceId.getInstanceId(request));
         LOG.debug("Proxy static content for {}", pathInfo.toString());
-        final String remoteUri = DemandwareClient.DEFAULT_SCHEMA + clientProvider.getDefaultClient().getEndpoint() + pathInfo.getResourcePath() +
+        final String remoteUri = DemandwareClient.DEFAULT_SCHEMA + demandwareClient.get().getEndpoint() + pathInfo.getResourcePath() +
                 "." + pathInfo.getExtension() + pathInfo.getSuffix();
 
-        final CloseableHttpClient httpClient = clientProvider.getDefaultClient().getHttpClient();
+        final CloseableHttpClient httpClient = demandwareClient.get().getHttpClient();
         CloseableHttpResponse responseObj = null;
         BufferedOutputStream output = null;
         try {

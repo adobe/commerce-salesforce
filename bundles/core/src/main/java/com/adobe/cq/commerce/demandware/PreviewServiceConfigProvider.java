@@ -18,11 +18,9 @@ package com.adobe.cq.commerce.demandware;
 
 import com.day.cq.replication.AgentConfig;
 
-import java.util.HashMap;
-import java.util.Optional;
-
-public interface DemandwareClientProvider {
-	Optional<DemandwareClient> getClientForSpecificInstance(final String instanceId);
-	Optional<DemandwareClient> getClientForSpecificInstance(final AgentConfig config);
-	HashMap<String, DemandwareClient> getDemandwareClients ();
+public interface PreviewServiceConfigProvider {
+    
+    PreviewServiceConfig getPreviewServiceConfigByInstanceId(final String instanceId);
+    
+    PreviewServiceConfig getClientForSpecificInstance(AgentConfig config);
 }

@@ -38,38 +38,12 @@ import java.util.Optional;
 public class DemandwareClientProviderImpl implements DemandwareClientProvider {
 	private static final Logger LOG = LoggerFactory.getLogger(DemandwareClientProviderImpl.class);
 	private static final String DWRE_SCHEME = "demandware://";
-	public static final String INSTANCE_ID_DEFAULT = "default";
 	@Reference(referenceInterface = DemandwareClient.class,
 			bind = "bindDemandwareClient",
 			unbind = "unbindDemandwareClient",
-			cardinality = ReferenceCardinality.MANDATORY_MULTIPLE, // TODO check if works with one
+			cardinality = ReferenceCardinality.MANDATORY_MULTIPLE,
 			policy = ReferencePolicy.DYNAMIC)
 	protected HashMap<String, DemandwareClient> demandwareClients;
-
-	/**
-	 * Returns DemandwareClient service, configured with "default" instance id
-	 * or, if not present, first found DemandwareClient service.
-	 *
-	 * @return
-	 *///TODO remove usages
-	public DemandwareClient getDefaultClient() {
-		Optional<DemandwareClient> client = getClientForSpecificInstance(INSTANCE_ID_DEFAULT);
-		if (client.isPresent()) {
-			return client.get();
-		}
-
-		LOG.debug("No default DemandwareClient configured: return first found service.");
-		Optional<DemandwareClient> clientOpt = demandwareClients.entrySet()
-				.stream()
-				.findFirst()
-				.map(Map.Entry::getValue);
-		if (clientOpt.isPresent()) {
-			return clientOpt.get();
-		}
-
-		LOG.error("Failed to get DemandwareClient - no configuration found.");
-		return null;
-	}
 
 	@Override
 	public Optional<DemandwareClient> getClientForSpecificInstance(final String instanceId) {
