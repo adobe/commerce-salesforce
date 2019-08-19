@@ -266,7 +266,7 @@ public class DemandwareClientImpl implements DemandwareClient {
         assetDownloadEndpoint = PropertiesUtil.toString(configuration.get(ASSET_DOWNLOAD_ENDPOINT),"");
         instanceId = PropertiesUtil.toString(configuration.get(INSTANCE_ID), null);
         protocolInterface = PropertiesUtil.toString(configuration.get(PROTOCOL_INTERFACE), null);
-        protocolSSL = StringUtils.trimToNull(PropertiesUtil.toString(configuration.get(PROTOCOL_SSL), "TLSv1.2"));
+        protocolSSL = StringUtils.trimToNull(PropertiesUtil.toString(configuration.get(PROTOCOL_SSL), "TLSv1.1"));
         keystoreType = StringUtils.trimToNull(PropertiesUtil.toString(configuration.get(KEYSTORE_TYPE), "JKS"));
         keyStorePath = StringUtils.trimToNull(PropertiesUtil.toString(configuration.get(KEYSTORE_PATH), null));
         keyStorePwd = StringUtils.trimToNull(PropertiesUtil.toString(configuration.get(KEYSTORE_PWD), null));
