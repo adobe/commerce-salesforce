@@ -88,9 +88,8 @@ public class PreviewServiceImpl implements PreviewService {
     
     @Override
     public String previewComponent(Resource resource, boolean useCache) {
-        PreviewServiceConfig previewServiceConfig = getPreviewServiceConfig(resource);
         if (resource != null) {
-            return getPreviewContent(previewServiceConfig.getPreviewPageEndPoint(), resource, useCache, null, previewServiceConfig, DemandwareCommerceConstants.DWRE_RENDERING_SELECTOR);
+            return getPreviewContent(resource, useCache, null, DemandwareCommerceConstants.DWRE_RENDERING_SELECTOR);
         } else {
             return null;
         }
@@ -98,9 +97,8 @@ public class PreviewServiceImpl implements PreviewService {
     
     @Override
     public String previewComponent(Resource resource, boolean useCache, String... selectors) {
-        PreviewServiceConfig previewServiceConfig = getPreviewServiceConfig(resource);
         if (resource != null) {
-            return getPreviewContent(previewServiceConfig.getPreviewPageEndPoint(), resource, useCache, null, previewServiceConfig, selectors);
+            return getPreviewContent(resource, useCache, null, selectors);
         } else {
             return null;
         }
@@ -108,21 +106,22 @@ public class PreviewServiceImpl implements PreviewService {
     
     @Override
     public String previewCategoryComponent(Resource resource, boolean useCache) {
-        PreviewServiceConfig previewServiceConfig = getPreviewServiceConfig(resource);
         if (resource != null) {
             final Page page = resource.getResourceResolver().adaptTo(PageManager.class).getContainingPage(resource);
             // add the category id parameter, using the page property if existing with fall back to page name
             final List<NameValuePair> params = new ArrayList<NameValuePair>();
             params.add(new BasicNameValuePair("cgid", page.getProperties().get("dwreCGID", page.getName())));
-            return getPreviewContent(previewServiceConfig.getPreviewPageEndPoint(), resource, useCache, params, previewServiceConfig, DemandwareCommerceConstants.DWRE_RENDERING_SELECTOR);
+            return getPreviewContent(resource, useCache, params, DemandwareCommerceConstants.DWRE_RENDERING_SELECTOR);
         } else {
             return null;
         }
     }
     
-    private String getPreviewContent(final String endPoint, final Resource resource, final boolean useCache,
-                                     final List<NameValuePair> params, PreviewServiceConfig previewServiceConfig, final String... selectores) {
+    private String getPreviewContent(final Resource resource, final boolean useCache,
+                                     final List<NameValuePair> params, final String... selectores) {
         String renderedPreview = "";
+        PreviewServiceConfig previewServiceConfig = getPreviewServiceConfig(resource);
+        final String endPoint = previewServiceConfig.getPreviewPageEndPoint();
         PreviewCache cache = previewServiceConfig.getCache();
         // check for cached preview content
         if (useCache && cache != null) {
@@ -141,7 +140,7 @@ public class PreviewServiceImpl implements PreviewService {
         final HttpClientBuilder httpClientBuilder = demandwareClient.getHttpClientBuilder();
         
         if (previewServiceConfig.getStorfrontProtectionEnabled()) {
-            credentialsProvider = createCredentialsProvider(previewServiceConfig, resource);
+            credentialsProvider = createCredentialsProvider(previewServiceConfig, demandwareClient);
         }
         
         if (credentialsProvider != null) {
@@ -251,12 +250,12 @@ public class PreviewServiceImpl implements PreviewService {
     /**
      * Setup storefront user credentials.
      */
-    protected CredentialsProvider createCredentialsProvider(PreviewServiceConfig previewServiceConfig, Resource resource) {
+    protected CredentialsProvider createCredentialsProvider(PreviewServiceConfig previewServiceConfig, DemandwareClient client) {
         // set default user/pass
         if (previewServiceConfig.getStorfrontProtectionUser() != null && previewServiceConfig.getStorfrontProtectionPassword() != null) {
             final CredentialsProvider credsProvider = new BasicCredentialsProvider();
             
-            credsProvider.setCredentials(new AuthScope(getDemandwareClient(getPage(resource)).getEndpoint(), AuthScope.ANY_PORT),
+            credsProvider.setCredentials(new AuthScope(client.getEndpoint(), AuthScope.ANY_PORT),
                     new UsernamePasswordCredentials(previewServiceConfig.getStorfrontProtectionUser(),
                             previewServiceConfig.getStorfrontProtectionPassword()));
             return credsProvider;
