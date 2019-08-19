@@ -61,6 +61,7 @@ public class StaticContentProxyServlet extends SlingSafeMethodsServlet {
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) throws ServletException,
             IOException {
 
+        //@TODO document
         RequestPathInfo pathInfo = request.getRequestPathInfo();
         Optional<DemandwareClient> demandwareClient = clientProvider.getClientForSpecificInstance(instanceId.getInstanceId(request));
         LOG.debug("Proxy static content for {}", pathInfo.toString());

@@ -99,7 +99,8 @@ public class DemandwareClientImpl implements DemandwareClient {
     @Property(label = "Key password", description = "Leave empty for no password")
     private static final String KEY_PWD = "key.password";
     
-    @Property(label = "Asset download endpoint")
+    @Property(label = "Asset download endpoint", description = "Path of asset on demandware instance used for importing assets via PIM",
+            value = "/on/demandware.static/-/{FILL ME}")
     private static final String ASSET_DOWNLOAD_ENDPOINT = "assetDownloadEndpoint";
 
     @Property(label = "Instance id", description = "Demandware instance identifier.")
