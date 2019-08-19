@@ -24,7 +24,7 @@ public interface PreviewServiceConfig {
     
     PreviewCache getCache();
     
-    String getStorfrontProtectionEnabled();
+    Boolean getStorfrontProtectionEnabled();
     
     String getPreviewTemplate();
     

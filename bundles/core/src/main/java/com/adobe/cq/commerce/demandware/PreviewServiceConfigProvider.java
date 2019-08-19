@@ -20,8 +20,6 @@ import com.day.cq.replication.AgentConfig;
 
 public interface PreviewServiceConfigProvider {
     
-    PreviewServiceConfig getDefaultPreviewServiceConfig();
-    
     PreviewServiceConfig getPreviewServiceConfigByInstanceId(final String instanceId);
     
     PreviewServiceConfig getClientForSpecificInstance(AgentConfig config);

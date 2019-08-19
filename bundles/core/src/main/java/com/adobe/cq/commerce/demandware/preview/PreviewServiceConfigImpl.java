@@ -79,7 +79,7 @@ public class PreviewServiceConfigImpl implements PreviewServiceConfig {
     private String previewDefaultSite;
     private String previewCacheEnabled;
     private String previewCacheTime;
-    private String storfrontProtectionEnabled;
+    private Boolean storfrontProtectionEnabled;
     private String storfrontProtectionUser;
     private String StorfrontProtectionPassword;
     private String instanceId;
@@ -114,7 +114,7 @@ public class PreviewServiceConfigImpl implements PreviewServiceConfig {
         return previewCacheTime;
     }
     
-    public String getStorfrontProtectionEnabled() {
+    public Boolean getStorfrontProtectionEnabled() {
         return storfrontProtectionEnabled;
     }
     
@@ -139,7 +139,7 @@ public class PreviewServiceConfigImpl implements PreviewServiceConfig {
         previewTemplate = PropertiesUtil.toString(configuration.get(PREVIEW_TEMPLATE), null);
         previewDefaultSite = PropertiesUtil.toString(configuration.get(PREVIEW_DEFAULT_SITE), null);
         previewCacheTime = PropertiesUtil.toString(configuration.get(PREVIEW_CACHE_TIME), "60");
-        storfrontProtectionEnabled = PropertiesUtil.toString(configuration.get(PREVIEW_CACHE_TIME), null);
+        storfrontProtectionEnabled = PropertiesUtil.toBoolean(configuration.get(PREVIEW_CACHE_TIME), true);
         storfrontProtectionUser = PropertiesUtil.toString(configuration.get(STORFRONT_PROTECTION_USER), null);
         StorfrontProtectionPassword = PropertiesUtil.toString(configuration.get(STORFRONT_PROTECTION_PASSWORD), null);
         instanceId = PropertiesUtil.toString(configuration.get(INSTANCE_ID), null);

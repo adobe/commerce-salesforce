@@ -50,31 +50,6 @@ public class PreviewServiceConfigProviderImpl implements PreviewServiceConfigPro
     protected HashMap<String, com.adobe.cq.commerce.demandware.PreviewServiceConfig> previewServiceConfigHashMap;
     
     /**
-     * returns Preview Service Config, configured with "default" instance id
-     * or, if not present, first found Preview Service Config.
-     *
-     * @return
-     */
-    public PreviewServiceConfig getDefaultPreviewServiceConfig() {
-        PreviewServiceConfig config = getPreviewServiceConfigByInstanceId(INSTANCE_ID_DEFAULT);
-        if (config != null) {
-            return config;
-        }
-        
-        LOG.debug("No default PreviewService configured: return first found service.");
-        Optional<PreviewServiceConfig> previewServiceConfig = previewServiceConfigHashMap.entrySet()
-                .stream()
-                .findFirst()
-                .map(Map.Entry::getValue);
-        if (previewServiceConfig.isPresent()) {
-            return previewServiceConfig.get();
-        }
-        
-        LOG.error("Failed to get PreviewService - no configuration found.");
-        return null;
-    }
-    
-    /**
      * Returns the configured Demandware client defined for specific SFCC instance
      *
      * @param instanceId id of the SFCC instance. should match Replication Agent condig (URI field)

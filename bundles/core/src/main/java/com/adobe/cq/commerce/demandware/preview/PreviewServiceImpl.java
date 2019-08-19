@@ -65,7 +65,7 @@ import java.util.Optional;
  * Component previewComponent service to render component previewComponent for Demandware placeholder components. The rendered previewComponent
  * will be cached by a simple cache, avoid unnecessary backend request.
  */
-@Component(metatype = false, policy = ConfigurationPolicy.REQUIRE, label = "Demandware Component Preview Service")
+@Component(policy = ConfigurationPolicy.REQUIRE, label = "Demandware Component Preview Service")
 @Service()
 public class PreviewServiceImpl implements PreviewService {
     
@@ -138,10 +138,13 @@ public class PreviewServiceImpl implements PreviewService {
         final String renderedComponentContent = renderService.render(resource, null, selectores);
         final Page containingPage = getPage(resource);
         DemandwareClient demandwareClient = getDemandwareClient(containingPage);
+        if(demandwareClient == null) {
+            LOG.error("Unable to get DemandwareClient for {}", containingPage.getName());
+        }
         
         final HttpClientBuilder httpClientBuilder = demandwareClient.getHttpClientBuilder();
         
-        if (PropertiesUtil.toBoolean(previewServiceConfig.getStorfrontProtectionEnabled(), true)) {
+        if (previewServiceConfig.getStorfrontProtectionEnabled()) {
             credentialsProvider = createCredentialsProvider(previewServiceConfig, resource);
         }
         
@@ -214,7 +217,8 @@ public class PreviewServiceImpl implements PreviewService {
     }
     
     private PreviewServiceConfig getPreviewServiceConfig(Resource resource) {
-        return previewServiceConfigProvider.getPreviewServiceConfigByInstanceId(instanceId.getInstanceId(getPage(resource)));
+        Page page = getPage(resource);
+        return previewServiceConfigProvider.getPreviewServiceConfigByInstanceId(instanceId.getInstanceId(page));
     }
     
     private Page getPage(Resource resource) {
