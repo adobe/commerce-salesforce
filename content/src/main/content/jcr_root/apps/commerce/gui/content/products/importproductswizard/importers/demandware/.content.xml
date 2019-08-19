@@ -35,7 +35,7 @@
                 renderReadOnly="{Boolean}true">
                 <datasource
                     jcr:primaryType="nt:unstructured"
-                    sling:resourceType="/libs/commerce/demandware/components/datasources/instanceId"/>
+                    sling:resourceType="commerce/demandware/components/datasources/instanceId"/>
         </instanceId>
         <button
                 jcr:primaryType="nt:unstructured"

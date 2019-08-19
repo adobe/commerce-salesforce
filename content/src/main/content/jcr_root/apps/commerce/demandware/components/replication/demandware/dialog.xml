@@ -23,11 +23,11 @@
             <items jcr:primaryType="cq:WidgetCollection">
                 <tab1
                     jcr:primaryType="cq:Widget"
-                    path="/libs/commerce/demandware/components/replication/demandware/tab_agent.infinity.json"
+                    path="/apps/commerce/demandware/components/replication/demandware/tab_agent.infinity.json"
                     xtype="cqinclude"/>
                 <tab2
                     jcr:primaryType="cq:Widget"
-                    path="/libs/commerce/demandware/components/replication/demandware/tab_extended.infinity.json"
+                    path="/apps/commerce/demandware/components/replication/demandware/tab_extended.infinity.json"
                     xtype="cqinclude"/>
             </items>
         </tabs>
