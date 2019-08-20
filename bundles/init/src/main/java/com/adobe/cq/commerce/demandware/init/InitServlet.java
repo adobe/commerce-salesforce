@@ -17,7 +17,6 @@
 package com.adobe.cq.commerce.demandware.init;
 
 import java.io.IOException;
-import java.util.Optional;
 import javax.jcr.Session;
 import javax.servlet.http.Cookie;
 
@@ -74,14 +73,13 @@ public class InitServlet extends SlingAllMethodsServlet {
         LOG.debug("Init Demandware Sandbox");
         ValueMap config = request.getResource().getValueMap();
 	    final String instanceId = config.get(PROPERTY_DW_INSTANCE_ID, String.class);
-	    final Optional<DemandwareClient> dwClient = clientProvider.getClientForSpecificInstance(instanceId);
+	    final DemandwareClient dwClient = clientProvider.getClientForSpecificInstance(instanceId);
 	    // get assets and push to webdav
         final String webDAVEndpoint = config.get("assetWebDAV", String.class);
         final String[] assetURIs = config.get("assetUris", String[].class);
-        if (StringUtils.isNotEmpty(webDAVEndpoint) && assetURIs != null && ArrayUtils.isNotEmpty(assetURIs)
-		        && dwClient.isPresent()) {
+        if (StringUtils.isNotEmpty(webDAVEndpoint) && assetURIs != null && ArrayUtils.isNotEmpty(assetURIs)) {
 	        for (String assetURI : assetURIs) {
-                upload(request, webDAVEndpoint, assetURI, dwClient.get());
+                upload(request, webDAVEndpoint, assetURI, dwClient);
             }
         }
 

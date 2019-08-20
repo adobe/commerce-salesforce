@@ -218,12 +218,8 @@ public class AccessTokenProviderImpl implements AccessTokenProvider {
 
         if (HTTPS.equals(uri.getScheme())) {
             relativeUri = uri.toString();
-            Optional<DemandwareClient> dwClient = clientProvider.getClientForSpecificInstance(instanceId);
-            if (!dwClient.isPresent()) {
-                LOGGER.error("Failed to get DemandwareClient for [{}] Demandware instanceId.", instanceId);
-                return;
-            }
-            HttpClientBuilder builder = dwClient.get().getHttpClientBuilder();
+            DemandwareClient dwClient = clientProvider.getClientForSpecificInstance(instanceId);
+            HttpClientBuilder builder = dwClient.getHttpClientBuilder();
 
             //set a default destination host
             HttpRoutePlanner routePlanner = new DefaultRoutePlanner(DefaultSchemePortResolver.INSTANCE) {

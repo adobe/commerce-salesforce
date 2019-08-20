@@ -40,7 +40,6 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.ServletException;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
-import java.util.Optional;
 
 /**
  * Simple proxy for static content assets (images, js, css) with relative URLs to Demandware.
@@ -63,12 +62,12 @@ public class StaticContentProxyServlet extends SlingSafeMethodsServlet {
 
         //@TODO document
         RequestPathInfo pathInfo = request.getRequestPathInfo();
-        Optional<DemandwareClient> demandwareClient = clientProvider.getClientForSpecificInstance(instanceId.getInstanceId(request));
+        DemandwareClient demandwareClient = clientProvider.getClientForSpecificInstance(instanceId.getInstanceId(request));
         LOG.debug("Proxy static content for {}", pathInfo.toString());
-        final String remoteUri = DemandwareClient.DEFAULT_SCHEMA + demandwareClient.get().getEndpoint() + pathInfo.getResourcePath() +
+        final String remoteUri = DemandwareClient.DEFAULT_SCHEMA + demandwareClient.getEndpoint() + pathInfo.getResourcePath() +
                 "." + pathInfo.getExtension() + pathInfo.getSuffix();
 
-        final CloseableHttpClient httpClient = demandwareClient.get().getHttpClient();
+        final CloseableHttpClient httpClient = demandwareClient.getHttpClient();
         CloseableHttpResponse responseObj = null;
         BufferedOutputStream output = null;
         try {

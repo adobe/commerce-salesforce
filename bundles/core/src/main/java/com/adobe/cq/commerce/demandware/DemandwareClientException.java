@@ -16,12 +16,12 @@
 
 package com.adobe.cq.commerce.demandware;
 
-import com.day.cq.replication.AgentConfig;
+public class DemandwareClientException extends RuntimeException {
+	public DemandwareClientException() {
+		super();
+	}
 
-import java.util.HashMap;
-
-public interface DemandwareClientProvider {
-	DemandwareClient getClientForSpecificInstance(final String instanceId);
-	DemandwareClient getClientForSpecificInstance(final AgentConfig config);
-	HashMap<String, DemandwareClient> getDemandwareClients ();
+	public DemandwareClientException(final String message) {
+		super(message);
+	}
 }

@@ -96,7 +96,7 @@ public class WebDAVTransportPlugin extends AbstractTransportHandlerPlugin {
         String path = null;
         final String endpoint = StringUtils.isNotEmpty(webDavEndpoint)
                 ? webDavEndpoint
-                : getDemandwareClientEndpoint(config);
+                : clientProvider.getClientForSpecificInstance(config).getEndpoint();
         final StringBuilder transportUriBuilder = new StringBuilder();
         transportUriBuilder.append(DemandwareClient.DEFAULT_SCHEMA);
         transportUriBuilder.append(endpoint);
@@ -236,15 +236,6 @@ public class WebDAVTransportPlugin extends AbstractTransportHandlerPlugin {
                 }
             }
         }
-    }
-
-    final String getDemandwareClientEndpoint(final AgentConfig config) {
-        final Optional<DemandwareClient> demandwareClient = clientProvider.getClientForSpecificInstance(config);
-        if (!demandwareClient.isPresent()) {
-            LOG.error("Failed to get DemandwareClient endpoint - no configuration found.");
-            return null;
-        }
-        return demandwareClient.get().getEndpoint();
     }
 
     /**

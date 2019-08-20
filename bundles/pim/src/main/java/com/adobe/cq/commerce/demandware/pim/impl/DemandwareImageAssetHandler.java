@@ -40,7 +40,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @Component(label = "Demandware Product Import Image Asset Handler")
 @Service
@@ -54,13 +53,8 @@ public class DemandwareImageAssetHandler implements ImportAssetHandler {
 
     @Override
     public Asset retrieveAsset(ImportContext ctx, Map<String, Object> properties, String instanceId) {
-        Optional<DemandwareClient> demandwareClient = clientProvider.getClientForSpecificInstance(instanceId);
-        if (!demandwareClient.isPresent()) {
-            LOG.error("Failed to get DemandwareClient for [{}] Demandware instanceId.", instanceId);
-            return null;
-        }
-        
-        String downloadEndpoint = demandwareClient.get().getAssetDownloadEndpoint();
+        DemandwareClient demandwareClient = clientProvider.getClientForSpecificInstance(instanceId);
+        String downloadEndpoint = demandwareClient.getAssetDownloadEndpoint();
         if (StringUtils.isBlank(downloadEndpoint)) {
             LOG.error("Missing download endpoint, can not download any asset");
             return null;
@@ -73,12 +67,12 @@ public class DemandwareImageAssetHandler implements ImportAssetHandler {
         }
         final String relativeImagePath = (String) properties.get(DemandwareCommerceConstants.ATTRIBUTE_ASSET_PATH);
         
-        final String endPoint = DemandwareClient.DEFAULT_SCHEMA + demandwareClient.get().getEndpoint()
+        final String endPoint = DemandwareClient.DEFAULT_SCHEMA + demandwareClient.getEndpoint()
                 + downloadEndpoint + StringUtils.prependIfMissing(relativeImagePath, "/", "/");
 
         // call Demandware to render preview for component
         CloseableHttpResponse responseObj = null;
-        CloseableHttpClient httpClient = demandwareClient.get().getHttpClient();
+        CloseableHttpClient httpClient = demandwareClient.getHttpClient();
         try {
             final RequestBuilder requestBuilder = RequestBuilder.get();
 

@@ -53,7 +53,7 @@ import org.osgi.framework.Constants;
 public class ContentAssetFolderPlugin extends AbstractOCAPITransportPlugin {
     
     @Reference
-    private InstanceIdProvider instanceId;
+    private InstanceIdProvider instanceIdProvider;
 
     @Override
     String getContentType() {
@@ -80,8 +80,8 @@ public class ContentAssetFolderPlugin extends AbstractOCAPITransportPlugin {
                         log.info("Assign content asset %s to folder %s (%s)", id, folder, action.getType().getName());
                         
                         // construct URL for folder assignment
-                        final String endpoint = clientProvider.getClientForSpecificInstance(instanceId.getInstanceId(config))
-                                .map(DemandwareClient::getEndpoint).orElse(StringUtils.EMPTY);
+                        final String instanceId = instanceIdProvider.getInstanceId(config);
+                        final String endpoint = clientProvider.getClientForSpecificInstance(instanceId).getEndpoint();
                         final String transportUriBuilder = DemandwareClient.DEFAULT_SCHEMA + endpoint + getOCApiPath() + getOCApiVersion() +
                                 constructEndpointURL(delivery.getString(DemandwareCommerceConstants.ATTR_API_ENDPOINT), folder, delivery);
                         final RequestBuilder requestBuilder = RequestBuilder.put();

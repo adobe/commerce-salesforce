@@ -58,7 +58,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Component previewComponent service to render component previewComponent for Demandware placeholder components. The rendered previewComponent
@@ -78,7 +77,7 @@ public class PreviewServiceImpl implements PreviewService {
     RenderService renderService;
     
     @Reference
-    private InstanceIdProvider instanceId;
+    private InstanceIdProvider instanceIdProvider;
     
     @Reference
     private PreviewServiceConfigProvider previewServiceConfigProvider;
@@ -202,18 +201,14 @@ public class PreviewServiceImpl implements PreviewService {
     
     private DemandwareClient getDemandwareClient(Page containingPage) {
         // call Demandware to render preview for component
-        Optional<DemandwareClient> client = clientProvider.getClientForSpecificInstance(instanceId.getInstanceId(containingPage));
-        if(client.isPresent()){
-            return client.get();
-        }else{
-            LOG.error("FailedtogetDemandwareClientfor[{}]DemandwareinstanceId.",instanceId.getInstanceId(containingPage));
-            return null;
-        }
+        String instanceId = instanceIdProvider.getInstanceId(containingPage);
+        return clientProvider.getClientForSpecificInstance(instanceId);
     }
     
     private PreviewServiceConfig getPreviewServiceConfig(Resource resource) {
         Page page = getPage(resource);
-        return previewServiceConfigProvider.getPreviewServiceConfigByInstanceId(instanceId.getInstanceId(page));
+        String instanceId = instanceIdProvider.getInstanceId(page);
+        return previewServiceConfigProvider.getPreviewServiceConfigByInstanceId(instanceId);
     }
     
     private Page getPage(Resource resource) {

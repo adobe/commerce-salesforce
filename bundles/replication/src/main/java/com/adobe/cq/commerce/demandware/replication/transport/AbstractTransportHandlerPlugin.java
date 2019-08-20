@@ -93,11 +93,8 @@ public abstract class AbstractTransportHandlerPlugin implements TransportHandler
      */
     protected HttpClientBuilder getHttpClientBuilder(final AgentConfig config, final ReplicationLog log) {
         // create and configure the Http client builder
-        final Optional<DemandwareClient> demandwareClient = clientProvider.getClientForSpecificInstance(config);
-        if (!demandwareClient.isPresent()) {
-            return null;
-        }
-        final HttpClientBuilder httpClientBuilder = demandwareClient.get().getHttpClientBuilder();
+        final DemandwareClient demandwareClient = clientProvider.getClientForSpecificInstance(config);
+        final HttpClientBuilder httpClientBuilder = demandwareClient.getHttpClientBuilder();
 
         // configure credentials
         final CredentialsProvider credentialsProvider = createCredentialsProvider(config, log);

@@ -147,7 +147,7 @@
         <script type="text/javascript">
         CQ.WCM.edit({
             "path":"<%= xssAPI.encodeForJSString(resource.getPath()) %>",
-            "dialog":"/libs/commerce/demandware/components/replication/demandware/dialog",
+            "dialog":"/apps/commerce/demandware/components/replication/demandware/dialog",
             "type":"commerce/demandware/components/replication/demandware",
             "editConfig":{
                 "xtype":"editbar",

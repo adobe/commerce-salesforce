@@ -19,6 +19,7 @@ package com.adobe.cq.commerce.demandware.replication.transport;
 import com.adobe.cq.commerce.demandware.DemandwareClient;
 import com.adobe.cq.commerce.demandware.DemandwareCommerceConstants;
 import com.adobe.cq.commerce.demandware.InstanceIdProvider;
+import com.adobe.cq.commerce.demandware.DemandwareClientException;
 import com.adobe.granite.auth.oauth.AccessTokenProvider;
 import com.day.cq.replication.AgentConfig;
 import com.day.cq.replication.ReplicationAction;
@@ -212,9 +213,7 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
         try {
             // construct the OCAPI request
             final StringBuilder transportUriBuilder = new StringBuilder();
-            final String endpoint = clientProvider.getClientForSpecificInstance(dwInstanceId)
-                    .map(DemandwareClient::getEndpoint)
-                    .orElse(StringUtils.EMPTY);
+            final String endpoint = clientProvider.getClientForSpecificInstance(dwInstanceId).getEndpoint();
             transportUriBuilder.append(DemandwareClient.DEFAULT_SCHEMA).append(endpoint);
             transportUriBuilder.append(getOCApiPath()).append(getOCApiVersion());
             transportUriBuilder.append(
@@ -223,8 +222,8 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
             final RequestBuilder requestBuilder = RequestBuilder.create(method);
             requestBuilder.setUri(transportUriBuilder.toString());
             return requestBuilder;
-        } catch (JSONException e) {
-            throw new ReplicationException("Can not create endpoint URI", e);
+        } catch (JSONException | DemandwareClientException e) {
+            throw new ReplicationException("Can not create endpoint URI: " + e.getMessage(), e);
         }
     }
 
