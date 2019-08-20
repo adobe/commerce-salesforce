@@ -20,12 +20,11 @@ import java.io.FileInputStream;
 import java.net.InetAddress;
 import java.net.ProxySelector;
 import java.net.UnknownHostException;
-import java.security.KeyManagementException;
 import java.security.KeyStore;
-import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 import javax.net.ssl.SSLContext;
 
+import com.adobe.cq.commerce.demandware.DemandwareClientException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
@@ -53,7 +52,6 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.apache.http.ssl.SSLContexts;
 import org.apache.sling.commons.osgi.PropertiesUtil;
-import org.osgi.framework.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -235,12 +233,8 @@ public class DemandwareClientImpl implements DemandwareClient {
                 new String[]{protocolSSL},
                 null,
                 SSLConnectionSocketFactory.getDefaultHostnameVerifier());
-        } catch (NoSuchAlgorithmException e) {
-            LOG.error("Cannot set custom ssl config: {}", e.toString());
-        } catch (KeyManagementException e) {
-            LOG.error("Cannot set custom ssl config: {}", e.toString());
         } catch (Exception e) {
-            LOG.error("Cannot set custom ssl config: {}", e.toString());
+            LOG.error("Cannot set custom ssl config: {}", e);
         }
         return sslsf;
     }
@@ -263,8 +257,16 @@ public class DemandwareClientImpl implements DemandwareClient {
     @Activate
     protected void activate(Map<String, Object> configuration) {
         instanceEndPoint = PropertiesUtil.toString(configuration.get(INSTANCE_ENDPOINT), null);
-        assetDownloadEndpoint = PropertiesUtil.toString(configuration.get(ASSET_DOWNLOAD_ENDPOINT),"");
+        assetDownloadEndpoint = PropertiesUtil.toString(configuration.get(ASSET_DOWNLOAD_ENDPOINT),null);
         instanceId = PropertiesUtil.toString(configuration.get(INSTANCE_ID), null);
+
+        if (StringUtils.isAnyBlank(instanceId, instanceEndPoint, assetDownloadEndpoint)) {
+            String errorMessage = String.format("Failed to activate DemandwareClient. " +
+                    "Some of mandatory fields are null: instanceId [%s], instanceEndpoint: [%s], assetDownloadEndpoint [%s]",
+                    instanceId, instanceEndPoint, assetDownloadEndpoint);
+            throw new DemandwareClientException(errorMessage);
+        }
+
         protocolInterface = PropertiesUtil.toString(configuration.get(PROTOCOL_INTERFACE), null);
         protocolSSL = StringUtils.trimToNull(PropertiesUtil.toString(configuration.get(PROTOCOL_SSL), "TLSv1.1"));
         keystoreType = StringUtils.trimToNull(PropertiesUtil.toString(configuration.get(KEYSTORE_TYPE), "JKS"));
