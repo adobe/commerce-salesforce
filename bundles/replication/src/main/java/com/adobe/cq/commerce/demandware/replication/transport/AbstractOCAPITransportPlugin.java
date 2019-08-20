@@ -101,7 +101,7 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
     private Map<Comparable<Object>, AccessTokenProvider> accessTokenProviders =
             new ConcurrentSkipListMap<>(Collections.reverseOrder());
 
-    private String atpClientId;
+    private String accessTokenProviderClientId;
     private String ocapiVersion;
     private String ocapiPath;
 
@@ -394,7 +394,7 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
 
     private AccessTokenProvider getAccessTokenProvider(final AgentConfig agentConfig) {
         final String instanceId = instanceIdProvider.getInstanceId(agentConfig);
-        final String accessTokenProviderId = getAccessTokenProviderId(atpClientId, instanceId);
+        final String accessTokenProviderId = getAccessTokenProviderId(accessTokenProviderClientId, instanceId);
         AccessTokenProvider accessTokenProvider = null;
         if (accessTokenProvidersProps.size() > 0 && accessTokenProviders.size() > 0) {
             if (StringUtils.isNotBlank(accessTokenProviderId) && null != accessTokenProvidersProps.get(
@@ -424,7 +424,7 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
     @Activate
     protected void activate(final ComponentContext ctx) {
         final Dictionary<?, ?> config = ctx.getProperties();
-        atpClientId = PropertiesUtil.toString(config.get(ACCESS_TOKEN_PROVIDER), "");
+        accessTokenProviderClientId = PropertiesUtil.toString(config.get(ACCESS_TOKEN_PROVIDER), "");
         ocapiVersion = PropertiesUtil.toString(config.get(OCAPI_VERSION), DEFAULT_OCAPI_VERSION);
         ocapiPath = StringUtils.appendIfMissing(PropertiesUtil.toString(config.get(OCAPI_PATH), DEFAULT_OCAPI_PATH),
                 "/", "/");
