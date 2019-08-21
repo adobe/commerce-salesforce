@@ -53,6 +53,8 @@
         <slf4j.version>1.7.6</slf4j.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
+        <aem.host>localhost</aem.host>
+        <aem.port>4502</aem.port>
     </properties>
 
     <!-- ======================================================================= -->
