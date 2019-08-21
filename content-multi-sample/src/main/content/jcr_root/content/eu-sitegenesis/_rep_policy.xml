@@ -19,5 +19,5 @@
     <allowEUSitegenesis
             jcr:primaryType="rep:GrantACE"
             rep:principalName="dwre-replication-agent-eu-sitegenesis"
-            rep:privileges="{Name}[jcr:read,crx:replicate]"/>
+            rep:privileges="{Name}[jcr:read]"/>
 </jcr:root>

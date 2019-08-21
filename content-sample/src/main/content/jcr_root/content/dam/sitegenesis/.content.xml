@@ -25,6 +25,6 @@
         <allowSitegenesisDam
                 jcr:primaryType="rep:GrantACE"
                 rep:principalName="dwre-replication-agent-sitegenesis"
-                rep:privileges="{Name}[jcr:read,crx:replicate]"/>
+                rep:privileges="{Name}[jcr:read]"/>
     </rep:policy>
 </jcr:root>

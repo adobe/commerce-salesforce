@@ -15,4 +15,12 @@
   ~ limitations under the License.
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 <jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:rep="internal"
-    jcr:primaryType="rep:AuthorizableFolder"/>
+          jcr:primaryType="rep:AuthorizableFolder">
+    <rep:policy
+            jcr:primaryType="rep:ACL">
+        <allowDWREReplicationService
+                jcr:primaryType="rep:GrantACE"
+                rep:principalName="dwre-replication-service"
+                rep:privileges="{Name}[jcr:all]"/>
+    </rep:policy>
+</jcr:root>

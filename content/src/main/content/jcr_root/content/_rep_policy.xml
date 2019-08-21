@@ -19,5 +19,5 @@
     <allowDemandwareService
             jcr:primaryType="rep:GrantACE"
             rep:principalName="dwre-replication-service"
-            rep:privileges="{Name}[jcr:read,crx:replicate]"/>
+            rep:privileges="{Name}[jcr:read]"/>
 </jcr:root>
