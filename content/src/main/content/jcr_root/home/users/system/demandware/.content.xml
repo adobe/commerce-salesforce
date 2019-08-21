@@ -21,6 +21,6 @@
         <allowDWREReplicationService
                 jcr:primaryType="rep:GrantACE"
                 rep:principalName="dwre-replication-service"
-                rep:privileges="{Name}[jcr:all]"/>
+                rep:privileges="{Name}[jcr:read,jcr:write]"/>
     </rep:policy>
 </jcr:root>
