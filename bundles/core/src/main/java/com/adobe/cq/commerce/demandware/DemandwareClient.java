@@ -56,4 +56,10 @@ public interface DemandwareClient {
     String getInstanceId();
     
     String getAssetDownloadEndpoint();
+
+    String getWebDavEndpoint();
+
+    String getWebDavUser();
+
+    String getWebDavUserPassword();
 }

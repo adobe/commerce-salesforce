@@ -97,7 +97,7 @@ public abstract class AbstractTransportHandlerPlugin implements TransportHandler
         final HttpClientBuilder httpClientBuilder = demandwareClient.getHttpClientBuilder();
 
         // configure credentials
-        final CredentialsProvider credentialsProvider = createCredentialsProvider(config, log);
+        final CredentialsProvider credentialsProvider = createCredentialsProvider(demandwareClient, log);
         if (credentialsProvider != null) {
             httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
         }
@@ -111,11 +111,11 @@ public abstract class AbstractTransportHandlerPlugin implements TransportHandler
     /**
      * Create the credentials provider.
      *
-     * @param config the replication agent config
+     * @param demandwareClient client providing connection to specific SFCC instance
      * @param log    the replication log
      * @return the configured {@code CredentialsProvider}
      */
-    protected CredentialsProvider createCredentialsProvider(AgentConfig config, ReplicationLog log) {
+    protected CredentialsProvider createCredentialsProvider(DemandwareClient demandwareClient, ReplicationLog log) {
         return null;
     }
 
