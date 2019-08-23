@@ -27,15 +27,12 @@ import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.ReferenceCardinality;
 import org.apache.felix.scr.annotations.ReferencePolicy;
 import org.apache.felix.scr.annotations.Service;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 
 @Component(label = "Demandware Demandware Client Provider", immediate = true)
 @Service(value = DemandwareClientProvider.class)
 public class DemandwareClientProviderImpl implements DemandwareClientProvider {
-	private static final Logger LOG = LoggerFactory.getLogger(DemandwareClientProviderImpl.class);
 	@Reference(referenceInterface = DemandwareClient.class,
 			bind = "bindDemandwareClient",
 			unbind = "unbindDemandwareClient",
@@ -57,9 +54,7 @@ public class DemandwareClientProviderImpl implements DemandwareClientProvider {
 	public DemandwareClient getClientForSpecificInstance(final String instanceId) {
 		DemandwareClient demandwareClient = demandwareClients.get(instanceId);
 		if (demandwareClient == null) {
-			String errorMessage = "DemandwareClient not found for instanceId: " + instanceId;
-			LOG.error(errorMessage);
-			throw new DemandwareClientException(errorMessage);
+			throw new DemandwareClientException("DemandwareClient not found for instanceId: " + instanceId);
 		}
 		return demandwareClient;
 	}
