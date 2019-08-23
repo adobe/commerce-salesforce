@@ -60,7 +60,10 @@ public class StaticContentProxyServlet extends SlingSafeMethodsServlet {
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) throws ServletException,
             IOException {
 
-        //instance Id is set via request - should be adjusted
+        /* The instance id identifies the Demandware client and generates the URL to generate the preview images.
+         * However, if the referrer is not present in the request, the URL would have to be changed when rendering in HTML and the instance id
+         * would have to be removed from the proxy.
+         */
         RequestPathInfo pathInfo = request.getRequestPathInfo();
         DemandwareClient demandwareClient = clientProvider.getClientForSpecificInstance(instanceId.getInstanceId(request));
         LOG.debug("Proxy static content for {}", pathInfo.toString());
