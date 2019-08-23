@@ -55,6 +55,7 @@
         <module>content-sample</module>
         <module>content-multi-sample</module>
         <module>clean-up-sample-content</module>
+        <module>base-config</module>
     </modules>
 
     <!-- ====================================================================== -->

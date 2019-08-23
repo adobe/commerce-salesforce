@@ -16,9 +16,7 @@
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 <workspaceFilter version="1.0">
     <filter root="/apps/commerce/demandware/components/init"/>
-    <filter root="/apps/commerce/demandware/config.author/com.adobe.cq.commerce.demandware.connection.DemandwareClientImpl-sitegenesis.config"/>
-    <filter root="/apps/commerce/demandware/config.author/com.adobe.cq.commerce.demandware.connection.DemandwareClientImpl-eu-sitegenesis.config"/>
-    <filter root="/apps/commerce/demandware/config.author/com.adobe.cq.commerce.demandware.connection.DemandwareClientImpl-us-sitegenesis.config"/>
+    <filter root="/apps/commerce/demandware/config.author" mode="merge" />
 
     <filter root="/content/sitegenesis"/>
     <filter root="/content/us-sitegenesis"/>
