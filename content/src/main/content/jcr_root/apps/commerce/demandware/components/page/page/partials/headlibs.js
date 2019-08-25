@@ -22,7 +22,7 @@
     var instanceIdProvider = sling.getService(Packages.com.adobe.cq.commerce.demandware.InstanceIdProvider);
 
     var instanceId = instanceIdProvider.getInstanceId(currentPage);
-    var demandwareClient = demandwareClientProvider.getClientForSpecificInstance(instanceId).get();
+    var demandwareClient = demandwareClientProvider.getClientForSpecificInstance(instanceId);
 
     return {
         endpoint: demandwareClient != null ? demandwareClient.getEndpoint() : ""

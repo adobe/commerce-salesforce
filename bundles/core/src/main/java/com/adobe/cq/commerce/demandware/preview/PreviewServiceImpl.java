@@ -63,8 +63,8 @@ import java.util.List;
  * Component previewComponent service to render component previewComponent for Demandware placeholder components. The rendered previewComponent
  * will be cached by a simple cache, avoid unnecessary backend request.
  */
-@Component(metatype = false, policy = ConfigurationPolicy.REQUIRE, label = "Demandware Component Preview Service")
-@Service()
+@Component
+@Service
 public class PreviewServiceImpl implements PreviewService {
     
     private static final Logger LOG = LoggerFactory.getLogger(PreviewServiceImpl.class);
