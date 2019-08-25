@@ -16,7 +16,8 @@
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 <workspaceFilter version="1.0">
     <filter root="/apps/commerce/demandware/components/init"/>
-    <filter root="/apps/commerce/demandware/config.author" mode="merge" />
+    <filter root="/apps/commerce/demandware/config.author"/>
+    <filter root="/apps/commerce/demandware/config/org.apache.sling.servlets.resolver.SlingServletResolver.config"/>
 
     <filter root="/content/sitegenesis"/>
     <filter root="/content/us-sitegenesis"/>
@@ -25,7 +26,8 @@
     <filter root="/content/dam/us-sitegenesis"/>
     <filter root="/content/dam/sitegenesis"/>
 
-    <filter root="/etc/demandware/init"/>
+    <filter root="/etc/demandware"/>
+    <filter root="/etc/designs/demandware"/>
     <filter root="/etc/replication/agents.author/demandware-sitegenesis"/>
     <filter root="/etc/replication/agents.author/demandware-us-sitegenesis"/>
     <filter root="/etc/replication/agents.author/demandware-eu-sitegenesis"/>

@@ -21,7 +21,7 @@
     <filter root="/content/dam/us-sitegenesis" mode="merge"/>
 
     <filter root="/apps/commerce/demandware/components/init"/>
-    <filter root="/apps/commerce/demandware/config" mode="merge"/>
+    <filter root="/apps/commerce/demandware/install" mode="merge"/>
     <filter root="/apps/commerce/demandware/config.author" mode="merge" />
 
     <filter root="/etc/demandware/init" mode="merge"/>

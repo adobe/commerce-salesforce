@@ -19,7 +19,8 @@
     jcr:mixinTypes="[rep:AccessControllable]">
     <jcr:content
             jcr:primaryType="nt:unstructured"
-            jcr:title="Sitegenesis"/>
+            jcr:title="Sitegenesis"
+            dwreLibrary="SiteGenesis"/>
     <rep:policy
             jcr:primaryType="rep:ACL">
         <allowSitegenesisDam

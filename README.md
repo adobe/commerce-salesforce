@@ -42,6 +42,7 @@ For ease of build and installation the following profiles are provided:
 * installSampleContent - installs the package with a sample project configured to 1 SFCC instance
 * installMultiSampleContent - installs the package with 2 sample projects and configurations for 2 SFCC instances
 * cleanUpSampleContent - deletes all sample content from AEM instance
+* installBaseConfig - install sample OSGI configs
 
 ## Contributing
  

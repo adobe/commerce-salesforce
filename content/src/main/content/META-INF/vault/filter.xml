@@ -15,9 +15,10 @@
   ~ limitations under the License.
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 <workspaceFilter version="1.0">
-    <filter root="/apps/commerce/demandware/config" mode="merge" />
     <filter root="/apps/commerce/demandware/components"/>
+    <filter root="/apps/commerce/demandware/config" mode="merge" />
     <filter root="/apps/commerce/demandware/templates"/>
+    <filter root="/apps/commerce/demandware/install"/>
     <filter root="/apps/commerce/gui/content/products/importproductswizard/importers"/>
 
     <filter root="/content" mode="merge">
