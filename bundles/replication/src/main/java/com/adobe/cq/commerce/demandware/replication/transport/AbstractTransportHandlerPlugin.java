@@ -16,12 +16,14 @@
 
 package com.adobe.cq.commerce.demandware.replication.transport;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import com.adobe.cq.commerce.demandware.DemandwareClient;
+import com.adobe.cq.commerce.demandware.DemandwareClientProvider;
+import com.adobe.cq.commerce.demandware.replication.TransportHandlerPlugin;
+import com.day.cq.replication.AgentConfig;
+import com.day.cq.replication.ReplicationLog;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.Reference;
 import org.apache.http.Header;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
@@ -29,16 +31,20 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicHeader;
 import org.apache.sling.commons.json.JSONObject;
 
-import com.adobe.cq.commerce.demandware.DemandwareClient;
-import com.adobe.cq.commerce.demandware.replication.TransportHandlerPlugin;
-import com.day.cq.replication.AgentConfig;
-import com.day.cq.replication.ReplicationLog;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Abstract {@code TransportHandlerPlugin} class used as base for all Demandware transport handlers.
  */
+@Component(componentAbstract = true)
 public abstract class AbstractTransportHandlerPlugin implements TransportHandlerPlugin {
     static final Pattern placeHolder = Pattern.compile("\\{(.*?)\\}");
+    @Reference
+    protected DemandwareClientProvider clientProvider;
 
     /**
      * Return the supported API type.
@@ -53,13 +59,6 @@ public abstract class AbstractTransportHandlerPlugin implements TransportHandler
      * @return
      */
     abstract String getContentType();
-
-    /**
-     * Returns the configured Demandware client.
-     *
-     * @return
-     */
-    abstract DemandwareClient getDemandwareClient();
 
     @Override
     public boolean canHandle(final String apiType, final String contentType) {
@@ -93,12 +92,12 @@ public abstract class AbstractTransportHandlerPlugin implements TransportHandler
      * @return the {@code HttpClientBuilder}
      */
     protected HttpClientBuilder getHttpClientBuilder(final AgentConfig config, final ReplicationLog log) {
-
         // create and configure the Http client builder
-        final HttpClientBuilder httpClientBuilder = getDemandwareClient().getHttpClientBuilder();
+        final DemandwareClient demandwareClient = clientProvider.getClientForSpecificInstance(config);
+        final HttpClientBuilder httpClientBuilder = demandwareClient.getHttpClientBuilder();
 
         // configure credentials
-        final CredentialsProvider credentialsProvider = createCredentialsProvider(config, log);
+        final CredentialsProvider credentialsProvider = createCredentialsProvider(demandwareClient, log);
         if (credentialsProvider != null) {
             httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
         }
@@ -112,11 +111,11 @@ public abstract class AbstractTransportHandlerPlugin implements TransportHandler
     /**
      * Create the credentials provider.
      *
-     * @param config the replication agent config
+     * @param demandwareClient client providing connection to specific SFCC instance
      * @param log    the replication log
      * @return the configured {@code CredentialsProvider}
      */
-    protected CredentialsProvider createCredentialsProvider(AgentConfig config, ReplicationLog log) {
+    protected CredentialsProvider createCredentialsProvider(DemandwareClient demandwareClient, ReplicationLog log) {
         return null;
     }
 

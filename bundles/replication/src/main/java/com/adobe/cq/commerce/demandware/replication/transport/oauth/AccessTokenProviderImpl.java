@@ -21,6 +21,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -28,11 +29,14 @@ import javax.jcr.Value;
 import javax.jcr.ValueFactory;
 import javax.net.ssl.SSLContext;
 
+import com.adobe.cq.commerce.demandware.DemandwareClient;
+import com.adobe.cq.commerce.demandware.DemandwareClientProvider;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.ConfigurationPolicy;
+import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
@@ -82,7 +86,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import aQute.bnd.annotation.component.Deactivate;
-import com.adobe.cq.commerce.demandware.DemandwareClient;
 import com.adobe.granite.auth.oauth.AccessTokenProvider;
 import com.adobe.granite.crypto.CryptoException;
 import com.adobe.granite.crypto.CryptoSupport;
@@ -90,6 +93,9 @@ import com.adobe.granite.crypto.CryptoSupport;
 @Service
 @Component(metatype = true, name = AccessTokenProviderImpl.FACTORY_PID, configurationFactory = true, immediate = true,
         policy = ConfigurationPolicy.REQUIRE, label = "Demandware Access Token provider")
+@Properties({
+        @Property(name = "webconsole.configurationFactory.nameHint", value = "{service.factoryPid} - {instance.id}")
+})
 public class AccessTokenProviderImpl implements AccessTokenProvider {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AccessTokenProviderImpl.class);
@@ -162,6 +168,9 @@ public class AccessTokenProviderImpl implements AccessTokenProvider {
     @Property(value = DEFAULT_DEMANDWARE_CLIENT_PASSWORD)
     protected static final String DEMANDWARE_CLIENT_PASSWORD = "auth.token.provider.demandware.client.password";
 
+    @Property(label = "Instance id", description = "Demandware instance identifier.")
+    private static final String INSTANCE_ID = "instance.id";
+
     /**
      * String format applied against a single argument (the clientId) that builds a relative path from the user home,
      * where the access token is stored in an encrypted format.
@@ -172,7 +181,7 @@ public class AccessTokenProviderImpl implements AccessTokenProvider {
     private CryptoSupport cryptoSupport;
 
     @Reference
-    private DemandwareClient demandwareClient;
+    private DemandwareClientProvider clientProvider;
 
     private CloseableHttpClient httpClient;
 
@@ -182,6 +191,7 @@ public class AccessTokenProviderImpl implements AccessTokenProvider {
     private int leeway;
     private boolean reuseAccessTokens;
     private String relativeUri;
+    private String instanceId;
 
     @Activate
     protected void activate(Map<String, Object> props)
@@ -191,6 +201,7 @@ public class AccessTokenProviderImpl implements AccessTokenProvider {
         clientId = PropertiesUtil.toString(props.get(CLIENT_ID), DEFAULT_CLIENT_ID);
         endPoint = PropertiesUtil.toString(props.get(END_POINT), DEFAULT_END_POINT);
         reuseAccessTokens = PropertiesUtil.toBoolean(props.get(REUSE_ACCESS_TOKENS), DEFAULT_REUSE_ACCESS_TOKENS);
+        instanceId = PropertiesUtil.toString(props.get(INSTANCE_ID), StringUtils.EMPTY);
         final String accessRequestFormat = PropertiesUtil.toString(props.get(ACCESS_TOKEN_REQ_FORMAT),
                 DEFAULT_ACCESS_TOKEN_REQ_FORMAT);
         int connectionTimeout = Math.abs(PropertiesUtil.toInteger(props.get(CONNECTION_TIMEOUT),
@@ -207,8 +218,8 @@ public class AccessTokenProviderImpl implements AccessTokenProvider {
 
         if (HTTPS.equals(uri.getScheme())) {
             relativeUri = uri.toString();
-
-            HttpClientBuilder builder = demandwareClient.getHttpClientBuilder();
+            DemandwareClient dwClient = clientProvider.getClientForSpecificInstance(instanceId);
+            HttpClientBuilder builder = dwClient.getHttpClientBuilder();
 
             //set a default destination host
             HttpRoutePlanner routePlanner = new DefaultRoutePlanner(DefaultSchemePortResolver.INSTANCE) {

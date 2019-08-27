@@ -18,9 +18,10 @@ package com.adobe.cq.commerce.demandware.init;
 
 import java.io.IOException;
 import javax.jcr.Session;
-import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 
+import com.adobe.cq.commerce.demandware.DemandwareClient;
+import com.adobe.cq.commerce.demandware.DemandwareClientProvider;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.felix.scr.annotations.Reference;
@@ -45,7 +46,6 @@ import org.apache.sling.api.servlets.SlingAllMethodsServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.adobe.cq.commerce.demandware.DemandwareClient;
 import com.day.cq.replication.ReplicationActionType;
 import com.day.cq.replication.ReplicationException;
 import com.day.cq.replication.Replicator;
@@ -59,26 +59,27 @@ import com.github.sardine.impl.SardineImpl;
 @SlingServlet(resourceTypes = "commerce/demandware/components/init", extensions = "html", methods = "POST", label = "Demandware Init Servlet")
 public class InitServlet extends SlingAllMethodsServlet {
 
-    private static final Logger LOG = LoggerFactory.getLogger(InitServlet.class);
+	private static final Logger LOG = LoggerFactory.getLogger(InitServlet.class);
+	private static final String PROPERTY_DW_INSTANCE_ID = "dwInstanceId";
 
-    @Reference
-    DemandwareClient demandwareClient;
+	@Reference
+    DemandwareClientProvider clientProvider;
 
     @Reference
     private Replicator replicator;
 
     @Override
-    protected void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response) throws
-        ServletException, IOException {
+    protected void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response) throws IOException {
         LOG.debug("Init Demandware Sandbox");
         ValueMap config = request.getResource().getValueMap();
-
-        // get assets and push to webdav
+	    final String instanceId = config.get(PROPERTY_DW_INSTANCE_ID, String.class);
+	    final DemandwareClient dwClient = clientProvider.getClientForSpecificInstance(instanceId);
+	    // get assets and push to webdav
         final String webDAVEndpoint = config.get("assetWebDAV", String.class);
         final String[] assetURIs = config.get("assetUris", String[].class);
-        if (StringUtils.isNotEmpty(webDAVEndpoint) && ArrayUtils.isNotEmpty(assetURIs)) {
-            for (String assetURI : assetURIs) {
-                upload(request, webDAVEndpoint, assetURI);
+        if (StringUtils.isNotEmpty(webDAVEndpoint) && assetURIs != null && ArrayUtils.isNotEmpty(assetURIs)) {
+	        for (String assetURI : assetURIs) {
+                upload(request, webDAVEndpoint, assetURI, dwClient);
             }
         }
 
@@ -101,20 +102,21 @@ public class InitServlet extends SlingAllMethodsServlet {
             request.getRequestPathInfo().getExtension());
     }
 
-    private void upload(SlingHttpServletRequest slingRequest, String endPoint, String assetURI) {
+    private void upload(SlingHttpServletRequest slingRequest, String endPoint, String assetURI,
+                        DemandwareClient dwClient) {
         final RequestBuilder requestBuilder = RequestBuilder.get();
         requestBuilder.setUri(assetURI);
         final Cookie token = slingRequest.getCookie("login-token");
         requestBuilder.addHeader(new BasicHeader("Cookie", token.getName() + "=" + token.getValue()));
         final HttpHost localHost = new HttpHost("localhost", 4502);
-        final HttpClient httpClient = demandwareClient.getHttpClientBuilder().build();
+        final HttpClient httpClient = dwClient.getHttpClientBuilder().build();
         try {
             // get the from AEM content
             final HttpResponse response = httpClient.execute(localHost, requestBuilder.build());
 
             if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 final HttpEntity entity = response.getEntity();
-                HttpClientBuilder httpClientBuilder = demandwareClient.getHttpClientBuilder();
+                HttpClientBuilder httpClientBuilder = dwClient.getHttpClientBuilder();
                 httpClientBuilder.setDefaultCredentialsProvider(
                     getWebDAVCredentials(slingRequest.getResource().getValueMap()));
                 // upload to webDAV

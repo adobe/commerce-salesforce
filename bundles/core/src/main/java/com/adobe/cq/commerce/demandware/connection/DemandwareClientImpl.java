@@ -20,16 +20,16 @@ import java.io.FileInputStream;
 import java.net.InetAddress;
 import java.net.ProxySelector;
 import java.net.UnknownHostException;
-import java.security.KeyManagementException;
 import java.security.KeyStore;
-import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 import javax.net.ssl.SSLContext;
 
+import com.adobe.cq.commerce.demandware.DemandwareClientException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.ConfigurationPolicy;
+import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.PropertyOption;
 import org.apache.felix.scr.annotations.Service;
@@ -61,13 +61,16 @@ import com.adobe.cq.commerce.demandware.DemandwareClient;
  * Central Demandware client service providing Demandware instance endpoint and already prepared, ready to use HTTP
  * clients to access the instance via OCAPI or WebDAV.
  */
-@Component(metatype = true, policy = ConfigurationPolicy.REQUIRE, label = "Demandware Client")
-@Service()
+@Service
+@Component(metatype = true, configurationFactory = true, immediate = true, policy = ConfigurationPolicy.REQUIRE,
+        label = "Demandware Client", name = "com.adobe.cq.commerce.demandware.connection.DemandwareClientImpl")
+@Properties({
+        @Property(name = "webconsole.configurationFactory.nameHint", value = "{service.factoryPid} - {instance.id}")
+})
 public class DemandwareClientImpl implements DemandwareClient {
-
     private static final Logger LOG = LoggerFactory.getLogger(DemandwareClientImpl.class);
 
-    @Property(label = "Instance endpoint ip or hostname")
+    @Property(label = "Instance endpoint ip or hostname", value = "{FILL ME}.demandware.net")
     private static final String INSTANCE_ENDPOINT = "endpoint";
 
     @Property(label = "Socket timeout")
@@ -79,7 +82,7 @@ public class DemandwareClientImpl implements DemandwareClient {
     @Property(label = "Local network interface to be used")
     private static final String PROTOCOL_INTERFACE = "interface";
 
-    @Property(label = "SSL version", value = "TLSv1.2")
+    @Property(label = "SSL version", value = "TLSv1.1")
     private static final String PROTOCOL_SSL = "ssl";
 
     @Property(label = "Keystore type", options = {@PropertyOption(name = "JKS", value = "JKS"), @PropertyOption(name = "PKCS12", value = "PKCS12")})
@@ -93,6 +96,22 @@ public class DemandwareClientImpl implements DemandwareClient {
 
     @Property(label = "Key password", description = "Leave empty for no password")
     private static final String KEY_PWD = "key.password";
+    
+    @Property(label = "Asset download endpoint", description = "Path of asset on demandware instance used for importing assets via PIM",
+            value = "/on/demandware.static/-/{FILL ME}")
+    private static final String ASSET_DOWNLOAD_ENDPOINT = "assetDownloadEndpoint";
+
+    @Property(label = "WebDAV instance endpoint", description = "Optional: WebDAV server hostname or ip if different from instance endpoint")
+	private static final String WEBDAV_ENDPOINT = "webdav.endpoint";
+
+	@Property(label = "WebDAV user ")
+	private static final String WEBDAV_USER = "webdav.user";
+
+	@Property(label = "WebDAV user password")
+	private static final String WEBDAV_PASSWORD = "webdav.password";
+
+    @Property(label = "Instance id", description = "Demandware instance identifier.")
+    private static final String INSTANCE_ID = "instance.id";
 
     private String instanceEndPoint;
     private int socketTimeout;
@@ -103,6 +122,11 @@ public class DemandwareClientImpl implements DemandwareClient {
     private String keyStorePath;
     private String keyStorePwd;
     private String keyPwd;
+    private String assetDownloadEndpoint;
+    private String instanceId;
+    private String webDavEndpoint;
+    private String webDavUser;
+    private String webDavUserPassword;
 
     @Override
     public String getEndpoint() {
@@ -221,12 +245,8 @@ public class DemandwareClientImpl implements DemandwareClient {
                 new String[]{protocolSSL},
                 null,
                 SSLConnectionSocketFactory.getDefaultHostnameVerifier());
-        } catch (NoSuchAlgorithmException e) {
-            LOG.error("Cannot set custom ssl config: {}", e.toString());
-        } catch (KeyManagementException e) {
-            LOG.error("Cannot set custom ssl config: {}", e.toString());
         } catch (Exception e) {
-            LOG.error("Cannot set custom ssl config: {}", e.toString());
+            LOG.error("Cannot set custom ssl config: {}", e);
         }
         return sslsf;
     }
@@ -236,17 +256,55 @@ public class DemandwareClientImpl implements DemandwareClient {
         return getHttpClientBuilder().build();
     }
 
+    @Override
+    public String getInstanceId() {
+        return instanceId;
+    }
+    
+    @Override
+    public String getAssetDownloadEndpoint(){
+        return assetDownloadEndpoint;
+    }
+
+    @Override
+    public String getWebDavEndpoint() {
+        return StringUtils.isNotEmpty(webDavEndpoint) ? webDavEndpoint : instanceEndPoint;
+    }
+
+    @Override
+    public String getWebDavUser() {
+        return webDavUser;
+    }
+
+    @Override
+    public String getWebDavUserPassword() {
+        return webDavUserPassword;
+    }
+
     @Activate
-    protected void activate(Map<String, Object> configuration) {
-        instanceEndPoint = PropertiesUtil.toString(configuration.get(INSTANCE_ENDPOINT), null);
-        protocolInterface = PropertiesUtil.toString(configuration.get(PROTOCOL_INTERFACE), null);
-        protocolSSL = StringUtils.trimToNull(PropertiesUtil.toString(configuration.get(PROTOCOL_SSL), "TLSv1.2"));
-        keystoreType = StringUtils.trimToNull(PropertiesUtil.toString(configuration.get(KEYSTORE_TYPE), "JKS"));
-        keyStorePath = StringUtils.trimToNull(PropertiesUtil.toString(configuration.get(KEYSTORE_PATH), null));
-        keyStorePwd = StringUtils.trimToNull(PropertiesUtil.toString(configuration.get(KEYSTORE_PWD), null));
-        keyPwd = StringUtils.trimToNull(PropertiesUtil.toString(configuration.get(KEY_PWD), null));
-        socketTimeout = PropertiesUtil.toInteger(configuration.get(INSTANCE_SOCKET_TIMEOUT), 0);
-        connectionTimeout = PropertiesUtil.toInteger(configuration.get(INSTANCE_CONNECTION_TIMEOUT), 0);
+    protected void activate(Map<String, Object> config) {
+        instanceId = PropertiesUtil.toString(config.get(INSTANCE_ID), null);
+        instanceEndPoint = PropertiesUtil.toString(config.get(INSTANCE_ENDPOINT), null);
+        assetDownloadEndpoint = PropertiesUtil.toString(config.get(ASSET_DOWNLOAD_ENDPOINT),null);
+
+        if (StringUtils.isAnyBlank(instanceId, instanceEndPoint, assetDownloadEndpoint)) {
+            String errorMessage = String.format("Failed to activate DemandwareClient. " +
+                    "Some of mandatory fields are null: instanceId [%s], instanceEndpoint: [%s], assetDownloadEndpoint [%s]",
+                    instanceId, instanceEndPoint, assetDownloadEndpoint);
+            throw new DemandwareClientException(errorMessage);
+        }
+
+        webDavEndpoint = PropertiesUtil.toString(config.get(WEBDAV_ENDPOINT), null);
+        webDavUser = PropertiesUtil.toString(config.get(WEBDAV_USER), null);
+        webDavUserPassword = PropertiesUtil.toString(config.get(WEBDAV_PASSWORD), null);
+        protocolInterface = PropertiesUtil.toString(config.get(PROTOCOL_INTERFACE), null);
+        protocolSSL = StringUtils.trimToNull(PropertiesUtil.toString(config.get(PROTOCOL_SSL), "TLSv1.1"));
+        keystoreType = StringUtils.trimToNull(PropertiesUtil.toString(config.get(KEYSTORE_TYPE), "JKS"));
+        keyStorePath = StringUtils.trimToNull(PropertiesUtil.toString(config.get(KEYSTORE_PATH), null));
+        keyStorePwd = StringUtils.trimToNull(PropertiesUtil.toString(config.get(KEYSTORE_PWD), null));
+        keyPwd = StringUtils.trimToNull(PropertiesUtil.toString(config.get(KEY_PWD), null));
+        socketTimeout = PropertiesUtil.toInteger(config.get(INSTANCE_SOCKET_TIMEOUT), 0);
+        connectionTimeout = PropertiesUtil.toInteger(config.get(INSTANCE_CONNECTION_TIMEOUT), 0);
         LOG.debug("activating Demandware client service");
     }
 }

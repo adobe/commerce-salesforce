@@ -19,7 +19,7 @@
     <groupId>com.adobe.cq.commerce</groupId>
     <artifactId>cq-commerce-demandware-parent</artifactId>
     <packaging>pom</packaging>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>2.0.0-SNAPSHOT</version>
 
     <name>Adobe AEM Commerce - Salesforce Commerce Integration Parent</name>
     <description>Adobe AEM Commerce Salesforce integration project.</description>
@@ -53,6 +53,8 @@
         <slf4j.version>1.7.6</slf4j.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
+        <aem.host>localhost</aem.host>
+        <aem.port>4502</aem.port>
     </properties>
 
     <!-- ======================================================================= -->
@@ -201,7 +203,7 @@
                 <plugin>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-scr-plugin</artifactId>
-                    <version>1.26.0</version>
+                    <version>1.24.0</version>
                     <executions>
                         <execution>
                             <id>generate-scr-scrdescriptor</id>
@@ -535,7 +537,7 @@
             <dependency>
                 <groupId>com.adobe.aem</groupId>
                 <artifactId>uber-jar</artifactId>
-                <version>6.4.1</version>
+                <version>6.4.5</version>
                 <classifier>apis</classifier>
                 <scope>provided</scope>
             </dependency>

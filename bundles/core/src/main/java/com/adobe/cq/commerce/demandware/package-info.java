@@ -13,7 +13,7 @@
  ~ See the License for the specific language governing permissions and
  ~ limitations under the License.
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-@Version("1.5.0")
+@Version("2.0.0")
 @Export(optional = "provide:=true")
 package com.adobe.cq.commerce.demandware;
 
