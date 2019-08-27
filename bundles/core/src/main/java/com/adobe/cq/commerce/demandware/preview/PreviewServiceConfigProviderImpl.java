@@ -18,9 +18,7 @@ package com.adobe.cq.commerce.demandware.preview;
 
 import com.adobe.cq.commerce.demandware.PreviewServiceConfig;
 import com.adobe.cq.commerce.demandware.PreviewServiceConfigProvider;
-import com.day.cq.replication.AgentConfig;
 import com.google.common.collect.Maps;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.ReferenceCardinality;
@@ -31,7 +29,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @Component(label = "Preview Service Config Provider", immediate = true)
 @Service(value = PreviewServiceConfigProvider.class)
@@ -62,25 +59,6 @@ public class PreviewServiceConfigProviderImpl implements PreviewServiceConfigPro
         }
         return config;
     }
-    
-    /**
-     * Returns the configured Preview Service Config defined for specific SFCC instance
-     *
-     * @param config Replication config containing id of the SFCC instance
-     * @return PreviewServiceConfig or null if client not found
-     */
-    public PreviewServiceConfig getClientForSpecificInstance(AgentConfig config) {
-        return getInstanceId(config)
-                .map(this::getPreviewServiceConfigByInstanceId)
-                .orElse(null);
-    }
-    
-    
-    private Optional<String> getInstanceId(final AgentConfig config) {
-        return Optional.ofNullable(config.getTransportURI())
-                .map(uri -> uri.replace(DWRE_SCHEME, StringUtils.EMPTY));
-    }
-    
     
     protected void bindPreviewServiceConfig(final PreviewServiceConfig config, final Map<String, Object> properties) {
         if (previewServiceConfigHashMap == null) {

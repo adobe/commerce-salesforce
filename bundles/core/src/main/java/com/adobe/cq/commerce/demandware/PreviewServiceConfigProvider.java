@@ -16,11 +16,7 @@
 
 package com.adobe.cq.commerce.demandware;
 
-import com.day.cq.replication.AgentConfig;
-
 public interface PreviewServiceConfigProvider {
     
     PreviewServiceConfig getPreviewServiceConfigByInstanceId(final String instanceId);
-    
-    PreviewServiceConfig getClientForSpecificInstance(AgentConfig config);
 }
