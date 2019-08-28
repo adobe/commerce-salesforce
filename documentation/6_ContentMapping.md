@@ -16,6 +16,14 @@
   
 ## Content mapping 
 
+User can set properties on jcr:content node to control which Site or Library will be used on SFCC instance:
+
 #### Pages
+* **dwreSite** - case-sensitive name of Salesforce Commerce Cloud Site.
+* **dwreLibrary** - library name of of Salesforce Commerce Cloud Content Library. Used for Replication.
+* **dwreInstanceId** - used to find matching DemandwareClient config for Preview mode on AEM Page.
+
 
 #### Assets
+* **dwreLibrary** - library name of of Salesforce Commerce Cloud Content Library. Used for Replication to WebDAV folder.
+* **dwreScope** - WebDav folder. Default value is "default". Check Sample content for an example.
