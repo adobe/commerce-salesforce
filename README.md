@@ -4,19 +4,27 @@
 
 This project has a number features to integrate Adobe AEM with Salesforce Commerce platform.
 
-This module is provided as two seperate packages - *cq-commerce-demandware-content* containing the core integration and
-*cq-commerce-demandware-sample-content* providing the sample content based on the Salesforce Commerce SiteGenesis demo site.
+###Structure
+The project consists of 5 packages: 
+* **cq-commerce-demandware-content** containing the core integration   
+* **cq-commerce-demandware-base-config** providing the sample OSGI configurations.
+* **cq-commerce-demandware-sample-content** providing the sample content based on the Salesforce Commerce SiteGenesis demo site
+* **cq-commerce-demandware-multi-sample-content** providing the sample content with support of multiple SFCC instances
+* **cq-commerce-demandware-clean-up-content** uninstalling all the sample content from AEM instance (single and multiple SFCC samples) 
+
+Note: *Base Config* module will be automatically installed with *installSampleContent* and *installMultiSampleContent* profiles, as it is required for sample content to work.
 
 ### Features
-* Create, maintain and publish AEM pages as content assets on the Salesforce Commerce instance
-  * Body content is created out of AEM page content
-  * Control meta attributes of the content asset directly from AEM page properties
-  * Supports MSM to manage multi-site / multi-region / multi-language setup's
-* Create, maintain and publish Salesforce Commerce content slot configuration's from within AEM
-* Publish AEM pages as Salesforce Commerce rendering templates (using Velocity markup)
-* Publish AEM assets to Salesforce Commerce
-* Live preview of AEM page content with dynamic catalog and product information
-* Connects to Salesforce Commerce via OCAPI and WebDav
+* Create, maintain and publish AEM pages as content assets on the Salesforce Commerce instance 
+    * Body content is created out of AEM page content 
+    * Control meta attributes of the content asset directly from AEM page properties 
+    * Supports MSM to manage multi-site / multi-region / multi-language setup's 
+* Create, maintain and publish Salesforce Commerce content slot configuration's from within AEM 
+* Publish AEM pages as Salesforce Commerce rendering templates (using Velocity markup) 
+* Publish AEM assets to Salesforce Commerce 
+* Live preview of AEM page content with dynamic catalog and product information 
+* Connects to Salesforce Commerce via OCAPI and WebDav 
+* Supports connection to multiple Salesforce Commerce instances
 
 For a general feature overview and introduction check out the [intro video](https://helpx.adobe.com/experience-manager/kt/commerce/using/demandware-feature-video-understand.html).
 
@@ -25,9 +33,9 @@ For a general feature overview and introduction check out the [intro video](http
 This project supports AEM 6.4 and later versions and requires access to an Salesforce Commerce instance (developer sandbox will work).
 For support oof previous AEM versions see Adobe [AEM documentation](https://helpx.adobe.com/experience-manager/6-3/sites/deploying/using/demandware.html). 
 
-* Start AEM 6.4 author instance
+* Start AEM 6.4.5 author instance
 * Install the main connector content package `cq-commerce-demandware-content`
-* Optionally install the sample content package `cq-commerce-demandware-sample-content`
+* Optionally install one of the sample content packages `cq-commerce-demandware-sample-content` or `cq-commerce-demandware-multi-sample-content`
 * Configure the connector to connect to your Saleforce Commerce instance as described in the [project wiki](../../wiki).
 
 ### Build
