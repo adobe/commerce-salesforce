@@ -15,5 +15,16 @@
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
 ## Demandware Access Token Provider 
-This configuration factory that must be configured to enable connection between AEM and Salesforce Commerce Cloud. 
-//TODO
+This configuration factory that must be configured to enable connection between AEM and Salesforce Commerce Cloud.
+One config required for each SFCC instance.
+
+When DemandwareClient send a request to SFCC instance it use and OAuth token. Provider allows Client to obtain a token and store it in CRX for reusing.
+Token is stored under "Replication Agent system user" node. For example in Sample Content:  
+/home/users/system/demandware/dwre-replication-agent-sitegenesis/oauth
+
+If token is not stored, but replication is successful check if user has write permissions on his own node.
+
+### Properties
+
+![Demandware Access Token Provider](/documentation/images/DemandwareAccessTokenProvider.png)
+

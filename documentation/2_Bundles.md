@@ -20,10 +20,21 @@ Backend implementation consists of 6 bundles.
 ![Bundles](/documentation/images/bundles.png)
 
 #### core bundle 
-provides functionality to connect to SFCC instance and preview of SFCC content on AEM pages in Edit Mode.
+Provides functionality to connect to SFCC instance and preview of SFCC content on AEM pages in Edit Mode.
 
 #### replication bundle 
-have a custom Replication Agent implementation, which allows to push content from AEM to SFCC.
+Have a custom Replication Agent implementation, which allows to push content from AEM to SFCC.
 
 #### pim bundle 
-is responsible for Product Import. It imports products and assets from SFCC into AEM.
+Is responsible for Product Import. It imports products and assets from SFCC into AEM.
+
+#### commerce bundle
+Contains CommerceService implementation for Demandware (SFCC).
+
+#### init bundle 
+The bundle contains code to import templates **from AEM instance to SFCC**. The tool can be found [Here](http://localhost:4502/etc/demandware/init.html).
+It is possible to configure which exactly templates are imported.
+The bundle is a part of the Sample Content. It is not installed with main *cq-commerce-demandware-content* package.
+
+#### libs bundle
+Installs custom libraries.
