@@ -4,7 +4,7 @@
 
 This project has a number features to integrate Adobe AEM with Salesforce Commerce platform.
 
-###Structure
+### Structure
 The project consists of 5 packages: 
 * **cq-commerce-demandware-content** containing the core integration   
 * **cq-commerce-demandware-base-config** providing the sample OSGI configurations.

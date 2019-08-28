@@ -14,16 +14,22 @@
   ~ limitations under the License.
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
-###Bundles Overview
+### Bundles Overview
 Backend implementation consists of 6 bundles.
 
-![Bundles](https://github.com/ackoch/commerce-salesforce/tree/master/documentation/images/bundles.png "Bundles")
+![Bundles](https://github.com/ackoch/commerce-salesforce/blob/master/documentation/images/bundles.png?raw=true "Bundles")
+![Bundles](https://raw.githubusercontent.com/ackoch/commerce-salesforce/master/documentation/images/bundles.png "Bundles")
+documentation/images/bundles.png
+![Bundles](/documentation/images/bundles.png)
+![Bundles](/documentation/images/bundles.png?raw=true)
+![Bundles](documentation/images/bundles.png?raw=true)
+![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Logo Title Text 1")
 
-####core bundle 
+#### core bundle 
 provides functionality to connect to SFCC instance and preview of SFCC content on AEM pages in Edit Mode.
 
-####replication bundle 
+#### replication bundle 
 have a custom Replication Agent implementation, which allows to push content from AEM to SFCC.
 
-####pim bundle 
+#### pim bundle 
 is responsible for Product Import. It imports products and assets from SFCC into AEM.
