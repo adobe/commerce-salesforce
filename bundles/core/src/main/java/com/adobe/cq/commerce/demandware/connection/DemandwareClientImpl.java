@@ -82,7 +82,7 @@ public class DemandwareClientImpl implements DemandwareClient {
     @Property(label = "Local network interface to be used")
     private static final String PROTOCOL_INTERFACE = "interface";
 
-    @Property(label = "SSL version", value = "TLSv1.1")
+    @Property(label = "SSL version", value = "TLSv1.2")
     private static final String PROTOCOL_SSL = "ssl";
 
     @Property(label = "Keystore type", options = {@PropertyOption(name = "JKS", value = "JKS"), @PropertyOption(name = "PKCS12", value = "PKCS12")})
@@ -298,7 +298,7 @@ public class DemandwareClientImpl implements DemandwareClient {
         webDavUser = PropertiesUtil.toString(config.get(WEBDAV_USER), null);
         webDavUserPassword = PropertiesUtil.toString(config.get(WEBDAV_PASSWORD), null);
         protocolInterface = PropertiesUtil.toString(config.get(PROTOCOL_INTERFACE), null);
-        protocolSSL = StringUtils.trimToNull(PropertiesUtil.toString(config.get(PROTOCOL_SSL), "TLSv1.1"));
+        protocolSSL = StringUtils.trimToNull(PropertiesUtil.toString(config.get(PROTOCOL_SSL), "TLSv1.2"));
         keystoreType = StringUtils.trimToNull(PropertiesUtil.toString(config.get(KEYSTORE_TYPE), "JKS"));
         keyStorePath = StringUtils.trimToNull(PropertiesUtil.toString(config.get(KEYSTORE_PATH), null));
         keyStorePwd = StringUtils.trimToNull(PropertiesUtil.toString(config.get(KEYSTORE_PWD), null));

@@ -26,7 +26,7 @@ Demandware Client will not be activated is any of mandatory properties is blank.
 * *"Socket timeout"* - optional.
 * *"HTTP connection timeout"* - optional.
 * *"Local network interface to be used"* - optional.
-* *"SSL version"* - default value is "TLSv1.1".
+* *"SSL version"* - default value is "TLSv1.2".
 * *"Keystore type"* - default value is "JKS". 
 * *"Keystore path"* - optional.
 * *"Keytsore password"* - optional.

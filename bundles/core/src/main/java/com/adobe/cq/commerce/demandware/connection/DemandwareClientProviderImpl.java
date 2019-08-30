@@ -30,7 +30,7 @@ import org.apache.felix.scr.annotations.Service;
 
 import java.util.HashMap;
 
-@Component(label = "Demandware Demandware Client Provider", immediate = true)
+@Component(label = "Demandware Client Provider", immediate = true)
 @Service(value = DemandwareClientProvider.class)
 public class DemandwareClientProviderImpl implements DemandwareClientProvider {
 	@Reference(referenceInterface = DemandwareClient.class,

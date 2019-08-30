@@ -34,7 +34,7 @@
     <groupId>com.adobe.cq.commerce</groupId>
     <artifactId>cq-commerce-demandware-content</artifactId>
     <packaging>content-package</packaging>
-    <name>Adobe AEM Commerce - Salesforce Commerce Integration Content Package</name>
+    <name>AEM/Salesforce - Content Package</name>
     <description>Adobe AEM Commerce - Salesforce Commerce integration application content package</description>
     <version>2.0.0-SNAPSHOT</version>
 

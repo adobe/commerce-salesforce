@@ -35,7 +35,7 @@ import java.util.Map;
  */
 @Service
 @Component(metatype = true, configurationFactory = true, immediate = true,
-        policy = ConfigurationPolicy.REQUIRE, label = "Preview Service Configuration", name = "com.adobe.cq.commerce.demandware.preview.PreviewServiceConfigImpl")
+        policy = ConfigurationPolicy.REQUIRE, label = "Demandware Preview Service Configuration", name = "com.adobe.cq.commerce.demandware.preview.PreviewServiceConfigImpl")
 @Properties({
         @Property(name = "webconsole.configurationFactory.nameHint", value = "{service.factoryPid} - {instance.id}")
 })

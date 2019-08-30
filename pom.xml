@@ -37,7 +37,7 @@
     <version>2.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     
-    <name>Adobe AEM Commerce Salesforce Integration - Reactor Project</name>
+    <name>AEM/Salesforce - Reactor Project</name>
     <description>Maven multi module project for Adobe AEM Commerce Salesforce integration.</description>
 
     <!-- ====================================================================== -->

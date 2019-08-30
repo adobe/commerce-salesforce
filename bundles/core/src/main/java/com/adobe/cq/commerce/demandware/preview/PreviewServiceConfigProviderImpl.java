@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component(label = "Preview Service Config Provider", immediate = true)
+@Component(label = "Demandware Preview Service Config Provider", immediate = true)
 @Service(value = PreviewServiceConfigProvider.class)
 public class PreviewServiceConfigProviderImpl implements PreviewServiceConfigProvider {
     

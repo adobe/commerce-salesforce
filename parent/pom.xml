@@ -21,7 +21,7 @@
     <packaging>pom</packaging>
     <version>2.0.0-SNAPSHOT</version>
 
-    <name>Adobe AEM Commerce - Salesforce Commerce Integration Parent</name>
+    <name>AEM/Salesforce - Parent</name>
     <description>Adobe AEM Commerce Salesforce integration project.</description>
 
     <!-- ====================================================================== -->
@@ -55,6 +55,7 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <aem.host>localhost</aem.host>
         <aem.port>4502</aem.port>
+        <baseline.skip>true</baseline.skip>
     </properties>
 
     <!-- ======================================================================= -->

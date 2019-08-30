@@ -35,7 +35,7 @@
     <artifactId>cq-commerce-demandware-clean-up-content</artifactId>
     <version>2.0.0-SNAPSHOT</version>
     <packaging>content-package</packaging>
-    <name>Adobe AEM Commerce - Salesforce Commerce Clean Up Demo Content</name>
+    <name>AEM/Salesforce - Clean Up Demo Content</name>
     <description>Adobe AEM Commerce - Salesforce Commerce clean up demo content package</description>
 
     <!-- ====================================================================== -->

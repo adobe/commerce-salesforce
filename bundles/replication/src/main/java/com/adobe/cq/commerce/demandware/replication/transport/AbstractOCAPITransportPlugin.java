@@ -77,7 +77,7 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
     static final String ACCESS_TOKEN_PROPERTY = "accessTokenProvider";
     static final String BEARER_AUTHENTICATION_FORMAT = "Bearer %s";
 
-    private static final String DEFAULT_OCAPI_VERSION = "v15_9";
+    private static final String DEFAULT_OCAPI_VERSION = "v17_6";
     private static final String DEFAULT_OCAPI_PATH = "/s/-/dw/data";
     private static final String DW_HTTP_METHOD_OVERRIDE_HEADER = "x-dw-http-method-override";
 
