@@ -34,7 +34,7 @@
     <artifactId>cq-commerce-demandware-pim</artifactId>
     <packaging>bundle</packaging>
     <version>2.0.0-SNAPSHOT</version>
-    <name>AEM/Salesforce - PIM Bundle</name>
+    <name>AEM/Demandware - PIM Bundle</name>
     <description>Adobe AEM Commerce - Salesforce Commerce integration PIM bundle</description>
 
     <!-- ====================================================================== -->

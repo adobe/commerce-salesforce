@@ -19,6 +19,6 @@
     jcr:mixinTypes="[rep:AccessControllable]">
     <jcr:content
             jcr:primaryType="nt:unstructured"
-            jcr:title="EU Sitegenesis"
-            dwreLibrary="eu-sitegenesis"/>
+            jcr:title="Sitegenesis - Shared"
+            dwreLibrary="sitegenesis-shared"/>
 </jcr:root>

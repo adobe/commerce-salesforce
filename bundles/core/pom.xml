@@ -34,7 +34,7 @@
     <artifactId>cq-commerce-demandware-core</artifactId>
     <packaging>bundle</packaging>
     <version>2.0.0-SNAPSHOT</version>
-    <name>AEM/Salesforce - Core Bundle</name>
+    <name>AEM/Demandware - Core Bundle</name>
     <description>Adobe AEM Commerce - Salesforce Commerce integration core bundle</description>
 
     <!-- ====================================================================== -->

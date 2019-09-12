@@ -35,7 +35,7 @@
     <artifactId>cq-commerce-demandware-sample-init</artifactId>
     <packaging>bundle</packaging>
     <version>2.0.0-SNAPSHOT</version>
-    <name>AEM/Salesforce - Init Helper Bundle</name>
+    <name>AEM/Demandware - Init Helper Bundle</name>
     <description>Adobe AEM Commerce - Salesforce Commerce integration init helper bundle</description>
 
     <!-- ====================================================================== -->

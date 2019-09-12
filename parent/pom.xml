@@ -21,7 +21,7 @@
     <packaging>pom</packaging>
     <version>2.0.0-SNAPSHOT</version>
 
-    <name>AEM/Salesforce - Parent</name>
+    <name>AEM/Demandware - Parent</name>
     <description>Adobe AEM Commerce Salesforce integration project.</description>
 
     <!-- ====================================================================== -->

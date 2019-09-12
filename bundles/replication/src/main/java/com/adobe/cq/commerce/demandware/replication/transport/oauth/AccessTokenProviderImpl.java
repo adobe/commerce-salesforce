@@ -94,13 +94,31 @@ import com.adobe.granite.crypto.CryptoSupport;
 @Component(metatype = true, name = AccessTokenProviderImpl.FACTORY_PID, configurationFactory = true, immediate = true,
         policy = ConfigurationPolicy.REQUIRE, label = "Demandware Access Token provider")
 @Properties({
-        @Property(name = "webconsole.configurationFactory.nameHint", value = "{service.factoryPid} - {instance.id}")
+        @Property(name = "webconsole.configurationFactory.nameHint", value = "{service.factoryPid}: {auth.token.provider.client.id}-{instance.id}")
 })
 public class AccessTokenProviderImpl implements AccessTokenProvider {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AccessTokenProviderImpl.class);
 
     public static final String FACTORY_PID = "com.adobe.cq.commerce.demandware.oauth.accesstoken.provider";
+
+    @Property(
+            label = "InstanceID",
+            description = "Demandware instance identifier. Used in conjunction with the provider.id " +
+                    "to uniquely identify this service.")
+    private static final String INSTANCE_ID = "instance.id";
+
+    private static final String DEFAULT_CLIENT_ID = "DemandwareAuthorizationClient";
+    @Property(
+            label = "ProviderID",
+            value = DEFAULT_CLIENT_ID,
+            description = "Can be used to further differentiate the access " +
+                    "token provider. An AccessTokenProvider is identified by it's " +
+                    "provider.id AND instance.id. This is mainly used for backwards compatibility. " +
+                    "Leave to 'DemandwareAuthorizationClient' if in doubt.")
+    protected static final String CLIENT_ID = "auth.token.provider.client.id";
+
+
 
     private static final String DEFAULT_END_POINT = "account.demandware.com";
     @Property(value = DEFAULT_END_POINT)
@@ -130,13 +148,7 @@ public class AccessTokenProviderImpl implements AccessTokenProvider {
     @Property(intValue = DEFAULT_SO_TIMEOUT)
     protected static final String SO_TIMEOUT = "auth.token.provider.so.timeout";
 
-    /**
-     * Access token provider identifier. This identifier could be used in declarative service to bind a specific
-     * provider.
-     */
-    private static final String DEFAULT_CLIENT_ID = "DemandwareAuthorizationClient";
-    @Property(value = DEFAULT_CLIENT_ID)
-    protected static final String CLIENT_ID = "auth.token.provider.client.id";
+
 
     /**
      * Token validity leeway in minute (default Demandware tokes are valid to 30 minutes, so we used 25 minutes)
@@ -168,8 +180,6 @@ public class AccessTokenProviderImpl implements AccessTokenProvider {
     @Property(value = DEFAULT_DEMANDWARE_CLIENT_PASSWORD)
     protected static final String DEMANDWARE_CLIENT_PASSWORD = "auth.token.provider.demandware.client.password";
 
-    @Property(label = "Instance id", description = "Demandware instance identifier.")
-    private static final String INSTANCE_ID = "instance.id";
 
     /**
      * String format applied against a single argument (the clientId) that builds a relative path from the user home,

@@ -35,7 +35,7 @@
     <artifactId>cq-commerce-demandware-libs</artifactId>
     <packaging>bundle</packaging>
     <version>2.0.0-SNAPSHOT</version>
-    <name>AEM/Salesforce - Custom Libs</name>
+    <name>AEM/Demandware - Custom Libs</name>
     <description>Adobe AEM Commerce - Salesforce Commerce integration custom libs container bundle</description>
 
     <!-- ====================================================================== -->

@@ -19,6 +19,8 @@
     <filter root="/content/us-sitegenesis" mode="merge"/>
     <filter root="/content/dam/eu-sitegenesis" mode="merge"/>
     <filter root="/content/dam/us-sitegenesis" mode="merge"/>
+    <filter root="/content/dam/shared-sitegenesis" mode="merge"/>
+
 
     <filter root="/apps/commerce/demandware/components/init"/>
     <filter root="/apps/commerce/demandware/install" mode="merge"/>

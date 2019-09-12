@@ -393,8 +393,10 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
     }
 
     private AccessTokenProvider getAccessTokenProvider(final AgentConfig agentConfig) {
+
         final String instanceId = instanceIdProvider.getInstanceId(agentConfig);
         final String accessTokenProviderId = getAccessTokenProviderId(accessTokenProviderClientId, instanceId);
+
         AccessTokenProvider accessTokenProvider = null;
         if (accessTokenProvidersProps.size() > 0 && accessTokenProviders.size() > 0) {
             if (StringUtils.isNotBlank(accessTokenProviderId) && null != accessTokenProvidersProps.get(

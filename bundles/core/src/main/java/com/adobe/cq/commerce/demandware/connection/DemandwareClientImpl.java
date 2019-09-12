@@ -70,6 +70,9 @@ import com.adobe.cq.commerce.demandware.DemandwareClient;
 public class DemandwareClientImpl implements DemandwareClient {
     private static final Logger LOG = LoggerFactory.getLogger(DemandwareClientImpl.class);
 
+    @Property(label = "Instance id", description = "Demandware instance identifier.")
+    private static final String INSTANCE_ID = "instance.id";
+
     @Property(label = "Instance endpoint ip or hostname", value = "{FILL ME}.demandware.net")
     private static final String INSTANCE_ENDPOINT = "endpoint";
 
@@ -109,9 +112,6 @@ public class DemandwareClientImpl implements DemandwareClient {
 
 	@Property(label = "WebDAV user password")
 	private static final String WEBDAV_PASSWORD = "webdav.password";
-
-    @Property(label = "Instance id", description = "Demandware instance identifier.")
-    private static final String INSTANCE_ID = "instance.id";
 
     private String instanceEndPoint;
     private int socketTimeout;

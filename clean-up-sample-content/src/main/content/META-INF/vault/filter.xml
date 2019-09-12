@@ -24,7 +24,9 @@
     <filter root="/content/eu-sitegenesis"/>
     <filter root="/content/dam/eu-sitegenesis"/>
     <filter root="/content/dam/us-sitegenesis"/>
+    <filter root="/content/dam/shared-sitegenesis" />
     <filter root="/content/dam/sitegenesis"/>
+
 
     <filter root="/etc/demandware"/>
     <filter root="/etc/designs/demandware"/>

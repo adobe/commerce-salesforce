@@ -21,11 +21,4 @@
             jcr:primaryType="nt:unstructured"
             jcr:title="US Sitegenesis"
             dwreLibrary="us-sitegenesis"/>
-    <rep:policy
-            jcr:primaryType="rep:ACL">
-        <allowUSSitegenesisDam
-                jcr:primaryType="rep:GrantACE"
-                rep:principalName="dwre-replication-agent-us-sitegenesis"
-                rep:privileges="{Name}[jcr:read]"/>
-    </rep:policy>
 </jcr:root>

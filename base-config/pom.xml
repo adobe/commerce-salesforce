@@ -35,7 +35,7 @@
     <artifactId>cq-commerce-demandware-base-config</artifactId>
     <version>2.0.0-SNAPSHOT</version>
     <packaging>content-package</packaging>
-    <name>AEM/Salesforce - Base Config Package</name>
+    <name>AEM/Demandware - Base Config Package</name>
     <description>Adobe AEM Commerce - Salesforce Commerce base configuration package</description>
 
     <!-- ====================================================================== -->

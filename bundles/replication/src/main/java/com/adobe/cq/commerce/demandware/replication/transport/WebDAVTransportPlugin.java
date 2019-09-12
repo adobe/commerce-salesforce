@@ -54,7 +54,7 @@ import java.net.URLEncoder;
  */
 @Component
 @Service(value = TransportHandlerPlugin.class)
-@Properties({@Property(name = TransportHandlerPlugin.PN_TASK, value = "WebDAVTransportPlugin", propertyPrivate = true),
+@Properties({@Property(name = TransportHandlerPlugin.PN_TASK, value = "Demandware WebDAV Transport Plugin", propertyPrivate = true),
     @Property(name = Constants.SERVICE_RANKING, intValue = 30)})
 public class WebDAVTransportPlugin extends AbstractTransportHandlerPlugin {
     private static final Logger LOG = LoggerFactory.getLogger(WebDAVTransportPlugin.class);
