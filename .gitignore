@@ -1,10 +1,11 @@
 target
 .idea
-.iml
+*.iml
 .classpath
 .metadata
 .project
 .settings
 .vlt
 .DS_Store
+*.iml
 

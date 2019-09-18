@@ -21,6 +21,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -28,11 +29,14 @@ import javax.jcr.Value;
 import javax.jcr.ValueFactory;
 import javax.net.ssl.SSLContext;
 
+import com.adobe.cq.commerce.demandware.DemandwareClient;
+import com.adobe.cq.commerce.demandware.DemandwareClientProvider;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.ConfigurationPolicy;
+import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
@@ -82,7 +86,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import aQute.bnd.annotation.component.Deactivate;
-import com.adobe.cq.commerce.demandware.DemandwareClient;
 import com.adobe.granite.auth.oauth.AccessTokenProvider;
 import com.adobe.granite.crypto.CryptoException;
 import com.adobe.granite.crypto.CryptoSupport;
@@ -90,11 +93,32 @@ import com.adobe.granite.crypto.CryptoSupport;
 @Service
 @Component(metatype = true, name = AccessTokenProviderImpl.FACTORY_PID, configurationFactory = true, immediate = true,
         policy = ConfigurationPolicy.REQUIRE, label = "Demandware Access Token provider")
+@Properties({
+        @Property(name = "webconsole.configurationFactory.nameHint", value = "{service.factoryPid}: {auth.token.provider.client.id}-{instance.id}")
+})
 public class AccessTokenProviderImpl implements AccessTokenProvider {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AccessTokenProviderImpl.class);
 
     public static final String FACTORY_PID = "com.adobe.cq.commerce.demandware.oauth.accesstoken.provider";
+
+    @Property(
+            label = "InstanceID",
+            description = "Demandware instance identifier. Used in conjunction with the provider.id " +
+                    "to uniquely identify this service.")
+    private static final String INSTANCE_ID = "instance.id";
+
+    private static final String DEFAULT_CLIENT_ID = "DemandwareAuthorizationClient";
+    @Property(
+            label = "ProviderID",
+            value = DEFAULT_CLIENT_ID,
+            description = "Can be used to further differentiate the access " +
+                    "token provider. An AccessTokenProvider is identified by it's " +
+                    "provider.id AND instance.id. This is mainly used for backwards compatibility. " +
+                    "Leave to 'DemandwareAuthorizationClient' if in doubt.")
+    protected static final String CLIENT_ID = "auth.token.provider.client.id";
+
+
 
     private static final String DEFAULT_END_POINT = "account.demandware.com";
     @Property(value = DEFAULT_END_POINT)
@@ -124,13 +148,7 @@ public class AccessTokenProviderImpl implements AccessTokenProvider {
     @Property(intValue = DEFAULT_SO_TIMEOUT)
     protected static final String SO_TIMEOUT = "auth.token.provider.so.timeout";
 
-    /**
-     * Access token provider identifier. This identifier could be used in declarative service to bind a specific
-     * provider.
-     */
-    private static final String DEFAULT_CLIENT_ID = "DemandwareAuthorizationClient";
-    @Property(value = DEFAULT_CLIENT_ID)
-    protected static final String CLIENT_ID = "auth.token.provider.client.id";
+
 
     /**
      * Token validity leeway in minute (default Demandware tokes are valid to 30 minutes, so we used 25 minutes)
@@ -162,6 +180,7 @@ public class AccessTokenProviderImpl implements AccessTokenProvider {
     @Property(value = DEFAULT_DEMANDWARE_CLIENT_PASSWORD)
     protected static final String DEMANDWARE_CLIENT_PASSWORD = "auth.token.provider.demandware.client.password";
 
+
     /**
      * String format applied against a single argument (the clientId) that builds a relative path from the user home,
      * where the access token is stored in an encrypted format.
@@ -172,7 +191,7 @@ public class AccessTokenProviderImpl implements AccessTokenProvider {
     private CryptoSupport cryptoSupport;
 
     @Reference
-    private DemandwareClient demandwareClient;
+    private DemandwareClientProvider clientProvider;
 
     private CloseableHttpClient httpClient;
 
@@ -182,6 +201,7 @@ public class AccessTokenProviderImpl implements AccessTokenProvider {
     private int leeway;
     private boolean reuseAccessTokens;
     private String relativeUri;
+    private String instanceId;
 
     @Activate
     protected void activate(Map<String, Object> props)
@@ -191,6 +211,7 @@ public class AccessTokenProviderImpl implements AccessTokenProvider {
         clientId = PropertiesUtil.toString(props.get(CLIENT_ID), DEFAULT_CLIENT_ID);
         endPoint = PropertiesUtil.toString(props.get(END_POINT), DEFAULT_END_POINT);
         reuseAccessTokens = PropertiesUtil.toBoolean(props.get(REUSE_ACCESS_TOKENS), DEFAULT_REUSE_ACCESS_TOKENS);
+        instanceId = PropertiesUtil.toString(props.get(INSTANCE_ID), StringUtils.EMPTY);
         final String accessRequestFormat = PropertiesUtil.toString(props.get(ACCESS_TOKEN_REQ_FORMAT),
                 DEFAULT_ACCESS_TOKEN_REQ_FORMAT);
         int connectionTimeout = Math.abs(PropertiesUtil.toInteger(props.get(CONNECTION_TIMEOUT),
@@ -207,8 +228,8 @@ public class AccessTokenProviderImpl implements AccessTokenProvider {
 
         if (HTTPS.equals(uri.getScheme())) {
             relativeUri = uri.toString();
-
-            HttpClientBuilder builder = demandwareClient.getHttpClientBuilder();
+            DemandwareClient dwClient = clientProvider.getClientForSpecificInstance(instanceId);
+            HttpClientBuilder builder = dwClient.getHttpClientBuilder();
 
             //set a default destination host
             HttpRoutePlanner routePlanner = new DefaultRoutePlanner(DefaultSchemePortResolver.INSTANCE) {

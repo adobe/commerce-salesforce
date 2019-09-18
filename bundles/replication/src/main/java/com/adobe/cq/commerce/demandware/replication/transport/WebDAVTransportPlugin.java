@@ -16,34 +16,6 @@
 
 package com.adobe.cq.commerce.demandware.replication.transport;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.Dictionary;
-
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.felix.scr.annotations.Activate;
-import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.ConfigurationPolicy;
-import org.apache.felix.scr.annotations.Properties;
-import org.apache.felix.scr.annotations.Property;
-import org.apache.felix.scr.annotations.Reference;
-import org.apache.felix.scr.annotations.Service;
-import org.apache.http.HttpStatus;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.sling.commons.json.JSONException;
-import org.apache.sling.commons.json.JSONObject;
-import org.apache.sling.commons.osgi.PropertiesUtil;
-import org.osgi.framework.Constants;
-import org.osgi.service.component.ComponentContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.adobe.cq.commerce.demandware.DemandwareClient;
 import com.adobe.cq.commerce.demandware.DemandwareCommerceConstants;
 import com.adobe.cq.commerce.demandware.replication.TransportHandlerPlugin;
@@ -55,33 +27,37 @@ import com.day.cq.replication.ReplicationLog;
 import com.github.sardine.Sardine;
 import com.github.sardine.impl.SardineException;
 import com.github.sardine.impl.SardineImpl;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.Properties;
+import org.apache.felix.scr.annotations.Property;
+import org.apache.felix.scr.annotations.Service;
+import org.apache.http.HttpStatus;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.sling.commons.json.JSONException;
+import org.apache.sling.commons.json.JSONObject;
+import org.osgi.framework.Constants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 /**
  * <code>TransportHandlerPlugin</code> to send static files to WebDAV.
  */
-@Component(label = "Demandware TransportHandler Plugin for WebDAV", immediate = true, metatype = true, policy = ConfigurationPolicy.REQUIRE)
+@Component
 @Service(value = TransportHandlerPlugin.class)
-@Properties({@Property(name = TransportHandlerPlugin.PN_TASK, value = "WebDAVTransportPlugin", propertyPrivate = true),
+@Properties({@Property(name = TransportHandlerPlugin.PN_TASK, value = "Demandware WebDAV Transport Plugin", propertyPrivate = true),
     @Property(name = Constants.SERVICE_RANKING, intValue = 30)})
 public class WebDAVTransportPlugin extends AbstractTransportHandlerPlugin {
-
     private static final Logger LOG = LoggerFactory.getLogger(WebDAVTransportPlugin.class);
-
-    @Property(label = "WebDAV instance endpoint", description = "Optional: WebDAV server hostname or ip if different from instance endpoint")
-    private static final String WEBDAV_ENDPOINT = "webdav.endpoint";
-
-    @Property(label = "WebDAV user ")
-    private static final String WEBDAV_USER = "webdav.user";
-
-    @Property(label = "WebDAV user password")
-    private static final String WEBDAV_PASSWORD = "webdav.password";
-
-    @Reference
-    DemandwareClient demandwareClient;
-
-    private String webDavEndpoint;
-    private String webDavUser;
-    private String webDavUserPassword;
 
     @Override
     String getApiType() {
@@ -94,19 +70,15 @@ public class WebDAVTransportPlugin extends AbstractTransportHandlerPlugin {
     }
 
     @Override
-    DemandwareClient getDemandwareClient() {
-        return demandwareClient;
-    }
-
-    @Override
     public boolean deliver(JSONObject delivery, AgentConfig config, ReplicationLog log, ReplicationAction action)
         throws ReplicationException {
 
         // construct the WebDAV request
         String path = null;
+        final String endpoint = clientProvider.getClientForSpecificInstance(config).getWebDavEndpoint();
         final StringBuilder transportUriBuilder = new StringBuilder();
         transportUriBuilder.append(DemandwareClient.DEFAULT_SCHEMA);
-        transportUriBuilder.append(StringUtils.isNotEmpty(webDavEndpoint) ? webDavEndpoint : demandwareClient.getEndpoint());
+        transportUriBuilder.append(endpoint);
         try {
             transportUriBuilder.append(
                 constructEndpointURL(delivery.getString(DemandwareCommerceConstants.ATTR_WEBDAV_SHARE), delivery));
@@ -181,12 +153,10 @@ public class WebDAVTransportPlugin extends AbstractTransportHandlerPlugin {
         } catch (IOException e) {
             throw new ReplicationException(e);
         } finally {
-            if (sardine != null) {
-                try {
-                    sardine.shutdown();
-                } catch (IOException e) {
-                    log.warn("Error shut down WebDAV client %s", e.getMessage());
-                }
+            try {
+                sardine.shutdown();
+            } catch (IOException e) {
+                log.warn("Error shut down WebDAV client %s", e.getMessage());
             }
         }
     }
@@ -235,12 +205,10 @@ public class WebDAVTransportPlugin extends AbstractTransportHandlerPlugin {
         } catch (IOException e) {
             throw new ReplicationException(e);
         } finally {
-            if (sardine != null) {
-                try {
-                    sardine.shutdown();
-                } catch (IOException e) {
-                    log.warn("Error shut down WebDAV client %s", e.getMessage());
-                }
+            try {
+                sardine.shutdown();
+            } catch (IOException e) {
+                log.warn("Error shut down WebDAV client %s", e.getMessage());
             }
         }
     }
@@ -249,25 +217,15 @@ public class WebDAVTransportPlugin extends AbstractTransportHandlerPlugin {
      * Setup transport user and other credentials.
      */
     @Override
-    protected CredentialsProvider createCredentialsProvider(AgentConfig config, ReplicationLog log) {
+    protected CredentialsProvider createCredentialsProvider(DemandwareClient client, ReplicationLog log) {
         // set default user/pass
-        if (StringUtils.isNotEmpty(webDavUser)) {
-            log.debug("WebDAV auth user: %s", webDavUser);
+        if (StringUtils.isNotEmpty(client.getWebDavUser())) {
+            log.debug("WebDAV auth user: %s", client.getWebDavUser());
             final CredentialsProvider credsProvider = new BasicCredentialsProvider();
             credsProvider.setCredentials(AuthScope.ANY,
-                new UsernamePasswordCredentials(webDavUser, webDavUserPassword));
+                new UsernamePasswordCredentials(client.getWebDavUser(), client.getWebDavUserPassword()));
             return credsProvider;
         }
         return null;
-    }
-
-    /* OSGI stuff */
-
-    @Activate
-    protected void activate(final ComponentContext ctx) {
-        final Dictionary<?, ?> config = ctx.getProperties();
-        webDavEndpoint = PropertiesUtil.toString(config.get(WEBDAV_ENDPOINT), "");
-        webDavUser = PropertiesUtil.toString(config.get(WEBDAV_USER), "");
-        webDavUserPassword = PropertiesUtil.toString(config.get(WEBDAV_PASSWORD), "");
     }
 }

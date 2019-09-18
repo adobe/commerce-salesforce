@@ -16,11 +16,9 @@
 
 package com.adobe.cq.commerce.demandware.preview;
 
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-
+import com.adobe.cq.commerce.demandware.DemandwareClient;
+import com.adobe.cq.commerce.demandware.DemandwareClientProvider;
+import com.adobe.cq.commerce.demandware.InstanceIdProvider;
 import org.apache.commons.io.IOUtils;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
@@ -39,8 +37,9 @@ import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.adobe.cq.commerce.demandware.DemandwareClient;
-import com.adobe.cq.commerce.demandware.RenderService;
+import javax.servlet.ServletException;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
 
 /**
  * Simple proxy for static content assets (images, js, css) with relative URLs to Demandware.
@@ -52,13 +51,21 @@ public class StaticContentProxyServlet extends SlingSafeMethodsServlet {
     private static final Logger LOG = LoggerFactory.getLogger(StaticContentProxyServlet.class);
 
     @Reference
-    private DemandwareClient demandwareClient;
-
+    private DemandwareClientProvider clientProvider;
+    
+    @Reference
+    private InstanceIdProvider instanceId;
+    
     @Override
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) throws ServletException,
             IOException {
 
+        /* The instance id identifies the Demandware client and generates the URL to generate the preview images.
+         * However, if the referrer is not present in the request, the URL would have to be changed when rendering in HTML and the instance id
+         * would have to be removed from the proxy.
+         */
         RequestPathInfo pathInfo = request.getRequestPathInfo();
+        DemandwareClient demandwareClient = clientProvider.getClientForSpecificInstance(instanceId.getInstanceId(request));
         LOG.debug("Proxy static content for {}", pathInfo.toString());
         final String remoteUri = DemandwareClient.DEFAULT_SCHEMA + demandwareClient.getEndpoint() + pathInfo.getResourcePath() +
                 "." + pathInfo.getExtension() + pathInfo.getSuffix();

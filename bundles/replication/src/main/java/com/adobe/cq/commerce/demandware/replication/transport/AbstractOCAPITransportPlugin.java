@@ -16,17 +16,16 @@
 
 package com.adobe.cq.commerce.demandware.replication.transport;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Collections;
-import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentSkipListMap;
-import javax.jcr.Session;
-
+import com.adobe.cq.commerce.demandware.DemandwareClient;
+import com.adobe.cq.commerce.demandware.DemandwareCommerceConstants;
+import com.adobe.cq.commerce.demandware.InstanceIdProvider;
+import com.adobe.cq.commerce.demandware.DemandwareClientException;
+import com.adobe.granite.auth.oauth.AccessTokenProvider;
+import com.day.cq.replication.AgentConfig;
+import com.day.cq.replication.ReplicationAction;
+import com.day.cq.replication.ReplicationActionType;
+import com.day.cq.replication.ReplicationException;
+import com.day.cq.replication.ReplicationLog;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
@@ -56,14 +55,16 @@ import org.apache.sling.commons.osgi.PropertiesUtil;
 import org.apache.sling.commons.osgi.ServiceUtil;
 import org.osgi.service.component.ComponentContext;
 
-import com.adobe.cq.commerce.demandware.DemandwareClient;
-import com.adobe.cq.commerce.demandware.DemandwareCommerceConstants;
-import com.adobe.granite.auth.oauth.AccessTokenProvider;
-import com.day.cq.replication.AgentConfig;
-import com.day.cq.replication.ReplicationAction;
-import com.day.cq.replication.ReplicationActionType;
-import com.day.cq.replication.ReplicationException;
-import com.day.cq.replication.ReplicationLog;
+import javax.jcr.Session;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Collections;
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 /**
  * Abstract {@code TransportHandlerPlugin} class used as base for all Demandware OCAPI transport handlers.
@@ -73,11 +74,10 @@ import com.day.cq.replication.ReplicationLog;
         referenceInterface = AccessTokenProvider.class, bind = "bindAccessTokenProvider", unbind = "unbindAccessTokenProvider",
         cardinality = ReferenceCardinality.OPTIONAL_MULTIPLE, policy = ReferencePolicy.DYNAMIC)
 public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHandlerPlugin {
-
     static final String ACCESS_TOKEN_PROPERTY = "accessTokenProvider";
     static final String BEARER_AUTHENTICATION_FORMAT = "Bearer %s";
 
-    private static final String DEFAULT_OCAPI_VERSION = "v15_9";
+    private static final String DEFAULT_OCAPI_VERSION = "v17_6";
     private static final String DEFAULT_OCAPI_PATH = "/s/-/dw/data";
     private static final String DW_HTTP_METHOD_OVERRIDE_HEADER = "x-dw-http-method-override";
 
@@ -94,21 +94,16 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
     protected ResourceResolverFactory rrf;
 
     @Reference
-    protected DemandwareClient demandwareClient;
+    private InstanceIdProvider instanceIdProvider;
 
     private Map<String, Comparable<Object>> accessTokenProvidersProps =
             new ConcurrentSkipListMap<>(Collections.reverseOrder());
     private Map<Comparable<Object>, AccessTokenProvider> accessTokenProviders =
             new ConcurrentSkipListMap<>(Collections.reverseOrder());
 
-    private String accessTokenProviderId;
+    private String accessTokenProviderClientId;
     private String ocapiVersion;
     private String ocapiPath;
-
-    @Override
-    DemandwareClient getDemandwareClient() {
-        return demandwareClient;
-    }
 
     @Override
     String getApiType() {
@@ -130,10 +125,11 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
             throws ReplicationException {
         final String id = delivery.optString(DemandwareCommerceConstants.ATTR_ID,
                 StringUtils.substringAfterLast(action.getPath(), "/"));
+        final String dwInstanceId = instanceIdProvider.getInstanceId(config);
 
         // step 1: check if the content asset already exists
         RequestBuilder requestBuilder;
-        requestBuilder = getRequestBuilder("GET", delivery);
+        requestBuilder = getRequestBuilder("GET", delivery, dwInstanceId);
         log.info("Deliver %s to %s (%s)", id, requestBuilder.build().getRequestLine().toString(), action.getType().getName());
 
         log.info("Check if %s %s already exists", getContentType(), id);
@@ -164,10 +160,10 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
             // step 3: deliver the content asset using PUT or PATCH request
             if (requestInput.getContentLength() > 0) {
                 if (StringUtils.isEmpty(eTagHeaderValue)) {
-                    requestBuilder = getRequestBuilder("POST", delivery);
+                    requestBuilder = getRequestBuilder("POST", delivery, dwInstanceId);
                     requestBuilder.addHeader(DW_HTTP_METHOD_OVERRIDE_HEADER, "PUT");
                 } else {
-                    requestBuilder = getRequestBuilder("PATCH", delivery);
+                    requestBuilder = getRequestBuilder("PATCH", delivery, dwInstanceId);
                     requestBuilder.addHeader(HttpHeaders.IF_MATCH, eTagHeaderValue);
                 }
                 log.debug("Send %s %s using %s", getContentType(), id, requestBuilder.getMethod());
@@ -187,7 +183,7 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
         } else {
             // check we there is an eTag header from the get, if not there is nothing to delete
             if (StringUtils.isNotEmpty(eTagHeaderValue)) {
-                requestBuilder = getRequestBuilder("DELETE", delivery);
+                requestBuilder = getRequestBuilder("DELETE", delivery, dwInstanceId);
                 log.info("Delete %s %s", getContentType(), id);
                 response = executeRequest(httpClient, requestBuilder.build(), log);
                 HttpClientUtils.closeQuietly(response);
@@ -205,18 +201,20 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
      *
      * @param method   the HTTP request method
      * @param delivery the JSON data
+     * @param dwInstanceId
      * @return the created request builder
      * @throws ReplicationException in case request builder can not be created
      */
-    protected RequestBuilder getRequestBuilder(final String method, final JSONObject delivery)
-            throws ReplicationException {
+    protected RequestBuilder getRequestBuilder(final String method, final JSONObject delivery,
+                                               final String dwInstanceId) throws ReplicationException {
         if (StringUtils.isEmpty(method)) {
             throw new ReplicationException("No request method provided");
         }
         try {
             // construct the OCAPI request
             final StringBuilder transportUriBuilder = new StringBuilder();
-            transportUriBuilder.append(DemandwareClient.DEFAULT_SCHEMA).append(demandwareClient.getEndpoint());
+            final String endpoint = clientProvider.getClientForSpecificInstance(dwInstanceId).getEndpoint();
+            transportUriBuilder.append(DemandwareClient.DEFAULT_SCHEMA).append(endpoint);
             transportUriBuilder.append(getOCApiPath()).append(getOCApiVersion());
             transportUriBuilder.append(
                     constructEndpointURL(delivery.getString(DemandwareCommerceConstants.ATTR_API_ENDPOINT), delivery));
@@ -224,8 +222,8 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
             final RequestBuilder requestBuilder = RequestBuilder.create(method);
             requestBuilder.setUri(transportUriBuilder.toString());
             return requestBuilder;
-        } catch (JSONException e) {
-            throw new ReplicationException("Can not create endpoint URI", e);
+        } catch (JSONException | DemandwareClientException e) {
+            throw new ReplicationException("Can not create endpoint URI: " + e.getMessage(), e);
         }
     }
 
@@ -275,23 +273,12 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
                 // obtain a valid access token and use it for authentication
                 if (config.isOAuthEnabled()) {
                     log.debug("* Using OAuth 2.0 Authorization Grants");
-                    AccessTokenProvider accessTokenProvider = null;
-                    if (accessTokenProvidersProps.size() > 0 && accessTokenProviders.size() > 0) {
-                        if (StringUtils.isNotBlank(accessTokenProviderId) && null != accessTokenProvidersProps.get(
-                                accessTokenProviderId)) {
-                            accessTokenProvider = accessTokenProviders.get(accessTokenProvidersProps.get(
-                                    accessTokenProviderId));
-                        }
-                        if (null == accessTokenProvider) {
-                            accessTokenProvider = (AccessTokenProvider) accessTokenProviders.values().toArray()[0];
-                        }
-                    }
+                    AccessTokenProvider accessTokenProvider = getAccessTokenProvider(config);
                     if (accessTokenProvider != null) {
                         final String agentUserID = conf.get(AgentConfig.AGENT_USER_ID, "");
                         log.debug("* OAuth 2.0 User: %s", agentUserID);
                         // get an access token for agent user
                         Map<String, Object> param = new HashMap<>();
-                        //param.put(ResourceResolverFactory.USER_IMPERSONATION, agentUserID);
                         param.put(ResourceResolverFactory.SUBSERVICE, "replication");
                         resolver = rrf.getServiceResourceResolver(param);
 
@@ -390,13 +377,48 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
         for (Header header : response.getAllHeaders()) {
             log.debug("> Header %s", header.getName() + ": " + header.getValue());
         }
-        if (!isRequestSuccessful(response)) {
-            try {
+        if (isRequestSuccessful(response)) {
+            return;
+        }
+
+        try {
+            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_NOT_FOUND) {
+                log.debug("Not found: %s", EntityUtils.toString(response.getEntity()));
+            } else {
                 log.error("> Error message: %s", EntityUtils.toString(response.getEntity()));
-            } catch (IOException e) {
-               // do nothing
+            }
+        } catch (IOException e) {
+           // do nothing
+        }
+    }
+
+    private AccessTokenProvider getAccessTokenProvider(final AgentConfig agentConfig) {
+
+        final String instanceId = instanceIdProvider.getInstanceId(agentConfig);
+        final String accessTokenProviderId = getAccessTokenProviderId(accessTokenProviderClientId, instanceId);
+
+        AccessTokenProvider accessTokenProvider = null;
+        if (accessTokenProvidersProps.size() > 0 && accessTokenProviders.size() > 0) {
+            if (StringUtils.isNotBlank(accessTokenProviderId) && null != accessTokenProvidersProps.get(
+                    accessTokenProviderId)) {
+                accessTokenProvider = accessTokenProviders.get(accessTokenProvidersProps.get(
+                        accessTokenProviderId));
+            }
+            if (null == accessTokenProvider) {
+                accessTokenProvider = (AccessTokenProvider) accessTokenProviders.values().toArray()[0];
             }
         }
+        return accessTokenProvider;
+    }
+
+    private String getAccessTokenProviderId(final Map<String, Object> properties) {
+        String clientId = (String) properties.get("auth.token.provider.client.id");
+        String instanceId = (String) properties.get("instance.id");
+        return getAccessTokenProviderId(clientId, instanceId);
+    }
+
+    private String getAccessTokenProviderId(final String clientId, final String instanceId) {
+        return String.format("%s-%s", clientId, instanceId);
     }
 
     /* OSGI stuff */
@@ -404,21 +426,21 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
     @Activate
     protected void activate(final ComponentContext ctx) {
         final Dictionary<?, ?> config = ctx.getProperties();
-        accessTokenProviderId = PropertiesUtil.toString(config.get(ACCESS_TOKEN_PROVIDER), "");
+        accessTokenProviderClientId = PropertiesUtil.toString(config.get(ACCESS_TOKEN_PROVIDER), "");
         ocapiVersion = PropertiesUtil.toString(config.get(OCAPI_VERSION), DEFAULT_OCAPI_VERSION);
         ocapiPath = StringUtils.appendIfMissing(PropertiesUtil.toString(config.get(OCAPI_PATH), DEFAULT_OCAPI_PATH),
                 "/", "/");
     }
 
     protected void bindAccessTokenProvider(final AccessTokenProvider atp, final Map<String, Object> properties) {
-        String pid = (String) properties.get("auth.token.provider.client.id");
-        accessTokenProvidersProps.put(pid, ServiceUtil.getComparableForServiceRanking(properties));
+        String atpId = getAccessTokenProviderId(properties);
+        accessTokenProvidersProps.put(atpId, ServiceUtil.getComparableForServiceRanking(properties));
         accessTokenProviders.put(ServiceUtil.getComparableForServiceRanking(properties), atp);
     }
 
     protected void unbindAccessTokenProvider(final AccessTokenProvider atp, final Map<String, Object> properties) {
-        String pid = (String) properties.get("auth.token.provider.client.id");
-        accessTokenProviders.remove(accessTokenProvidersProps.get(pid));
-        accessTokenProvidersProps.remove(pid);
+        String atpId = getAccessTokenProviderId(properties);
+        accessTokenProviders.remove(accessTokenProvidersProps.get(atpId));
+        accessTokenProvidersProps.remove(atpId);
     }
 }

@@ -16,16 +16,16 @@
 
 package com.adobe.cq.commerce.demandware.pim.impl;
 
-import java.io.IOException;
-import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.adobe.cq.commerce.demandware.DemandwareClient;
+import com.adobe.cq.commerce.demandware.DemandwareClientProvider;
+import com.adobe.cq.commerce.demandware.pim.DemandwareCommerceConstants;
+import com.adobe.cq.commerce.demandware.pim.ImportAssetHandler;
+import com.adobe.cq.commerce.demandware.pim.ImportContext;
+import com.adobe.granite.asset.api.Asset;
+import com.adobe.granite.asset.api.AssetManager;
+import com.adobe.granite.asset.api.RenditionHandler;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Properties;
-import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
 import org.apache.http.HttpStatus;
@@ -34,54 +34,41 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.sling.commons.osgi.PropertiesUtil;
-import org.osgi.framework.Constants;
-import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.adobe.cq.commerce.demandware.DemandwareClient;
-import com.adobe.cq.commerce.demandware.pim.DemandwareCommerceConstants;
-import com.adobe.cq.commerce.demandware.pim.ImportAssetHandler;
-import com.adobe.cq.commerce.demandware.pim.ImportContext;
-import com.adobe.granite.asset.api.Asset;
-import com.adobe.granite.asset.api.AssetManager;
-import com.adobe.granite.asset.api.RenditionHandler;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
-@Component(label = "Demandware Product Import Image Asset Handler", metatype = true)
+@Component(label = "Demandware Product Import Image Asset Handler")
 @Service
-@Properties(value = {
-    @Property(name = Constants.SERVICE_RANKING, intValue = 0, propertyPrivate = true),
-    @Property(name = Constants.SERVICE_DESCRIPTION, value = "Demandware specific import product image handler " +
-        "implementation", propertyPrivate = true)
-})
 public class DemandwareImageAssetHandler implements ImportAssetHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(DemandwareImageAssetHandler.class);
 
-    @Property
-    private static final String DOWNLOAD_ENDPOINT = "downloadEndpoint";
-
     @Reference
-    DemandwareClient demandwareClient;
-
-    private String downloadEndpoint;
+    DemandwareClientProvider clientProvider;
+    
 
     @Override
-    public Asset retrieveAsset(ImportContext ctx, Map<String, Object> properties) {
+    public Asset retrieveAsset(ImportContext ctx, Map<String, Object> properties, String instanceId) {
+        DemandwareClient demandwareClient = clientProvider.getClientForSpecificInstance(instanceId);
+        String downloadEndpoint = demandwareClient.getAssetDownloadEndpoint();
         if (StringUtils.isBlank(downloadEndpoint)) {
             LOG.error("Missing download endpoint, can not download any asset");
             return null;
         }
 
-        if (!properties.containsKey(DemandwareCommerceConstants.ATTRIBUTE_ASSET_PATH) && StringUtils.isBlank
-            ((String) properties.get(DemandwareCommerceConstants.ATTRIBUTE_ASSET_PATH))) {
+        if (!properties.containsKey(DemandwareCommerceConstants.ATTRIBUTE_ASSET_PATH)
+                && StringUtils.isBlank((String) properties.get(DemandwareCommerceConstants.ATTRIBUTE_ASSET_PATH))) {
             LOG.error("Missing asset path");
             return null;
         }
         final String relativeImagePath = (String) properties.get(DemandwareCommerceConstants.ATTRIBUTE_ASSET_PATH);
-        final String endPoint = DemandwareClient.DEFAULT_SCHEMA + demandwareClient.getEndpoint() + downloadEndpoint +
-            StringUtils.prependIfMissing(relativeImagePath, "/", "/");
+        
+        final String endPoint = DemandwareClient.DEFAULT_SCHEMA + demandwareClient.getEndpoint()
+                + downloadEndpoint + StringUtils.prependIfMissing(relativeImagePath, "/", "/");
 
         // call Demandware to render preview for component
         CloseableHttpResponse responseObj = null;
@@ -129,13 +116,5 @@ public class DemandwareImageAssetHandler implements ImportAssetHandler {
             HttpClientUtils.closeQuietly(httpClient);
         }
         return null;
-    }
-
-    /* OSGI stuff */
-
-    @Activate
-    protected void activate(final ComponentContext ctx) {
-        final Dictionary<?, ?> config = ctx.getProperties();
-        downloadEndpoint = PropertiesUtil.toString(config.get(DOWNLOAD_ENDPOINT), "");
     }
 }

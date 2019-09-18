@@ -76,7 +76,8 @@ public interface ImportHandler {
      * @param ctx       the importer context
      * @param imageNode the node for the image (e.g. /var/commerce/products/catalog/product/image)
      * @param values    the product's properties
+     * @param instanceId    instanceId to identify Demandware Client
      * @throws RepositoryException in case the product asset could not be updated
      */
-    void updateAsset(ImportContext ctx, Node imageNode, ValueMap values) throws RepositoryException;
+    void updateAsset(ImportContext ctx, Node imageNode, ValueMap values, String instanceId) throws RepositoryException;
 }

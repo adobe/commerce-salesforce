@@ -15,13 +15,19 @@
   ~ limitations under the License.
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 <workspaceFilter version="1.0">
-    <filter root="/libs/commerce/demandware" />
-    <filter root="/apps/commerce/demandware"/>
+    <filter root="/apps/commerce/demandware/components"/>
+    <filter root="/apps/commerce/demandware/config" mode="merge" />
+    <filter root="/apps/commerce/demandware/templates"/>
+    <filter root="/apps/commerce/demandware/install"/>
     <filter root="/apps/commerce/gui/content/products/importproductswizard/importers"/>
-    <filter root="/etc/replication/agents.author/demandware"/>
-    <filter root="/etc/scaffolding/demandware"/>
-    <filter root="/home/users/system/demandware"/>
+
     <filter root="/content" mode="merge">
         <include pattern=".*/rep:policy(/.*)?"/>
     </filter>
+
+    <filter root="/etc/designs/demandware"/>
+    <filter root="/etc/replication/agents.author/demandware" mode="merge"/>
+    <filter root="/etc/scaffolding/demandware"/>
+
+    <filter root="/home/users/system/demandware" mode="merge"/>
 </workspaceFilter>
