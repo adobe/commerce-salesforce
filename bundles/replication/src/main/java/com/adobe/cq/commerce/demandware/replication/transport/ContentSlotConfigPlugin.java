@@ -16,11 +16,12 @@
 
 package com.adobe.cq.commerce.demandware.replication.transport;
 
-import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Properties;
-import org.apache.felix.scr.annotations.Property;
-import org.apache.felix.scr.annotations.Service;
+import com.adobe.cq.commerce.demandware.DemandwareClientProvider;
+import com.adobe.cq.commerce.demandware.InstanceIdProvider;
+import com.adobe.granite.auth.oauth.AccessTokenProvider;
+import org.apache.felix.scr.annotations.*;
 import org.apache.http.client.methods.RequestBuilder;
+import org.apache.sling.api.resource.ResourceResolverFactory;
 import org.apache.sling.commons.json.JSONException;
 import org.apache.sling.commons.json.JSONObject;
 import org.osgi.framework.Constants;
@@ -29,14 +30,48 @@ import com.adobe.cq.commerce.demandware.DemandwareCommerceConstants;
 import com.adobe.cq.commerce.demandware.replication.TransportHandlerPlugin;
 import com.day.cq.replication.ReplicationException;
 
+import static com.adobe.cq.commerce.demandware.replication.transport.AbstractOCAPITransportPlugin.*;
+
 /**
  * <code>TransportHandlerPlugin</code> to send content asset data to Demandware using OC data API.
  */
 @Component(label = "Demandware TransportHandler Plugin Content Slot Config", metatype = true, immediate = true)
 @Service(value = TransportHandlerPlugin.class)
-@Properties({@Property(name = TransportHandlerPlugin.PN_TASK, value = "ContentSlotConfigPlugin", propertyPrivate =
-        true), @Property(name = Constants.SERVICE_RANKING, intValue = 10)})
+@Properties({
+        @Property(name = TransportHandlerPlugin.PN_TASK, value = "ContentSlotConfigPlugin", propertyPrivate = true),
+        @Property(name = Constants.SERVICE_RANKING, intValue = 10),
+        @Property(name = ACCESS_TOKEN_PROVIDER, label = "Access Token Provider Id to be used for OCAPI access"),
+        @Property(name = OCAPI_VERSION, label = "OCAPI version", value = DEFAULT_OCAPI_VERSION),
+        @Property(name = OCAPI_PATH, label = "OCAPI path", value = DEFAULT_OCAPI_PATH)
+})
+@Reference(name = AbstractOCAPITransportPlugin.ACCESS_TOKEN_PROPERTY,
+        referenceInterface = AccessTokenProvider.class, bind = "bindAccessTokenProvider", unbind = "unbindAccessTokenProvider",
+        cardinality = ReferenceCardinality.OPTIONAL_MULTIPLE, policy = ReferencePolicy.DYNAMIC)
 public class ContentSlotConfigPlugin extends AbstractOCAPITransportPlugin {
+
+    @Reference
+    private InstanceIdProvider instanceIdProvider;
+
+    @Reference
+    private DemandwareClientProvider clientProvider;
+
+    @Reference
+    private ResourceResolverFactory rrf;
+
+    @Override
+    protected DemandwareClientProvider getClientProvider() {
+        return clientProvider;
+    }
+
+    @Override
+    protected ResourceResolverFactory getResourceResolverFactory() {
+        return rrf;
+    }
+
+    @Override
+    protected InstanceIdProvider getInstanceIdProvider() {
+        return instanceIdProvider;
+    }
 
     @Override
     String getContentType() {

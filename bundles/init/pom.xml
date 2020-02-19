@@ -55,6 +55,11 @@
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
                 <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Bundle-Category>ecommerce,example</Bundle-Category>
+                    </instructions>
+                </configuration>
             </plugin>
         </plugins>
     </build>
