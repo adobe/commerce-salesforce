@@ -21,6 +21,7 @@ import com.adobe.cq.commerce.demandware.replication.ContentBuilderPlugin;
 import com.adobe.cq.commerce.demandware.replication.content.attributemapping.AttributeDescriptor;
 import com.adobe.cq.commerce.demandware.replication.content.attributemapping.AttributeToJsonConverter;
 import com.adobe.cq.commerce.demandware.replication.content.attributemapping.impl.AttributeDescriptorFactory;
+import com.adobe.cq.commerce.demandware.replication.content.attributemapping.impl.DwreFolderAttributesLookupService;
 import com.day.cq.commons.inherit.HierarchyNodeInheritanceValueMap;
 import com.day.cq.replication.ReplicationAction;
 import com.day.cq.replication.ReplicationActionType;
@@ -81,6 +82,9 @@ public class ContentAssetPagePlugin extends AbstractContentBuilderPlugin {
     private RankedServices<AttributeToJsonConverter> attributeConverters =
             new RankedServices<>(Order.ASCENDING);
 
+    @Reference
+    private DwreFolderAttributesLookupService folderAttributes;
+
     @Override
     public JSONObject create(final ReplicationAction action, Resource resource, JSONObject content)
         throws JSONException {
@@ -96,9 +100,6 @@ public class ContentAssetPagePlugin extends AbstractContentBuilderPlugin {
                 new HierarchyNodeInheritanceValueMap(page.getContentResource());
 
         // get base values for site, library and language attributes
-        final String language = getLanguage(page);
-        final String site = pageProperties.getInherited(
-            DemandwareCommerceConstants.PN_DWRE_SITE, String.class);
         final String library = pageProperties.getInherited(
             DemandwareCommerceConstants.PN_DWRE_LIBRARY, String.class);
         // get DWRE template for page
@@ -118,9 +119,11 @@ public class ContentAssetPagePlugin extends AbstractContentBuilderPlugin {
 
         if (action.getType() == ReplicationActionType.ACTIVATE) {
             // check for folder assignments
-            if (pageProperties.containsKey(DemandwareCommerceConstants.PN_DWRE_FOLDER)) {
-                delivery.put(DemandwareCommerceConstants.ATTR_FOLDER,
-                        new JSONArray(Arrays.asList(pageProperties.get(DemandwareCommerceConstants.PN_DWRE_FOLDER, String[].class))));
+            final List<String> dwreFolders = pageProperties.containsKey(DemandwareCommerceConstants.PN_DWRE_FOLDER)
+                    ? Arrays.asList(pageProperties.get(DemandwareCommerceConstants.PN_DWRE_FOLDER, String[].class))
+                    : Collections.emptyList();
+            if (!dwreFolders.isEmpty()) {
+                delivery.put(DemandwareCommerceConstants.ATTR_FOLDER, new JSONArray(dwreFolders));
             }
 
             // construct payload and map page data
@@ -132,7 +135,9 @@ public class ContentAssetPagePlugin extends AbstractContentBuilderPlugin {
             }
 
             // map configured page to content asset attributes
-            for (final AttributeDescriptor attribute : attributeDescriptors) {
+            Set<AttributeDescriptor> attributes = new HashSet<>(attributeDescriptors);
+            attributes.addAll(folderAttributes.getDescriptors(dwreFolders));
+            for (final AttributeDescriptor attribute : attributes) {
                 final AttributeToJsonConverter converter =
                         findConverter(attribute, page, pageProperties);
                 if(converter!=null) {
