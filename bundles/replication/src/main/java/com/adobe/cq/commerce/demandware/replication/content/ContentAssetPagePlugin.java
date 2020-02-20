@@ -135,8 +135,7 @@ public class ContentAssetPagePlugin extends AbstractContentBuilderPlugin {
             }
 
             // map configured page to content asset attributes
-            Set<AttributeDescriptor> attributes = new HashSet<>(attributeDescriptors);
-            attributes.addAll(folderAttributes.getDescriptors(dwreFolders));
+            final Set<AttributeDescriptor> attributes = gatherAttributeDescriptors(dwreFolders);
             for (final AttributeDescriptor attribute : attributes) {
                 final AttributeToJsonConverter converter =
                         findConverter(attribute, page, pageProperties);
@@ -150,6 +149,18 @@ public class ContentAssetPagePlugin extends AbstractContentBuilderPlugin {
         }
         LOG.debug("Delivery for page {}: {}", page.getPath(), delivery.toString());
         return delivery;
+    }
+
+    private Set<AttributeDescriptor> gatherAttributeDescriptors(List<String> dwreFolders) {
+        final Set<AttributeDescriptor> attributes = new HashSet<>(attributeDescriptors);
+        folderAttributes.getDescriptors(dwreFolders).stream().forEach(
+                attr -> {
+                    if(!attributes.add(attr)) {
+                        attributes.remove(attr);
+                        attributes.add(attr);}
+                }
+        );
+        return attributes;
     }
 
     private AttributeToJsonConverter findConverter(AttributeDescriptor attr,
@@ -249,7 +260,7 @@ public class ContentAssetPagePlugin extends AbstractContentBuilderPlugin {
 
         @AttributeDefinition(
                 name = "Attribute Mapping",
-                description = "Page attribute mapping: <JCR property name>;<Demandware attribute name>;<optional type> for multi value fields i18n or site"
+                description = "Page attribute mapping: <JCR property name>;<Demandware attribute name>;<converter ID>:<default value>. Last two parameters are optional."
         )
         String[] attributes_mapping() default {
                 "jcr:title;name;i18n",

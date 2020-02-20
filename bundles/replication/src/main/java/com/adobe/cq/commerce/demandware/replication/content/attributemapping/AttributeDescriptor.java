@@ -16,6 +16,9 @@
 
 package com.adobe.cq.commerce.demandware.replication.content.attributemapping;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.trimToEmpty;
 
@@ -67,6 +70,28 @@ public class AttributeDescriptor {
 
     public String getDefaultValue() {
         return defaultValue;
+    }
+
+    @Override // Generated. Don't edit.
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (!(o instanceof AttributeDescriptor)) return false;
+
+        AttributeDescriptor that = (AttributeDescriptor) o;
+
+        return new EqualsBuilder()
+                .append(targetName, that.targetName)
+                .append(sourceName, that.sourceName)
+                .isEquals();
+    }
+
+    @Override // Generated. Don't edit.
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(targetName)
+                .append(sourceName)
+                .toHashCode();
     }
 
     @Override

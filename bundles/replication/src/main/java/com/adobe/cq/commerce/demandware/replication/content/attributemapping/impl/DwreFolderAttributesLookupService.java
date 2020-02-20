@@ -45,7 +45,12 @@ public class DwreFolderAttributesLookupService {
         final Set<AttributeDescriptor> descriptors = new HashSet<>();
         for(DwreFolderAttributesAssignment assignment: assignments) {
             if(assignment.isApplicable(dwreFolders)) {
-                descriptors.addAll(assignment.getAttributeDescriptors());
+                assignment.getAttributeDescriptors().stream().forEach(attr -> {
+                    if(!descriptors.add(attr)) {
+                        descriptors.remove(attr);
+                        descriptors.add(attr);
+                    }
+                });
             }
         }
         return descriptors.isEmpty()
