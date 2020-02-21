@@ -29,6 +29,7 @@ import org.osgi.framework.Constants;
 import com.adobe.cq.commerce.demandware.DemandwareCommerceConstants;
 import com.adobe.cq.commerce.demandware.replication.TransportHandlerPlugin;
 import com.day.cq.replication.ReplicationException;
+import org.osgi.service.component.ComponentContext;
 
 import static com.adobe.cq.commerce.demandware.replication.transport.AbstractOCAPITransportPlugin.*;
 
@@ -91,5 +92,10 @@ public class ContentSlotConfigPlugin extends AbstractOCAPITransportPlugin {
             throw new ReplicationException("Can not create endpoint URI", e);
         }
         return requestBuilder;
+    }
+
+    @Activate
+    protected void activate(ComponentContext ctx) {
+        super.activate(ctx);
     }
 }

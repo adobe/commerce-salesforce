@@ -42,6 +42,7 @@ import com.day.cq.replication.ReplicationAction;
 import com.day.cq.replication.ReplicationActionType;
 import com.day.cq.replication.ReplicationException;
 import com.day.cq.replication.ReplicationLog;
+import org.osgi.service.component.ComponentContext;
 
 import static com.adobe.cq.commerce.demandware.replication.transport.AbstractOCAPITransportPlugin.*;
 
@@ -89,5 +90,10 @@ public class ContentAssetPlugin extends AbstractOCAPITransportPlugin {
     @Override
     String getContentType() {
         return "content-asset";
+    }
+
+    @Activate
+    protected void activate(ComponentContext ctx) {
+        super.activate(ctx);
     }
 }
