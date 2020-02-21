@@ -25,6 +25,12 @@ import org.apache.sling.commons.json.JSONObject;
 import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
+
+/**
+ * Basic implementation for attribute converters.
+ *
+ * Respects default values.
+ */
 public abstract class AbstractAttributeToJsonConverter implements AttributeToJsonConverter {
 
     @Override
@@ -38,9 +44,25 @@ public abstract class AbstractAttributeToJsonConverter implements AttributeToJso
                 : value;
     }
 
-    protected abstract Object getValue(AttributeDescriptor attr,
-                                       final Page page,
-                                       HierarchyNodeInheritanceValueMap properties);
+    /**
+     * Obtains value for this attribute conversion.
+     *
+     * The default implementation simply copies the input value to the output
+     * of if there is no input value the default value to the output.
+     *
+     * @param attr
+     * @param page
+     * @param properties
+     * @return
+     */
+    protected Object getValue(final AttributeDescriptor attr,
+                              final Page page,
+                              final HierarchyNodeInheritanceValueMap properties) {
+        final Object value = properties.get(attr.getSourceName());
+        return value==null
+                ? attr.getDefaultValue()
+                : value;
+    }
 
     protected String getMultivalueKey(AttributeDescriptor attr,
                                       final Page page,

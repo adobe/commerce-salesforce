@@ -14,47 +14,37 @@
  ~ limitations under the License.
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-package com.adobe.cq.commerce.demandware.replication.content.attributemapping.impl;
+package com.adobe.cq.commerce.demandware.replication.content.attributemapping.converter;
 
-import com.adobe.cq.commerce.demandware.DemandwareCommerceConstants;
 import com.adobe.cq.commerce.demandware.replication.content.attributemapping.AbstractAttributeToJsonConverter;
 import com.adobe.cq.commerce.demandware.replication.content.attributemapping.AttributeDescriptor;
 import com.adobe.cq.commerce.demandware.replication.content.attributemapping.AttributeToJsonConverter;
 import com.day.cq.commons.inherit.HierarchyNodeInheritanceValueMap;
 import com.day.cq.wcm.api.Page;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.osgi.service.component.annotations.Component;
 
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 
 @Component(service = AttributeToJsonConverter.class, immediate = true,
         property = {
-                "service.ranking:Integer=0"
+                "service.ranking:Integer=1000"
         })
-public class SiteAttributeToJsonConverter extends AbstractAttributeToJsonConverter {
+public class CommaSeparatedValuesAttributeToJsonConverter extends AbstractAttributeToJsonConverter {
+
+    @Override
+    protected Object getValue(AttributeDescriptor attr, Page page, HierarchyNodeInheritanceValueMap properties) {
+        String[] values = properties.get(attr.getSourceName(), String[].class);
+        if(ArrayUtils.isEmpty(values) && StringUtils.isNotEmpty(attr.getDefaultValue())) {
+            values = new String[] { attr.getDefaultValue() };
+        }
+        return StringUtils.join(values, ',');
+    }
 
     @Override
     public boolean canHandle(AttributeDescriptor attr, Page page, HierarchyNodeInheritanceValueMap properties) {
         return super.canHandle(attr, page, properties)
-                && equalsIgnoreCase("site", attr.getConverterId());
-    }
-
-    @Override
-    protected boolean isMultivalued() {
-        return true;
-    }
-
-    @Override
-    protected String getMultivalueKey(final AttributeDescriptor attr,
-                                      final Page page,
-                                      final HierarchyNodeInheritanceValueMap properties) {
-        return properties.getInherited(
-                DemandwareCommerceConstants.PN_DWRE_SITE, String.class);
-    }
-
-    @Override
-    protected Object getValue(final AttributeDescriptor attr,
-                              final Page page,
-                              final HierarchyNodeInheritanceValueMap properties) {
-        return properties.get(attr.getSourceName());
+                && equalsIgnoreCase("comma-separated-values", attr.getConverterId());
     }
 }

@@ -17,7 +17,8 @@
 package com.adobe.cq.commerce.demandware.replication.content.attributemapping.impl;
 
 import com.adobe.cq.commerce.demandware.replication.content.attributemapping.AttributeDescriptor;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.StrMatcher;
+import org.apache.commons.lang3.text.StrTokenizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +32,15 @@ public class AttributeDescriptorFactory {
             .getLogger(java.lang.invoke.MethodHandles.lookup().lookupClass());
 
 
+    // AEM 6.4 does not include org.apache.commons.text. Therefore,
+    // the deprecated StrTokenizer is used.
+    private final StrTokenizer tokenizer =
+            new StrTokenizer("", ';', '"')
+                .setIgnoreEmptyTokens(false)
+                .setEmptyTokenAsNull(false)
+                .setTrimmerMatcher(StrMatcher.trimMatcher());
+
+
     public List<AttributeDescriptor> fromOsgiConfig(final String[] config) {
         if(config==null || config.length==0) {
             return Collections.emptyList();
@@ -38,7 +48,7 @@ public class AttributeDescriptorFactory {
 
         final List<AttributeDescriptor> mapping = new ArrayList<>(config.length);
         for(String configLine: config) {
-            final String[] components = StringUtils.split(configLine, ';');
+            final String[] components = tokenizer.reset(configLine).getTokenArray();
             if(components.length<2) {
                 LOG.warn("Ignoring config line '{}' on attribute mapping since it must have at least 2 parts. It has {}.",
                         configLine, components.length);
@@ -50,8 +60,8 @@ public class AttributeDescriptorFactory {
 
                 final String sourceName = components[0];
                 final String targetName = components[1];
-                final String converterId = components.length > 2 ? components[2] : null;
-                final String defaultValue = components.length > 3 ? components[3] : null;
+                final String converterId = components.length > 2 ? components[2] : "";
+                final String defaultValue = components.length > 3 ? components[3] : "";
 
                 mapping.add(new AttributeDescriptor(sourceName,
                                                     targetName,

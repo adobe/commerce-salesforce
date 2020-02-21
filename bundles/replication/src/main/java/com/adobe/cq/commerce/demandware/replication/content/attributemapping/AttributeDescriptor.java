@@ -50,10 +50,10 @@ public class AttributeDescriptor {
             throw new IllegalArgumentException("targetName must not be blank.");
         }
 
-        this.sourceName = trimToEmpty(sourceName);
-        this.targetName = trimToEmpty(targetName);
-        this.converterId = trimToEmpty(converterId);
-        this.defaultValue = trimToEmpty(defaultValue);
+        this.sourceName = sourceName;
+        this.targetName = targetName;
+        this.converterId = converterId;
+        this.defaultValue = defaultValue;
     }
 
     public String getSourceName() {
@@ -97,9 +97,9 @@ public class AttributeDescriptor {
     @Override
     public String toString() {
         return new StringBuilder("AttributeDescriptor[")
-                .append("converterId:").append(converterId)
-                .append(",sourceName:").append(sourceName)
+                .append("sourceName:").append(sourceName)
                 .append(",targetName:").append(targetName)
+                .append(",converterId:").append(converterId)
                 .append(",defaultValue:").append(defaultValue)
                 .append(']')
                 .toString();

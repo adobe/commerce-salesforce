@@ -14,37 +14,48 @@
  ~ limitations under the License.
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-package com.adobe.cq.commerce.demandware.replication.content.attributemapping.impl;
+package com.adobe.cq.commerce.demandware.replication.content.attributemapping.converter;
 
 import com.adobe.cq.commerce.demandware.replication.content.attributemapping.AbstractAttributeToJsonConverter;
 import com.adobe.cq.commerce.demandware.replication.content.attributemapping.AttributeDescriptor;
 import com.adobe.cq.commerce.demandware.replication.content.attributemapping.AttributeToJsonConverter;
 import com.day.cq.commons.inherit.HierarchyNodeInheritanceValueMap;
 import com.day.cq.wcm.api.Page;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.osgi.service.component.annotations.Component;
 
-import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
+import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
 
 @Component(service = AttributeToJsonConverter.class, immediate = true,
         property = {
-                "service.ranking:Integer=1000"
+                "service.ranking:Integer=0"
         })
-public class CommaSeparatedValuesAttributeToJsonConverter extends AbstractAttributeToJsonConverter {
-
-    @Override
-    protected Object getValue(AttributeDescriptor attr, Page page, HierarchyNodeInheritanceValueMap properties) {
-        String[] values = properties.get(attr.getSourceName(), String[].class);
-        if(ArrayUtils.isEmpty(values) && StringUtils.isNotEmpty(attr.getDefaultValue())) {
-            values = new String[] { attr.getDefaultValue() };
-        }
-        return StringUtils.join(values, ',');
-    }
+public class I18nAttributeToJsonConverter extends AbstractAttributeToJsonConverter {
 
     @Override
     public boolean canHandle(AttributeDescriptor attr, Page page, HierarchyNodeInheritanceValueMap properties) {
         return super.canHandle(attr, page, properties)
-                && equalsIgnoreCase("comma-separated-values", attr.getConverterId());
+                && equalsIgnoreCase("i18n", attr.getConverterId());
+    }
+
+    @Override
+    protected boolean isMultivalued() {
+        return true;
+    }
+
+    @Override
+    protected String getMultivalueKey(final AttributeDescriptor attr,
+                                      final Page page,
+                                      final HierarchyNodeInheritanceValueMap properties) {
+        return getLanguage(page, properties);
+    }
+
+    @Override
+    protected Object getValue(final AttributeDescriptor attr,
+                              final Page page,
+                              final HierarchyNodeInheritanceValueMap properties) {
+        final Object value = properties.get(attr.getSourceName());
+        return value==null
+                ? attr.getDefaultValue()
+                : value;
     }
 }

@@ -14,8 +14,9 @@
  ~ limitations under the License.
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-package com.adobe.cq.commerce.demandware.replication.content.attributemapping.impl;
+package com.adobe.cq.commerce.demandware.replication.content.attributemapping.converter;
 
+import com.adobe.cq.commerce.demandware.DemandwareCommerceConstants;
 import com.adobe.cq.commerce.demandware.replication.content.attributemapping.AbstractAttributeToJsonConverter;
 import com.adobe.cq.commerce.demandware.replication.content.attributemapping.AttributeDescriptor;
 import com.adobe.cq.commerce.demandware.replication.content.attributemapping.AttributeToJsonConverter;
@@ -23,18 +24,18 @@ import com.day.cq.commons.inherit.HierarchyNodeInheritanceValueMap;
 import com.day.cq.wcm.api.Page;
 import org.osgi.service.component.annotations.Component;
 
-import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
+import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 
 @Component(service = AttributeToJsonConverter.class, immediate = true,
         property = {
                 "service.ranking:Integer=0"
         })
-public class I18nAttributeToJsonConverter extends AbstractAttributeToJsonConverter {
+public class SiteAttributeToJsonConverter extends AbstractAttributeToJsonConverter {
 
     @Override
     public boolean canHandle(AttributeDescriptor attr, Page page, HierarchyNodeInheritanceValueMap properties) {
         return super.canHandle(attr, page, properties)
-                && equalsIgnoreCase("i18n", attr.getConverterId());
+                && equalsIgnoreCase("site", attr.getConverterId());
     }
 
     @Override
@@ -46,13 +47,17 @@ public class I18nAttributeToJsonConverter extends AbstractAttributeToJsonConvert
     protected String getMultivalueKey(final AttributeDescriptor attr,
                                       final Page page,
                                       final HierarchyNodeInheritanceValueMap properties) {
-        return getLanguage(page, properties);
+        return properties.getInherited(
+                DemandwareCommerceConstants.PN_DWRE_SITE, String.class);
     }
 
     @Override
     protected Object getValue(final AttributeDescriptor attr,
                               final Page page,
                               final HierarchyNodeInheritanceValueMap properties) {
-        return properties.get(attr.getSourceName());
+        final Object value = properties.get(attr.getSourceName());
+        return value==null
+                ? attr.getDefaultValue()
+                : value;
     }
 }

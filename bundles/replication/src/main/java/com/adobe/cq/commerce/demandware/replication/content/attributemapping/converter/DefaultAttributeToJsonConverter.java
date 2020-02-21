@@ -14,44 +14,28 @@
  ~ limitations under the License.
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-package com.adobe.cq.commerce.demandware.replication.content.attributemapping.impl;
+package com.adobe.cq.commerce.demandware.replication.content.attributemapping.converter;
 
 import com.adobe.cq.commerce.demandware.replication.content.attributemapping.AbstractAttributeToJsonConverter;
 import com.adobe.cq.commerce.demandware.replication.content.attributemapping.AttributeDescriptor;
 import com.adobe.cq.commerce.demandware.replication.content.attributemapping.AttributeToJsonConverter;
 import com.day.cq.commons.inherit.HierarchyNodeInheritanceValueMap;
 import com.day.cq.wcm.api.Page;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.sling.commons.json.JSONArray;
 import org.osgi.service.component.annotations.Component;
 
-import java.util.Arrays;
-
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @Component(service = AttributeToJsonConverter.class, immediate = true,
-        property = {
-                "service.ranking:Integer=1000"
-        })
-public class StringArrayAttributeToJsonConverter extends AbstractAttributeToJsonConverter {
-
-    public static final String[] EMPTY_STRING_ARRAY = new String[0];
-
-    @Override
-    protected Object getValue(AttributeDescriptor attr, Page page, HierarchyNodeInheritanceValueMap properties) {
-        String[] values = properties.get(attr.getSourceName(), String[].class);
-        if(ArrayUtils.isEmpty(values)) {
-            values = StringUtils.isEmpty(attr.getDefaultValue())
-                    ? EMPTY_STRING_ARRAY
-                    : new String[] { attr.getDefaultValue() };
-        }
-        return new JSONArray(Arrays.asList(values));
-    }
+           property = {
+               "service.ranking:Integer=10000"
+           })
+public class DefaultAttributeToJsonConverter extends AbstractAttributeToJsonConverter {
 
     @Override
     public boolean canHandle(AttributeDescriptor attr, Page page, HierarchyNodeInheritanceValueMap properties) {
         return super.canHandle(attr, page, properties)
-                && equalsIgnoreCase("[string]", attr.getConverterId());
+                && (isEmpty(attr.getConverterId()) || equalsIgnoreCase(attr.getConverterId(),"default"));
     }
 }
