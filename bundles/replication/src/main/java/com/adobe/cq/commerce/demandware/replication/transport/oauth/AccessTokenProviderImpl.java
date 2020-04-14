@@ -221,8 +221,19 @@ public class AccessTokenProviderImpl implements AccessTokenProvider {
         final boolean relaxedSsl = PropertiesUtil.toBoolean(props.get(RELAXED_SSL), DEFAULT_RELAXED_SSL);
         final String demandWareClientId = PropertiesUtil.toString(props.get(DEMANDWARE_CLIENT_ID),
                 DEFAULT_DEMANDWARE_CLIENT_ID);
-        final String demandWareClientPassword = PropertiesUtil.toString(props.get(DEMANDWARE_CLIENT_PASSWORD),
+
+        final String password = PropertiesUtil.toString(props.get(DEMANDWARE_CLIENT_PASSWORD),
                 DEFAULT_DEMANDWARE_CLIENT_PASSWORD);
+        
+        String demandWareClientPassword;
+        if(this.cryptoSupport.isProtected(password))
+        {
+            demandWareClientPassword= this.cryptoSupport.unprotect(password);
+        } 
+        else
+        {
+        	demandWareClientPassword = password;
+        }
 
         final URI uri = new URI(String.format(accessRequestFormat, endPoint));
 

@@ -25,6 +25,8 @@ import java.util.Map;
 import javax.net.ssl.SSLContext;
 
 import com.adobe.cq.commerce.demandware.DemandwareClientException;
+import com.adobe.granite.crypto.CryptoSupport;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
@@ -32,6 +34,7 @@ import org.apache.felix.scr.annotations.ConfigurationPolicy;
 import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
 import org.apache.felix.scr.annotations.PropertyOption;
+import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
 import org.apache.http.client.RedirectStrategy;
 import org.apache.http.client.config.RequestConfig;
@@ -112,6 +115,9 @@ public class DemandwareClientImpl implements DemandwareClient {
 
 	@Property(label = "WebDAV user password")
 	private static final String WEBDAV_PASSWORD = "webdav.password";
+	
+	@Reference
+    private CryptoSupport cryptoSupport;
 
     private String instanceEndPoint;
     private int socketTimeout;
@@ -282,7 +288,8 @@ public class DemandwareClientImpl implements DemandwareClient {
     }
 
     @Activate
-    protected void activate(Map<String, Object> config) {
+    protected void activate(Map<String, Object> config) 
+    		throws Exception {
         instanceId = PropertiesUtil.toString(config.get(INSTANCE_ID), null);
         instanceEndPoint = PropertiesUtil.toString(config.get(INSTANCE_ENDPOINT), null);
         assetDownloadEndpoint = PropertiesUtil.toString(config.get(ASSET_DOWNLOAD_ENDPOINT),null);
@@ -296,7 +303,17 @@ public class DemandwareClientImpl implements DemandwareClient {
 
         webDavEndpoint = PropertiesUtil.toString(config.get(WEBDAV_ENDPOINT), null);
         webDavUser = PropertiesUtil.toString(config.get(WEBDAV_USER), null);
-        webDavUserPassword = PropertiesUtil.toString(config.get(WEBDAV_PASSWORD), null);
+        
+        String password = PropertiesUtil.toString(config.get(WEBDAV_PASSWORD), null);
+        if(this.cryptoSupport.isProtected(password))
+        {
+        	webDavUserPassword= this.cryptoSupport.unprotect(password);
+        } 
+        else
+        {
+        	webDavUserPassword = password;
+        }
+        
         protocolInterface = PropertiesUtil.toString(config.get(PROTOCOL_INTERFACE), null);
         protocolSSL = StringUtils.trimToNull(PropertiesUtil.toString(config.get(PROTOCOL_SSL), "TLSv1.2"));
         keystoreType = StringUtils.trimToNull(PropertiesUtil.toString(config.get(KEYSTORE_TYPE), "JKS"));
