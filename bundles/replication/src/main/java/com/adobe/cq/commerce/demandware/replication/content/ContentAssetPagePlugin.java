@@ -22,13 +22,11 @@ import com.adobe.cq.commerce.demandware.replication.content.attributemapping.Att
 import com.adobe.cq.commerce.demandware.replication.content.attributemapping.AttributeToJsonConverter;
 import com.adobe.cq.commerce.demandware.replication.content.attributemapping.impl.AttributeDescriptorFactory;
 import com.adobe.cq.commerce.demandware.replication.content.attributemapping.impl.DwreFolderAttributesLookupService;
+import com.adobe.cq.commerce.demandware.replication.content.naming.ContentAssetNameResolver;
 import com.day.cq.commons.inherit.HierarchyNodeInheritanceValueMap;
 import com.day.cq.replication.ReplicationAction;
 import com.day.cq.replication.ReplicationActionType;
 import com.day.cq.wcm.api.Page;
-import com.day.cq.wcm.api.WCMException;
-import com.day.cq.wcm.msm.api.LiveRelationship;
-import com.day.cq.wcm.msm.api.LiveRelationshipManager;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
@@ -46,6 +44,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+
+import static org.osgi.service.component.annotations.ReferenceCardinality.MANDATORY;
+import static org.osgi.service.component.annotations.ReferencePolicy.DYNAMIC;
+import static org.osgi.service.component.annotations.ReferencePolicyOption.GREEDY;
 
 /**
  * <code>ContentBuilderPlugin</code> to export and map a AEM pages of the configured resource type to a Demandware
@@ -65,10 +67,11 @@ public class ContentAssetPagePlugin extends AbstractContentBuilderPlugin {
     private static final Logger LOG = LoggerFactory
             .getLogger(java.lang.invoke.MethodHandles.lookup().lookupClass());
 
-
-
-    @Reference
-    LiveRelationshipManager liveRelationshipManager;
+    @Reference(
+            cardinality = MANDATORY,
+            policy = DYNAMIC,
+            policyOption = GREEDY)
+    private volatile ContentAssetNameResolver assetNames;
 
     private String defaultRenderingTemplate;
     private String defaultContentLibrary;
@@ -76,8 +79,8 @@ public class ContentAssetPagePlugin extends AbstractContentBuilderPlugin {
 
     @Reference(service = AttributeToJsonConverter.class,
             cardinality = ReferenceCardinality.MULTIPLE,
-            policy = ReferencePolicy.DYNAMIC,
-            policyOption = ReferencePolicyOption.GREEDY,
+            policy = DYNAMIC,
+            policyOption = GREEDY,
             bind = "bindAttrConverter", unbind = "unbindAttrConverter")
     private RankedServices<AttributeToJsonConverter> attributeConverters =
             new RankedServices<>(Order.ASCENDING);
@@ -115,7 +118,7 @@ public class ContentAssetPagePlugin extends AbstractContentBuilderPlugin {
         delivery.put(DemandwareCommerceConstants.ATTR_API_ENDPOINT, api);
         delivery.put(DemandwareCommerceConstants.ATTR_LIBRARY, StringUtils.defaultIfEmpty(library,
             defaultContentLibrary));
-        delivery.put(DemandwareCommerceConstants.ATTR_ID, getContentAssetName(resource));
+        delivery.put(DemandwareCommerceConstants.ATTR_ID, assetNames.resolve(resource));
 
         if (action.getType() == ReplicationActionType.ACTIVATE) {
             // check for folder assignments
@@ -173,27 +176,6 @@ public class ContentAssetPagePlugin extends AbstractContentBuilderPlugin {
             }
         }
         return null;
-    }
-
-    /**
-     * Get the content asset name based on the page name of the live relation source page (if there is one) or
-     * current page resource name. <br/>
-     * If we have a multi language / multi region site we always use the name of the source page as id for the
-     * content asset, as we need to bring all language pages down to one content asset within Demandware.
-     *
-     * @param resource the current page resource
-     * @return the conten asset name
-     */
-    private String getContentAssetName(Resource resource) {
-        if (liveRelationshipManager.hasLiveRelationship(resource)) {
-            try {
-                LiveRelationship lr = liveRelationshipManager.getLiveRelationship(resource, false);
-                return StringUtils.substringAfterLast(lr.getSourcePath(), "/");
-            } catch (WCMException wcme) {
-                LOG.debug("Error retrieving live relationship", wcme);
-            }
-        }
-        return resource.getName();
     }
 
 

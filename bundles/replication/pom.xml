@@ -56,7 +56,8 @@
                         <Bundle-Category>ecommerce,publishing</Bundle-Category>
                         <Export-Package>
                             com.adobe.cq.commerce.demandware.replication,
-                            com.adobe.cq.commerce.demandware.replication.content.attributemapping
+                            com.adobe.cq.commerce.demandware.replication.content.attributemapping,
+                            com.adobe.cq.commerce.demandware.replication.content.naming
                         </Export-Package>
                     </instructions>
                 </configuration>
