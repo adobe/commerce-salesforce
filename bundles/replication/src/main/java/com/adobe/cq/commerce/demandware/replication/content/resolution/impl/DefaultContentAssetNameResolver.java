@@ -13,8 +13,9 @@
  ~ See the License for the specific language governing permissions and
  ~ limitations under the License.
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-package com.adobe.cq.commerce.demandware.replication.content.naming;
+package com.adobe.cq.commerce.demandware.replication.content.resolution.impl;
 
+import com.adobe.cq.commerce.demandware.replication.content.resolution.ContentAssetNameResolver;
 import com.day.cq.wcm.api.WCMException;
 import com.day.cq.wcm.msm.api.LiveRelationship;
 import com.day.cq.wcm.msm.api.LiveRelationshipManager;

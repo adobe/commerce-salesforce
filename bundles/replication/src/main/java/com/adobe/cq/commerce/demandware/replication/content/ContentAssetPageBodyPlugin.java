@@ -20,15 +20,10 @@ import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.List;
 
+import com.adobe.cq.commerce.demandware.replication.content.resolution.LocaleResolver;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.felix.scr.annotations.Activate;
-import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.ConfigurationPolicy;
-import org.apache.felix.scr.annotations.Properties;
-import org.apache.felix.scr.annotations.Property;
-import org.apache.felix.scr.annotations.Reference;
-import org.apache.felix.scr.annotations.Service;
+import org.apache.felix.scr.annotations.*;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.commons.json.JSONException;
 import org.apache.sling.commons.json.JSONObject;
@@ -73,6 +68,9 @@ public class ContentAssetPageBodyPlugin extends AbstractContentBuilderPlugin {
     @Reference
     private RenderService renderService;
 
+    @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY, policy = ReferencePolicy.DYNAMIC, policyOption = ReferencePolicyOption.GREEDY)
+    private volatile LocaleResolver localeResolver;
+
     @Override
     public boolean canHandle(final ReplicationAction action, final Resource resource) {
         return super.canHandle(action, resource) && action.getType() == ReplicationActionType.ACTIVATE;
@@ -91,7 +89,7 @@ public class ContentAssetPageBodyPlugin extends AbstractContentBuilderPlugin {
 
         final Page page = resource.adaptTo(Page.class);
         LOG.debug("Transform page {} into content asset body", page.getPath());
-        final String language = getLanguage(page);
+        final String language = localeResolver.resolveOcapiLocaleString(page);
 
         // add body content
         JSONObject pageData = getJSONPayload(delivery);

@@ -20,14 +20,10 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Dictionary;
 
+import com.adobe.cq.commerce.demandware.replication.content.resolution.LocaleResolver;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
-import org.apache.felix.scr.annotations.Activate;
-import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.ConfigurationPolicy;
-import org.apache.felix.scr.annotations.Properties;
-import org.apache.felix.scr.annotations.Property;
-import org.apache.felix.scr.annotations.Service;
+import org.apache.felix.scr.annotations.*;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.commons.json.JSONArray;
@@ -71,6 +67,9 @@ public class ContentSlotConfigPagePlugin extends AbstractContentBuilderPlugin {
         DEFAULT_CONTENT_SLOT_CONFIG_API)
     private static final String CONTENT_SLOT_CONFI_API = "api";
 
+    @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY, policy = ReferencePolicy.DYNAMIC, policyOption = ReferencePolicyOption.GREEDY)
+    private volatile LocaleResolver localeResolver;
+
     @Override
     public JSONObject create(final ReplicationAction action, Resource resource, JSONObject content)
         throws JSONException {
@@ -85,7 +84,7 @@ public class ContentSlotConfigPagePlugin extends AbstractContentBuilderPlugin {
         final ValueMap pageProperties = new HierarchyNodeInheritanceValueMap(page.getContentResource());
 
         // get base values for site, library and language attributes
-        final String language = getLanguage(page);
+        final String language = localeResolver.resolveOcapiLocaleString(page);
         final String site = ((HierarchyNodeInheritanceValueMap) pageProperties).getInherited(
             DemandwareCommerceConstants.PN_DWRE_SITE, String.class);
         final String slotType = pageProperties.get(DemandwareCommerceConstants.PN_DWRE_SLOT_TYPE, String.class);

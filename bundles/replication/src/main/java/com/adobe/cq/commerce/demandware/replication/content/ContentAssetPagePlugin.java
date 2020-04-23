@@ -22,7 +22,7 @@ import com.adobe.cq.commerce.demandware.replication.content.attributemapping.Att
 import com.adobe.cq.commerce.demandware.replication.content.attributemapping.AttributeToJsonConverter;
 import com.adobe.cq.commerce.demandware.replication.content.attributemapping.impl.AttributeDescriptorFactory;
 import com.adobe.cq.commerce.demandware.replication.content.attributemapping.impl.DwreFolderAttributesLookupService;
-import com.adobe.cq.commerce.demandware.replication.content.naming.ContentAssetNameResolver;
+import com.adobe.cq.commerce.demandware.replication.content.resolution.ContentAssetNameResolver;
 import com.day.cq.commons.inherit.HierarchyNodeInheritanceValueMap;
 import com.day.cq.replication.ReplicationAction;
 import com.day.cq.replication.ReplicationActionType;

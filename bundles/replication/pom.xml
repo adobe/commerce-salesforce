@@ -57,7 +57,7 @@
                         <Export-Package>
                             com.adobe.cq.commerce.demandware.replication,
                             com.adobe.cq.commerce.demandware.replication.content.attributemapping,
-                            com.adobe.cq.commerce.demandware.replication.content.naming
+                            com.adobe.cq.commerce.demandware.replication.content.resolution
                         </Export-Package>
                     </instructions>
                 </configuration>
