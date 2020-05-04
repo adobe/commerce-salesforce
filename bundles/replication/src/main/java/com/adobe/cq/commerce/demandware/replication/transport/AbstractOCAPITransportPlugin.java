@@ -1,5 +1,5 @@
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- ~ Copyright 2019 Adobe Systems Incorporated
+ ~ Copyright 2019 Adobe Systems Incorporated and others
  ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");
  ~ you may not use this file except in compliance with the License.
@@ -20,6 +20,8 @@ import com.adobe.cq.commerce.demandware.DemandwareClient;
 import com.adobe.cq.commerce.demandware.DemandwareClientException;
 import com.adobe.cq.commerce.demandware.DemandwareCommerceConstants;
 import com.adobe.cq.commerce.demandware.InstanceIdProvider;
+import com.adobe.cq.commerce.demandware.replication.DemandwareReplicationException;
+import com.adobe.cq.commerce.demandware.replication.DemandwareReplicationLoginService;
 import com.adobe.granite.auth.oauth.AccessTokenProvider;
 import com.day.cq.replication.*;
 import org.apache.commons.lang3.StringUtils;
@@ -68,7 +70,7 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
     protected static final String OCAPI_PATH = "ocapi.path";
 
 
-    abstract protected ResourceResolverFactory getResourceResolverFactory();
+    abstract protected DemandwareReplicationLoginService getReplicationLoginService();
 
     abstract protected InstanceIdProvider getInstanceIdProvider();
 
@@ -236,8 +238,6 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
     protected List<Header> createDefaultHeaders(AgentConfig config, ReplicationLog log) {
         final List<Header> defaultHeaders = super.createDefaultHeaders(config, log);
 
-        ResourceResolver resolver = null;
-        Session userSession = null;
         try {
             // get the transport uri and remove the demandware:// prefix
             final String transportUri = StringUtils.replace(config.getTransportURI(), DWRE_SCHEME, "https://");
@@ -254,15 +254,14 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
                         final String agentUserID = conf.get(AgentConfig.AGENT_USER_ID, "");
                         log.debug("* OAuth 2.0 User: %s", agentUserID);
                         // get an access token for agent user
-                        Map<String, Object> param = new HashMap<>();
-                        param.put(ResourceResolverFactory.SUBSERVICE, "replication");
-                        resolver = getResourceResolverFactory().getServiceResourceResolver(param);
 
-                        try {
+                        try (final ResourceResolver resolver = getReplicationLoginService().createResourceResolver()) {
                             String accessToken = accessTokenProvider.getAccessToken(resolver, agentUserID, null);
                             String authorization = String.format(BEARER_AUTHENTICATION_FORMAT, accessToken);
                             defaultHeaders.add(new BasicHeader(HttpHeaders.AUTHORIZATION, authorization));
                             log.debug("* OAuth 2.0 Authorization Bearer setup successful");
+                        } catch (DemandwareReplicationException drex) {
+                            log.error("Failed to obtain resource resolver: %s", drex.getMessage());
                         } catch (Exception e) {
                             log.error("Failed to get an access token for user: %s msg: %s", agentUserID,
                                     e.getMessage());
@@ -280,17 +279,8 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
                 log.warn("Agent needs to be configured using https protocol");
 
             }
-        } catch (LoginException e) {
-            log.error("Unable to retrieve a session.", e);
         } catch (URISyntaxException e) {
             log.error("Transport uri not valid: ", e);
-        } finally {
-            if (userSession != null && userSession.isLive()) {
-                userSession.logout();
-            }
-            if (resolver != null && resolver.isLive()) {
-                resolver.close();
-            }
         }
         return defaultHeaders;
     }

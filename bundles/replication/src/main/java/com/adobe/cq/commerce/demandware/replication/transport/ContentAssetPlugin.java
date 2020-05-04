@@ -1,5 +1,5 @@
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- ~ Copyright 2019 Adobe Systems Incorporated
+ ~ Copyright 2019 Adobe Systems Incorporated and others
  ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");
  ~ you may not use this file except in compliance with the License.
@@ -18,30 +18,11 @@ package com.adobe.cq.commerce.demandware.replication.transport;
 
 import com.adobe.cq.commerce.demandware.DemandwareClientProvider;
 import com.adobe.cq.commerce.demandware.InstanceIdProvider;
-import com.adobe.granite.auth.oauth.AccessTokenProvider;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.felix.scr.annotations.*;
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.RequestBuilder;
-import org.apache.http.client.utils.HttpClientUtils;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.sling.api.resource.ResourceResolverFactory;
-import org.apache.sling.commons.json.JSONException;
-import org.apache.sling.commons.json.JSONObject;
-import org.osgi.framework.Constants;
-
-import com.adobe.cq.commerce.demandware.DemandwareClient;
-import com.adobe.cq.commerce.demandware.DemandwareCommerceConstants;
+import com.adobe.cq.commerce.demandware.replication.DemandwareReplicationLoginService;
 import com.adobe.cq.commerce.demandware.replication.TransportHandlerPlugin;
-import com.day.cq.replication.AgentConfig;
-import com.day.cq.replication.ReplicationAction;
-import com.day.cq.replication.ReplicationActionType;
-import com.day.cq.replication.ReplicationException;
-import com.day.cq.replication.ReplicationLog;
+import com.adobe.granite.auth.oauth.AccessTokenProvider;
+import org.apache.felix.scr.annotations.*;
+import org.osgi.framework.Constants;
 import org.osgi.service.component.ComponentContext;
 
 import static com.adobe.cq.commerce.demandware.replication.transport.AbstractOCAPITransportPlugin.*;
@@ -70,7 +51,7 @@ public class ContentAssetPlugin extends AbstractOCAPITransportPlugin {
     private DemandwareClientProvider clientProvider;
 
     @Reference
-    private ResourceResolverFactory rrf;
+    private DemandwareReplicationLoginService replicationLoginService;
 
     @Override
     protected DemandwareClientProvider getClientProvider() {
@@ -78,8 +59,8 @@ public class ContentAssetPlugin extends AbstractOCAPITransportPlugin {
     }
 
     @Override
-    protected ResourceResolverFactory getResourceResolverFactory() {
-        return rrf;
+    protected DemandwareReplicationLoginService getReplicationLoginService() {
+        return replicationLoginService;
     }
 
     @Override

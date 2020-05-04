@@ -13,19 +13,21 @@
  ~ See the License for the specific language governing permissions and
  ~ limitations under the License.
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+package com.adobe.cq.commerce.demandware.replication;
 
-package com.adobe.cq.commerce.demandware;
+import com.adobe.cq.commerce.demandware.DemandwareClientException;
 
-public class DemandwareClientException extends RuntimeException {
-	public DemandwareClientException() {
-		super();
-	}
+/**
+ * A general exception indicating something went wrong during a replication
+ * request.
+ */
+public class DemandwareReplicationException extends DemandwareClientException {
 
-	public DemandwareClientException(final String message) {
-		super(message);
-	}
+    public DemandwareReplicationException(String message) {
+        super(message);
+    }
 
-	public DemandwareClientException(final String message, final Throwable cause) {
-		super(message, cause);
-	}
+    public DemandwareReplicationException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }
