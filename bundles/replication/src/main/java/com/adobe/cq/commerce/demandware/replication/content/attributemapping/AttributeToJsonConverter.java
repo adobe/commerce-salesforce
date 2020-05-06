@@ -35,32 +35,4 @@ public interface AttributeToJsonConverter {
                                Page page,
                                HierarchyNodeInheritanceValueMap properties)
             throws JSONException;
-
-    /**
-     * Get the correct content language in the correct format to be used with OCAPI.
-     *
-     * @param page the current page
-     * @return the language for the give page
-     */
-    default String getLanguage(final Page page,
-                               final HierarchyNodeInheritanceValueMap properties)
-    {
-        return isNotEmpty(properties.getInherited(JcrConstants.JCR_LANGUAGE, String.class))
-                ? format(page.getLanguage(false))
-                : null;
-    }
-
-    /**
-     * Format a Java locale for usage with Demandware OCAPI. The OCAPI accepts locale's formatted like "de-DE", using
-     * dash instead of underscore.
-     *
-     * @param locale the {@code Locale}
-     * @return the formatted locale string
-     */
-    default String format(final Locale locale) {
-        if (locale != null) {
-            return StringUtils.replaceChars(locale.toString(), "_", "-");
-        }
-        return null;
-    }
 }

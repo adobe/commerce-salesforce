@@ -19,17 +19,25 @@ package com.adobe.cq.commerce.demandware.replication.content.attributemapping.co
 import com.adobe.cq.commerce.demandware.replication.content.attributemapping.AbstractAttributeToJsonConverter;
 import com.adobe.cq.commerce.demandware.replication.content.attributemapping.AttributeDescriptor;
 import com.adobe.cq.commerce.demandware.replication.content.attributemapping.AttributeToJsonConverter;
+import com.adobe.cq.commerce.demandware.replication.content.resolution.LocaleResolver;
 import com.day.cq.commons.inherit.HierarchyNodeInheritanceValueMap;
 import com.day.cq.wcm.api.Page;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 
 import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
+import static org.osgi.service.component.annotations.ReferencePolicy.DYNAMIC;
+import static org.osgi.service.component.annotations.ReferencePolicyOption.GREEDY;
 
 @Component(service = AttributeToJsonConverter.class, immediate = true,
         property = {
                 "service.ranking:Integer=0"
         })
 public class I18nAttributeToJsonConverter extends AbstractAttributeToJsonConverter {
+
+    @Reference(cardinality = ReferenceCardinality.MANDATORY, policy = DYNAMIC, policyOption = GREEDY)
+    private volatile LocaleResolver localeResolver;
 
     @Override
     public boolean canHandle(AttributeDescriptor attr, Page page, HierarchyNodeInheritanceValueMap properties) {
@@ -46,7 +54,7 @@ public class I18nAttributeToJsonConverter extends AbstractAttributeToJsonConvert
     protected String getMultivalueKey(final AttributeDescriptor attr,
                                       final Page page,
                                       final HierarchyNodeInheritanceValueMap properties) {
-        return getLanguage(page, properties);
+        return localeResolver.resolveOcapiLocaleString(page);
     }
 
     @Override
