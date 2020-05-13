@@ -39,8 +39,11 @@ import org.apache.http.entity.StringEntity;
 import org.apache.sling.commons.json.JSONArray;
 import org.apache.sling.commons.json.JSONException;
 import org.apache.sling.commons.json.JSONObject;
+import org.apache.sling.commons.osgi.PropertiesUtil;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.ComponentContext;
+
+import java.util.Dictionary;
 
 import static com.adobe.cq.commerce.demandware.replication.transport.AbstractOCAPITransportPlugin.*;
 
@@ -55,12 +58,15 @@ import static com.adobe.cq.commerce.demandware.replication.transport.AbstractOCA
         @Property(name = Constants.SERVICE_RANKING, intValue = 11),
         @Property(name = ACCESS_TOKEN_PROVIDER, label = "Access Token Provider Id to be used for OCAPI access"),
         @Property(name = OCAPI_VERSION, label = "OCAPI version", value = DEFAULT_OCAPI_VERSION),
-        @Property(name = OCAPI_PATH, label = "OCAPI path", value = DEFAULT_OCAPI_PATH)
+        @Property(name = OCAPI_PATH, label = "OCAPI path", value = DEFAULT_OCAPI_PATH),
+        @Property(name = OCAPI_EP, label = "OCAPI endpoint", value = ContentAssetFolderPlugin.DEFAULT_ASSET_FOLDER_EP)
 })
 @Reference(name = AbstractOCAPITransportPlugin.ACCESS_TOKEN_PROPERTY,
         referenceInterface = AccessTokenProvider.class, bind = "bindAccessTokenProvider", unbind = "unbindAccessTokenProvider",
         cardinality = ReferenceCardinality.OPTIONAL_MULTIPLE, policy = ReferencePolicy.DYNAMIC)
 public class ContentAssetFolderPlugin extends AbstractOCAPITransportPlugin {
+
+    protected final static String DEFAULT_ASSET_FOLDER_EP = "/libraries/{library_id}/folder_assignments/{id}/{folder}";
     
     @Reference
     private InstanceIdProvider instanceIdProvider;
@@ -70,6 +76,8 @@ public class ContentAssetFolderPlugin extends AbstractOCAPITransportPlugin {
 
     @Reference
     private DemandwareReplicationLoginService replicationLoginService;
+
+    private String endpoint = DEFAULT_ASSET_FOLDER_EP;
 
     @Override
     protected DemandwareClientProvider getClientProvider() {
@@ -112,9 +120,9 @@ public class ContentAssetFolderPlugin extends AbstractOCAPITransportPlugin {
                         
                         // construct URL for folder assignment
                         final String instanceId = instanceIdProvider.getInstanceId(config);
-                        final String endpoint = getClientProvider().getClientForSpecificInstance(instanceId).getEndpoint();
-                        final String transportUriBuilder = DemandwareClient.DEFAULT_SCHEMA + endpoint + getOCApiPath() + getOCApiVersion() +
-                                constructEndpointURL(delivery.getString(DemandwareCommerceConstants.ATTR_API_ENDPOINT), folder, delivery);
+                        final String host = getClientProvider().getClientForSpecificInstance(instanceId).getEndpoint();
+                        final String transportUriBuilder = DemandwareClient.DEFAULT_SCHEMA + host + getOCApiPath() + getOCApiVersion() +
+                                createFolderEndpoint(folder, delivery);
                         final RequestBuilder requestBuilder = RequestBuilder.put();
                         requestBuilder.setUri(transportUriBuilder);
                         requestBuilder.addHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType());
@@ -146,15 +154,17 @@ public class ContentAssetFolderPlugin extends AbstractOCAPITransportPlugin {
         return true;
     }
     
-    private String constructEndpointURL(String endpointUrl, String folder, JSONObject delivery) {
-        endpointUrl = StringUtils.appendIfMissing(StringUtils.replace(endpointUrl, "/content/",
-                "/folder_assignments/"), "/" + folder);
-        return super.constructEndpointURL(endpointUrl, delivery);
+    private String createFolderEndpoint(final String folder, JSONObject delivery) {
+        final String ep = StringUtils.replace(endpoint, "{folder}", folder);
+        return super.constructEndpointURL(ep, delivery);
     }
 
     @Activate
     protected void activate(ComponentContext ctx) {
         super.activate(ctx);
+
+        final Dictionary<?, ?> config = ctx.getProperties();
+        endpoint = PropertiesUtil.toString(config.get(OCAPI_EP), DEFAULT_ASSET_FOLDER_EP);
     }
 
 }

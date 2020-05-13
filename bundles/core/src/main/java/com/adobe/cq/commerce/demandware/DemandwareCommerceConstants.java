@@ -62,6 +62,7 @@ public interface DemandwareCommerceConstants {
     String ATTR_DATA = "data";
     String ATTR_MIMETYPE = "mimetype";
     String ATTR_BASE64 = "base64";
+    String ATTR_LOCALE = "locale";
     
     /**
      * special, Demandware specify page properties which need to be mapped

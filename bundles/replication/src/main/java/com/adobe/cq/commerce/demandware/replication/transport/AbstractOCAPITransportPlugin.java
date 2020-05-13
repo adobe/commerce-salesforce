@@ -68,7 +68,7 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
     protected static final String ACCESS_TOKEN_PROVIDER = "accessTokenProviderId";
     protected static final String OCAPI_VERSION = "ocapi.version";
     protected static final String OCAPI_PATH = "ocapi.path";
-
+    protected static final String OCAPI_EP = "ocapi.ep";
 
     abstract protected DemandwareReplicationLoginService getReplicationLoginService();
 

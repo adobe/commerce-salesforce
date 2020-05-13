@@ -23,6 +23,7 @@ import com.adobe.cq.commerce.demandware.replication.content.attributemapping.Att
 import com.adobe.cq.commerce.demandware.replication.content.attributemapping.impl.AttributeDescriptorFactory;
 import com.adobe.cq.commerce.demandware.replication.content.attributemapping.impl.DwreFolderAttributesLookupService;
 import com.adobe.cq.commerce.demandware.replication.content.resolution.ContentAssetNameResolver;
+import com.adobe.cq.commerce.demandware.replication.content.resolution.LocaleResolver;
 import com.day.cq.commons.inherit.HierarchyNodeInheritanceValueMap;
 import com.day.cq.replication.ReplicationAction;
 import com.day.cq.replication.ReplicationActionType;
@@ -73,6 +74,12 @@ public class ContentAssetPagePlugin extends AbstractContentBuilderPlugin {
             policyOption = GREEDY)
     private volatile ContentAssetNameResolver assetNames;
 
+    @Reference(
+            cardinality = MANDATORY,
+            policy = DYNAMIC,
+            policyOption = GREEDY)
+    private volatile LocaleResolver localeResolver;
+
     private String defaultRenderingTemplate;
     private String defaultContentLibrary;
     private List<AttributeDescriptor> attributeDescriptors;
@@ -119,6 +126,7 @@ public class ContentAssetPagePlugin extends AbstractContentBuilderPlugin {
         delivery.put(DemandwareCommerceConstants.ATTR_LIBRARY, StringUtils.defaultIfEmpty(library,
             defaultContentLibrary));
         delivery.put(DemandwareCommerceConstants.ATTR_ID, assetNames.resolve(resource));
+        delivery.put(DemandwareCommerceConstants.ATTR_LOCALE, localeResolver.resolveOcapiLocaleString(page));
 
         if (action.getType() == ReplicationActionType.ACTIVATE) {
             // check for folder assignments

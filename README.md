@@ -36,7 +36,7 @@ For support oof previous AEM versions see Adobe [AEM documentation](https://help
 * Start AEM 6.4.5 author instance
 * Install the main connector content package `cq-commerce-demandware-content`
 * Optionally install one of the sample content packages `cq-commerce-demandware-sample-content` or `cq-commerce-demandware-multi-sample-content`
-* Configure the connector to connect to your Saleforce Commerce instance as described in the [project wiki](../../wiki).
+* Configure the connector to connect to your Saleforce Commerce instance as described in the [docs](./docs/Home.md).
 
 ### Build
 
