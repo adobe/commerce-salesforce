@@ -1,5 +1,5 @@
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- ~ Copyright 2019 Adobe Systems Incorporated
+ ~ Copyright 2019 Adobe Systems Incorporated and others
  ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");
  ~ you may not use this file except in compliance with the License.
@@ -30,6 +30,8 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.security.AccessControlException;
 
+import com.adobe.cq.commerce.demandware.replication.DemandwareReplicationException;
+import com.adobe.cq.commerce.demandware.replication.DemandwareReplicationLoginService;
 import org.apache.felix.scr.annotations.Activate;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Property;
@@ -38,10 +40,8 @@ import org.apache.felix.scr.annotations.ReferenceCardinality;
 import org.apache.felix.scr.annotations.ReferencePolicy;
 import org.apache.felix.scr.annotations.Service;
 import org.apache.http.entity.ContentType;
-import org.apache.sling.api.resource.LoginException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
-import org.apache.sling.api.resource.ResourceResolverFactory;
 import org.apache.sling.commons.json.JSONException;
 import org.apache.sling.commons.json.JSONObject;
 import org.apache.sling.commons.osgi.PropertiesUtil;
@@ -69,7 +69,7 @@ public class DemandwareContentBuilder implements ContentBuilder {
     private String name;
 
     @Reference
-    private ResourceResolverFactory rrf;
+    private DemandwareReplicationLoginService rrf;
 
     @Reference(referenceInterface = ContentBuilderPlugin.class,
             bind = "bindContentHandlerPlugin",
@@ -107,10 +107,8 @@ public class DemandwareContentBuilder implements ContentBuilder {
             final Node node = (Node) session.getItem(action.getPath());
 
             JSONObject json = null;
-            try {
-                // get the resource
-                ResourceResolver resolver = getResourceResolver();
-                Resource resource = resolver.getResource(node.getPath());
+            try (final ResourceResolver resolver = rrf.createResourceResolver()) {
+                final Resource resource = resolver.getResource(node.getPath());
 
                 // iterate all registered plugins and delegate the work
                 for (ContentBuilderPluginWrapper contentBuilderPluginWrapper : contentHandlerPlugins) {
@@ -119,6 +117,9 @@ public class DemandwareContentBuilder implements ContentBuilder {
                         json = contentBuilderPlugin.create(action, resource, json);
                     }
                 }
+            } catch(DemandwareReplicationException rex) {
+                log.error("Error replicating to SFCC: %s", rex.getMessage());
+                throw new ReplicationException(rex);
             } catch (JSONException e) {
                 log.error("Error creating JSON object: %s", e.getMessage());
                 throw new ReplicationException(e);
@@ -169,22 +170,6 @@ public class DemandwareContentBuilder implements ContentBuilder {
                                      ReplicationContentFactory factory, Map<String, Object> parameters)
             throws ReplicationException {
         return create(session, action, factory);
-    }
-
-
-    /**
-     * Get the service resource resolver for the content builder
-     * @return the service resource resolver
-     * @throws ReplicationException if no resource resolver is available
-     */
-    private ResourceResolver getResourceResolver() throws ReplicationException {
-        try {
-            Map<String, Object> info = Collections.singletonMap(ResourceResolverFactory.SUBSERVICE,
-                    (Object) "replication");
-            return rrf.getServiceResourceResolver(info);
-        } catch (LoginException e) {
-            throw new ReplicationException("Can not get a resource resolver", e);
-        }
     }
 
     /**

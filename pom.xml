@@ -87,6 +87,7 @@
                     <excludes combine.children="append">
                         <!-- Ignore lint-files -->
                         <exclude>.circleci/*</exclude>
+                        <exclude>**/docs/**/*</exclude>
                     </excludes>
                 </configuration>
             </plugin>

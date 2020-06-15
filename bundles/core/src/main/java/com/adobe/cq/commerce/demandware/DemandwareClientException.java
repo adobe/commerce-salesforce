@@ -1,5 +1,5 @@
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- ~ Copyright 2019 Adobe Systems Incorporated
+ ~ Copyright 2019 Adobe Systems Incorporated and others
  ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");
  ~ you may not use this file except in compliance with the License.
@@ -23,5 +23,9 @@ public class DemandwareClientException extends RuntimeException {
 
 	public DemandwareClientException(final String message) {
 		super(message);
+	}
+
+	public DemandwareClientException(final String message, final Throwable cause) {
+		super(message, cause);
 	}
 }

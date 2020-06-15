@@ -53,13 +53,12 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Bundle-Category>cq5</Bundle-Category>
+                        <Bundle-Category>ecommerce,publishing</Bundle-Category>
                         <Export-Package>
-                            com.adobe.cq.commerce.demandware.replication
+                            com.adobe.cq.commerce.demandware.replication,
+                            com.adobe.cq.commerce.demandware.replication.content.attributemapping,
+                            com.adobe.cq.commerce.demandware.replication.content.resolution
                         </Export-Package>
-                        <Private-Package>
-                            com.adobe.cq.commerce.demandware.replication.*
-                        </Private-Package>
                     </instructions>
                 </configuration>
             </plugin>

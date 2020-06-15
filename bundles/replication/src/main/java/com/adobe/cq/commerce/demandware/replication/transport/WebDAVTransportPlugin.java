@@ -17,6 +17,7 @@
 package com.adobe.cq.commerce.demandware.replication.transport;
 
 import com.adobe.cq.commerce.demandware.DemandwareClient;
+import com.adobe.cq.commerce.demandware.DemandwareClientProvider;
 import com.adobe.cq.commerce.demandware.DemandwareCommerceConstants;
 import com.adobe.cq.commerce.demandware.replication.TransportHandlerPlugin;
 import com.day.cq.replication.AgentConfig;
@@ -29,10 +30,7 @@ import com.github.sardine.impl.SardineException;
 import com.github.sardine.impl.SardineImpl;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Properties;
-import org.apache.felix.scr.annotations.Property;
-import org.apache.felix.scr.annotations.Service;
+import org.apache.felix.scr.annotations.*;
 import org.apache.http.HttpStatus;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -54,10 +52,20 @@ import java.net.URLEncoder;
  */
 @Component
 @Service(value = TransportHandlerPlugin.class)
-@Properties({@Property(name = TransportHandlerPlugin.PN_TASK, value = "Demandware WebDAV Transport Plugin", propertyPrivate = true),
-    @Property(name = Constants.SERVICE_RANKING, intValue = 30)})
+@Properties({
+        @Property(name = TransportHandlerPlugin.PN_TASK, value = "Demandware WebDAV Transport Plugin", propertyPrivate = true),
+        @Property(name = Constants.SERVICE_RANKING, intValue = 30)
+})
 public class WebDAVTransportPlugin extends AbstractTransportHandlerPlugin {
     private static final Logger LOG = LoggerFactory.getLogger(WebDAVTransportPlugin.class);
+
+    @Reference
+    private DemandwareClientProvider clientProvider;
+
+    @Override
+    protected DemandwareClientProvider getClientProvider() {
+        return clientProvider;
+    }
 
     @Override
     String getApiType() {
@@ -75,7 +83,7 @@ public class WebDAVTransportPlugin extends AbstractTransportHandlerPlugin {
 
         // construct the WebDAV request
         String path = null;
-        final String endpoint = clientProvider.getClientForSpecificInstance(config).getWebDavEndpoint();
+        final String endpoint = getClientProvider().getClientForSpecificInstance(config).getWebDavEndpoint();
         final StringBuilder transportUriBuilder = new StringBuilder();
         transportUriBuilder.append(DemandwareClient.DEFAULT_SCHEMA);
         transportUriBuilder.append(endpoint);

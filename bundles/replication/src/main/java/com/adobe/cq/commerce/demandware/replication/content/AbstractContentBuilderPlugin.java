@@ -16,11 +16,9 @@
 
 package com.adobe.cq.commerce.demandware.replication.content;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
+import com.adobe.cq.commerce.demandware.DemandwareCommerceConstants;
+import com.adobe.cq.commerce.demandware.replication.ContentBuilderPlugin;
+import com.day.cq.replication.ReplicationAction;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.sling.api.resource.Resource;
@@ -29,11 +27,9 @@ import org.apache.sling.commons.json.JSONObject;
 import org.apache.sling.commons.osgi.PropertiesUtil;
 import org.osgi.service.component.ComponentContext;
 
-import com.adobe.cq.commerce.demandware.DemandwareCommerceConstants;
-import com.adobe.cq.commerce.demandware.replication.ContentBuilderPlugin;
-import com.day.cq.commons.inherit.HierarchyNodeInheritanceValueMap;
-import com.day.cq.replication.ReplicationAction;
-import com.day.cq.wcm.api.Page;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Abstract {@code ContentBuilderPlugin} sharing a common set a of methods used by most plugins.
@@ -89,32 +85,6 @@ public abstract class AbstractContentBuilderPlugin implements ContentBuilderPlug
             pageData = new JSONObject();
         }
         return pageData;
-    }
-
-    /**
-     * Get the correct content language in the correct format to be used with OCAPI.
-     *
-     * @param page the current page
-     * @return the language for the give page
-     */
-    protected final String getLanguage(final Page page) {
-        return StringUtils.isNotEmpty(
-            new HierarchyNodeInheritanceValueMap(page.getContentResource()).getInherited(JcrConstants.JCR_LANGUAGE,
-                String.class)) ? getFormattedLocale(page.getLanguage(false)) : null;
-    }
-
-    /**
-     * Format a Java locale for usage with Demandware OCAPI. The OCAPI accepts locale's formatted like "de-DE", using
-     * dash instead of underscore.
-     *
-     * @param locale the {@code Locale}
-     * @return the formatted locale string
-     */
-    protected final String getFormattedLocale(final Locale locale) {
-        if (locale != null) {
-            return StringUtils.replaceChars(locale.toString(), "_", "-");
-        }
-        return null;
     }
 
     /**

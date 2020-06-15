@@ -63,7 +63,7 @@
                 </executions>
                 <configuration>
                     <instructions>
-                        <Bundle-Category>cq5</Bundle-Category>
+                        <Bundle-Category>ecommerce</Bundle-Category>
                         <Export-Package>
                             com.adobe.cq.commerce.demandware,
                             com.adobe.cq.commerce.demandware.components

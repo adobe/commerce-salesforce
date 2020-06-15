@@ -60,6 +60,7 @@
                 </executions>
                 <configuration>
                     <instructions>
+                        <Bundle-Category>ecommerce</Bundle-Category>
                         <!-- Import any version of javax.inject, to allow running on multiple versions of AEM -->
                         <Import-Package>javax.inject;version=0.0.0,*</Import-Package>
                         <Sling-Model-Packages>

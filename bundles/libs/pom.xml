@@ -49,6 +49,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
+                        <Bundle-Category>ecommerce</Bundle-Category>
                         <Embed-Dependency>
                             sardine,
                             ant,

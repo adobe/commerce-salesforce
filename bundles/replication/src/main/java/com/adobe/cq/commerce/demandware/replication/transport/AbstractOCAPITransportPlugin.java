@@ -1,5 +1,5 @@
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- ~ Copyright 2019 Adobe Systems Incorporated
+ ~ Copyright 2019 Adobe Systems Incorporated and others
  ~
  ~ Licensed under the Apache License, Version 2.0 (the "License");
  ~ you may not use this file except in compliance with the License.
@@ -17,22 +17,14 @@
 package com.adobe.cq.commerce.demandware.replication.transport;
 
 import com.adobe.cq.commerce.demandware.DemandwareClient;
+import com.adobe.cq.commerce.demandware.DemandwareClientException;
 import com.adobe.cq.commerce.demandware.DemandwareCommerceConstants;
 import com.adobe.cq.commerce.demandware.InstanceIdProvider;
-import com.adobe.cq.commerce.demandware.DemandwareClientException;
+import com.adobe.cq.commerce.demandware.replication.DemandwareReplicationException;
+import com.adobe.cq.commerce.demandware.replication.DemandwareReplicationLoginService;
 import com.adobe.granite.auth.oauth.AccessTokenProvider;
-import com.day.cq.replication.AgentConfig;
-import com.day.cq.replication.ReplicationAction;
-import com.day.cq.replication.ReplicationActionType;
-import com.day.cq.replication.ReplicationException;
-import com.day.cq.replication.ReplicationLog;
+import com.day.cq.replication.*;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.felix.scr.annotations.Activate;
-import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Property;
-import org.apache.felix.scr.annotations.Reference;
-import org.apache.felix.scr.annotations.ReferenceCardinality;
-import org.apache.felix.scr.annotations.ReferencePolicy;
 import org.apache.http.Header;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
@@ -59,42 +51,28 @@ import javax.jcr.Session;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Collections;
-import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 /**
  * Abstract {@code TransportHandlerPlugin} class used as base for all Demandware OCAPI transport handlers.
  */
-@Component(componentAbstract = true)
-@Reference(name = AbstractOCAPITransportPlugin.ACCESS_TOKEN_PROPERTY,
-        referenceInterface = AccessTokenProvider.class, bind = "bindAccessTokenProvider", unbind = "unbindAccessTokenProvider",
-        cardinality = ReferenceCardinality.OPTIONAL_MULTIPLE, policy = ReferencePolicy.DYNAMIC)
 public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHandlerPlugin {
     static final String ACCESS_TOKEN_PROPERTY = "accessTokenProvider";
     static final String BEARER_AUTHENTICATION_FORMAT = "Bearer %s";
 
-    private static final String DEFAULT_OCAPI_VERSION = "v17_6";
-    private static final String DEFAULT_OCAPI_PATH = "/s/-/dw/data";
-    private static final String DW_HTTP_METHOD_OVERRIDE_HEADER = "x-dw-http-method-override";
+    protected static final String DEFAULT_OCAPI_VERSION = "v17_6";
+    protected static final String DEFAULT_OCAPI_PATH = "/s/-/dw/data";
+    protected static final String DW_HTTP_METHOD_OVERRIDE_HEADER = "x-dw-http-method-override";
 
-    @Property(label = "Access Token Provider Id to be used for OCAPI access")
-    private static final String ACCESS_TOKEN_PROVIDER = "accessTokenProviderId";
+    protected static final String ACCESS_TOKEN_PROVIDER = "accessTokenProviderId";
+    protected static final String OCAPI_VERSION = "ocapi.version";
+    protected static final String OCAPI_PATH = "ocapi.path";
+    protected static final String OCAPI_EP = "ocapi.ep";
 
-    @Property(label = "OCAPI version", value = DEFAULT_OCAPI_VERSION)
-    private static final String OCAPI_VERSION = "ocapi.version";
+    abstract protected DemandwareReplicationLoginService getReplicationLoginService();
 
-    @Property(label = "OCAPI path", value = DEFAULT_OCAPI_PATH)
-    private static final String OCAPI_PATH = "ocapi.path";
-
-    @Reference
-    protected ResourceResolverFactory rrf;
-
-    @Reference
-    private InstanceIdProvider instanceIdProvider;
+    abstract protected InstanceIdProvider getInstanceIdProvider();
 
     private Map<String, Comparable<Object>> accessTokenProvidersProps =
             new ConcurrentSkipListMap<>(Collections.reverseOrder());
@@ -125,7 +103,7 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
             throws ReplicationException {
         final String id = delivery.optString(DemandwareCommerceConstants.ATTR_ID,
                 StringUtils.substringAfterLast(action.getPath(), "/"));
-        final String dwInstanceId = instanceIdProvider.getInstanceId(config);
+        final String dwInstanceId = getInstanceIdProvider().getInstanceId(config);
 
         // step 1: check if the content asset already exists
         RequestBuilder requestBuilder;
@@ -213,7 +191,7 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
         try {
             // construct the OCAPI request
             final StringBuilder transportUriBuilder = new StringBuilder();
-            final String endpoint = clientProvider.getClientForSpecificInstance(dwInstanceId).getEndpoint();
+            final String endpoint = getClientProvider().getClientForSpecificInstance(dwInstanceId).getEndpoint();
             transportUriBuilder.append(DemandwareClient.DEFAULT_SCHEMA).append(endpoint);
             transportUriBuilder.append(getOCApiPath()).append(getOCApiVersion());
             transportUriBuilder.append(
@@ -260,8 +238,6 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
     protected List<Header> createDefaultHeaders(AgentConfig config, ReplicationLog log) {
         final List<Header> defaultHeaders = super.createDefaultHeaders(config, log);
 
-        ResourceResolver resolver = null;
-        Session userSession = null;
         try {
             // get the transport uri and remove the demandware:// prefix
             final String transportUri = StringUtils.replace(config.getTransportURI(), DWRE_SCHEME, "https://");
@@ -278,15 +254,14 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
                         final String agentUserID = conf.get(AgentConfig.AGENT_USER_ID, "");
                         log.debug("* OAuth 2.0 User: %s", agentUserID);
                         // get an access token for agent user
-                        Map<String, Object> param = new HashMap<>();
-                        param.put(ResourceResolverFactory.SUBSERVICE, "replication");
-                        resolver = rrf.getServiceResourceResolver(param);
 
-                        try {
+                        try (final ResourceResolver resolver = getReplicationLoginService().createResourceResolver()) {
                             String accessToken = accessTokenProvider.getAccessToken(resolver, agentUserID, null);
                             String authorization = String.format(BEARER_AUTHENTICATION_FORMAT, accessToken);
                             defaultHeaders.add(new BasicHeader(HttpHeaders.AUTHORIZATION, authorization));
                             log.debug("* OAuth 2.0 Authorization Bearer setup successful");
+                        } catch (DemandwareReplicationException drex) {
+                            log.error("Failed to obtain resource resolver: %s", drex.getMessage());
                         } catch (Exception e) {
                             log.error("Failed to get an access token for user: %s msg: %s", agentUserID,
                                     e.getMessage());
@@ -304,17 +279,8 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
                 log.warn("Agent needs to be configured using https protocol");
 
             }
-        } catch (LoginException e) {
-            log.error("Unable to retrieve a session.", e);
         } catch (URISyntaxException e) {
             log.error("Transport uri not valid: ", e);
-        } finally {
-            if (userSession != null && userSession.isLive()) {
-                userSession.logout();
-            }
-            if (resolver != null && resolver.isLive()) {
-                resolver.close();
-            }
         }
         return defaultHeaders;
     }
@@ -394,7 +360,7 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
 
     private AccessTokenProvider getAccessTokenProvider(final AgentConfig agentConfig) {
 
-        final String instanceId = instanceIdProvider.getInstanceId(agentConfig);
+        final String instanceId = getInstanceIdProvider().getInstanceId(agentConfig);
         final String accessTokenProviderId = getAccessTokenProviderId(accessTokenProviderClientId, instanceId);
 
         AccessTokenProvider accessTokenProvider = null;
@@ -411,19 +377,34 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
         return accessTokenProvider;
     }
 
-    private String getAccessTokenProviderId(final Map<String, Object> properties) {
+    protected String getAccessTokenProviderId(final Map<String, Object> properties) {
         String clientId = (String) properties.get("auth.token.provider.client.id");
         String instanceId = (String) properties.get("instance.id");
         return getAccessTokenProviderId(clientId, instanceId);
     }
 
-    private String getAccessTokenProviderId(final String clientId, final String instanceId) {
+    protected String getAccessTokenProviderId(final String clientId, final String instanceId) {
         return String.format("%s-%s", clientId, instanceId);
     }
 
-    /* OSGI stuff */
+    protected Map<String, Comparable<Object>> getAccessTokenProvidersProps() {
+        return accessTokenProvidersProps;
+    }
 
-    @Activate
+    protected Map<Comparable<Object>, AccessTokenProvider> getAccessTokenProviders() {
+        return accessTokenProviders;
+    }
+
+
+    /**
+     * Implementors have to call this activate method in order to
+     * initialize common properties.
+     *
+     * This ist a remnant of the former abstract components declaration which
+     * still has to be cleaned up.
+     *
+     * @param ctx The component context of the implementing OSGi service.
+     */
     protected void activate(final ComponentContext ctx) {
         final Dictionary<?, ?> config = ctx.getProperties();
         accessTokenProviderClientId = PropertiesUtil.toString(config.get(ACCESS_TOKEN_PROVIDER), "");
@@ -432,15 +413,36 @@ public abstract class AbstractOCAPITransportPlugin extends AbstractTransportHand
                 "/", "/");
     }
 
+    /**
+     * This bind has to be wired via a refence annotation on the implementing
+     * component.
+     *
+     * This ist a remnant of the former abstract components declaration which
+     * still has to be cleaned up.
+     *
+     * @param atp
+     * @param properties
+     */
     protected void bindAccessTokenProvider(final AccessTokenProvider atp, final Map<String, Object> properties) {
         String atpId = getAccessTokenProviderId(properties);
-        accessTokenProvidersProps.put(atpId, ServiceUtil.getComparableForServiceRanking(properties));
-        accessTokenProviders.put(ServiceUtil.getComparableForServiceRanking(properties), atp);
+        getAccessTokenProvidersProps().put(atpId, ServiceUtil.getComparableForServiceRanking(properties));
+        getAccessTokenProviders().put(ServiceUtil.getComparableForServiceRanking(properties), atp);
     }
 
+    /**
+     * This unbind has to be wired via a reference annotation on the implementing
+     * component.
+     *
+     * This ist a remnant of the former abstract components declaration which
+     * still has to be cleaned up.
+     *
+     * @param atp
+     * @param properties
+     */
     protected void unbindAccessTokenProvider(final AccessTokenProvider atp, final Map<String, Object> properties) {
         String atpId = getAccessTokenProviderId(properties);
-        accessTokenProviders.remove(accessTokenProvidersProps.get(atpId));
-        accessTokenProvidersProps.remove(atpId);
+        getAccessTokenProviders().remove(getAccessTokenProvidersProps().get(atpId));
+        getAccessTokenProvidersProps().remove(atpId);
     }
+
 }
