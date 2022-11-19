@@ -19,6 +19,7 @@ package com.adobe.cq.commerce.demandware.replication.content;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -195,7 +196,7 @@ public class DemandwareContentBuilder implements ContentBuilder {
      * @throws IOException if an I/O error occurs
      */
     private File createJSONFile(JSONObject json) throws IOException {
-        final File tmpFile = File.createTempFile("demandware", ".json");
+        final File tmpFile = Files.createTempFile("demandware", ".json").toFile();
         boolean successful = false;
         try {
             FileWriter writer = new FileWriter(tmpFile);
